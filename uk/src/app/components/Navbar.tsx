@@ -2,76 +2,48 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, LogIn, MapPin } from 'lucide-react';
+import { Menu, X, MapPin } from 'lucide-react';
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [hideNav, setHideNav] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-      // ---- TOP SAFE ZONE ----
-      if (currentScrollY < 200) {
-        setHideNav(false);
-        setLastScrollY(currentScrollY);
-        return;
-      }
-
-      // ---- FOLLOW LOGIC ----
-      if (currentScrollY > lastScrollY) {
-        setHideNav(true); // scroll down
-      } else {
-        setHideNav(false); // scroll up
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
-
-  const navLinks = [
+  const links = [
     { href: '/', label: 'Home' },
     { href: '/destinations', label: 'Destinations' },
     { href: '/activities', label: 'Activities' },
-    { href: '#', label: 'Retreats' },
+    { href: '/retreats', label: 'Retreats' },
   ];
 
   return (
     <>
-      {/* Navbar */}
       <nav
-        className={`fixed w-full top-0 z-50
-        transition-transform duration-300 ease-in-out
-        ${hideNav ? '-translate-y-full' : 'translate-y-0'}
-        backdrop-blur-xl bg-white/10 dark:bg-slate-950/20
-        shadow-lg shadow-orange-200/10 dark:shadow-orange-900/10
-        border-b border-white/10 
-        py-2.5`}>
-        <div className="max-w-[95vw] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-10">
+        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300
+        ${scrolled
+          ? 'bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl shadow-sm'
+          : 'bg-transparent'}
+        border-b border-black/5 dark:border-white/5`}
+      >
+        <div className="max-w-[90vw] mx-auto px-4">
+          <div className="h-16 flex items-center justify-between">
+            
             {/* Logo */}
-            <Link href="/" className="flex items-center group cursor-pointer">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-400 via-red-400 to-orange-500 rounded-lg opacity-0 group-hover:opacity-20 blur-lg transition-all duration-300" />
-
-                <div className="relative flex items-center gap-2 px-3 py-2">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <MapPin size={22} />
-                  </div>
-
-                  <div className="flex flex-col">
-                    <span className="text-xl font-bold bg-gradient-to-r from-orange-600 via-red-500 to-orange-600 bg-clip-text text-transparent">
-                      Devbhoomi
-                    </span>
-                    <span className="text-xs font-semibold text-orange-500 tracking-widest">
-                      DARSHAN
-                    </span>
-                  </div>
+            <Link href="/" className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white">
+                <MapPin size={18} />
+              </div>
+              <div className="leading-tight">
+                <div className="font-semibold text-lg tracking-tight">
+                  Devbhoomi
+                </div>
+                <div className="text-[10px] tracking-widest text-orange-500">
+                  DARSHAN
                 </div>
               </div>
             </Link>
@@ -109,31 +81,43 @@ export default function Navbar() {
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </div>
+
+            {/* Mobile Toggle */}
+            <button
+              onClick={() => setOpen(!open)}
+              className="md:hidden p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5"
+            >
+              {open ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
         </div>
       </nav>
 
       {/* Mobile Menu */}
       <div
-        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`fixed inset-0 z-40 md:hidden transition-all duration-300
+        ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
       >
         <div
-          className="absolute inset-0 backdrop-blur-sm bg-black/30"
-          onClick={() => setIsOpen(false)}
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          onClick={() => setOpen(false)}
         />
 
-        <div className="absolute top-20 left-4 right-4 p-6 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl">
-          <div className="flex flex-col gap-2">
-            {navLinks.map((link) => (
+        <div
+          className={`absolute top-16 inset-x-4 rounded-2xl bg-white dark:bg-slate-900
+          p-6 shadow-xl transition-all duration-300
+          ${open ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}
+        >
+          <div className="flex flex-col gap-4">
+            {links.map(l => (
               <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="px-4 py-3 rounded-lg font-medium hover:bg-orange-100 dark:hover:bg-orange-900/30 transition"
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="text-base font-medium text-gray-800 dark:text-gray-200
+                hover:text-orange-500 transition"
               >
-                {link.label}
+                {l.label}
               </Link>
             ))}
             <Link href="/login" onClick={() => setIsOpen(false)}>
@@ -147,7 +131,7 @@ export default function Navbar() {
       </div>
 
       {/* Spacer */}
-      <div className="h-10" />
+      <div className="h-16" />
     </>
   );
 }
