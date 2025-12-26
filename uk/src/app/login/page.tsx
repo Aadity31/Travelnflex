@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, ChangeEvent } from "react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
@@ -35,112 +36,160 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white relative overflow-hidden">
-      {/* Decorative background shapes */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-orange-300 to-emerald-400 rounded-full opacity-80 transform translate-x-32 -translate-y-32"></div>
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-orange-500 to-purple-400 rounded-full opacity-70 transform -translate-x-32 translate-y-32"></div>
+      {/* Enhanced Animated Background Circles - Original Colors */}
+      {/* Top Right Circle - Orange to Emerald */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-orange-300 to-emerald-400 rounded-full opacity-80 transform translate-x-32 -translate-y-32 animate-pulse"></div>
+
+      {/* Bottom Left Circle - Orange to Purple */}
+      <div
+        className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-orange-500 to-purple-400 rounded-full opacity-70 transform -translate-x-32 translate-y-32 animate-pulse"
+        style={{ animationDelay: "1s" }}
+      ></div>
 
       {/* Login Card */}
-      <div className="relative z-10 w-full max-w-md mx-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10">
+      <div className="relative z-10 w-full max-w-sm mx-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-6 border border-gray-100">
           {/* Logo */}
-          <div className="flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">L</span>
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg
+                className="w-6 h-6 text-white"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z" />
+              </svg>
             </div>
-            <span className="text-2xl font-bold text-gray-800">YourLogo</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+              Sacred Journey
+            </span>
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back
-          </h1>
-          <p className="text-gray-600 mb-8">
-            Log in to your account to continue
-          </p>
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              Welcome back
+            </h1>
+            <p className="text-gray-600 text-sm">
+              Log in to continue your journey
+            </p>
+          </div>
 
           {/* Google Login Button */}
           <button
-            onClick={() => handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 border-2 border-gray-200 rounded-xl py-3.5 font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group"
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center gap-2.5 border-2 border-gray-200 rounded-lg py-2.5 text-sm font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group mb-5"
           >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
-              className="w-5 h-5 group-hover:scale-110 transition-transform duration-300"
+              className="w-4 h-4 group-hover:scale-110 transition-transform duration-300"
             />
-            <span className="text-gray-700">Sign up with Google</span>
+            <span className="text-gray-700">Continue with Google</span>
           </button>
 
           {/* Divider */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="text-gray-500 text-sm">or</span>
-            <div className="flex-1 h-px bg-gray-300"></div>
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <span className="text-gray-500 text-xs font-medium">OR</span>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
           </div>
 
-          {/* Email */}
-          <div className="mb-2">
-            <label className="block text-gray-700 font-medium mb-2">
-              Email
+          {/* Email Input */}
+          <div className="mb-3.5 group">
+            <label className="block text-gray-700 font-medium text-xs mb-1.5">
+              Email Address
             </label>
-            <input
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg 
-             text-gray-900 placeholder-gray-400
-             focus:outline-none focus:border-orange-500"
-              placeholder="Enter your email"
-            />
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+              <input
+                type="email"
+                value={email}
+                onChange={handleEmailChange}
+                className="w-full pl-10 pr-3 py-2.5 border-2 border-gray-200 rounded-lg 
+                text-sm text-gray-900 placeholder:text-gray-400 bg-white
+                focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300"
+                placeholder="Enter your email"
+              />
+            </div>
           </div>
 
-          {/* Password */}
-          <div className="mb-2">
-            <label className="block text-gray-700 font-medium mb-2">
+          {/* Password Input */}
+          <div className="mb-3 group">
+            <label className="block text-gray-700 font-medium text-xs mb-1.5">
               Password
             </label>
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={handlePasswordChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg 
-             text-gray-900 placeholder-gray-400
-             focus:outline-none focus:border-orange-500"
-              placeholder="Enter your password"
-            />
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={handlePasswordChange}
+                className="w-full pl-10 pr-10 py-2.5 border-2 border-gray-200 rounded-lg 
+                text-sm text-gray-900 placeholder:text-gray-400 bg-white
+                focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300"
+                placeholder="Enter your password"
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
           </div>
 
-          {/* Remember me */}
-          <div className="flex items-center justify-between mb-4">
-            <label className="flex items-center gap-2">
+          {/* Remember me & Forgot Password */}
+          <div className="flex items-center justify-between mb-5">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={handleRememberMeChange}
+                className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 focus:ring-2 cursor-pointer"
               />
-              <span className="text-sm text-gray-700">Remember me</span>
+              <span className="text-xs text-gray-700">Remember me</span>
             </label>
+            <Link
+              href="/forgot-password"
+              className="text-xs text-orange-600 hover:text-red-600 font-medium transition-colors"
+            >
+              Forgot password?
+            </Link>
           </div>
 
           {/* Login Button */}
           <button
             onClick={handleLogin}
-            className="w-full bg-orange-500 text-white font-semibold py-3 rounded-lg hover:bg-orange-600"
+            className="w-full py-2.5 text-sm rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-500/30"
           >
             Log in
           </button>
 
-          {/* Signup */}
-          <p className="mt-6 text-center text-sm text-gray-600">
+          {/* Signup Link */}
+          <p className="mt-5 text-center text-xs text-gray-600">
             Don&apos;t have an account?{" "}
             <Link
               href="/signup"
-              className="font-semibold text-orange-600 hover:text-red-600 underline-offset-4 hover:underline transition"
+              className="font-semibold text-orange-600 hover:text-red-600 hover:underline transition-colors"
             >
               Sign up
             </Link>
           </p>
         </div>
+
+        {/* Bottom Text */}
+        <p className="text-center text-[10px] text-gray-500 mt-4">
+          Protected by reCAPTCHA and subject to the{" "}
+          <Link href="/privacy" className="text-orange-600 hover:underline">
+            Privacy Policy
+          </Link>
+        </p>
       </div>
     </div>
   );
