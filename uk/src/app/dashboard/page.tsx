@@ -1,17 +1,24 @@
 'use client';
 
 import { useSession, signOut } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   if (status === "loading") {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
-  if (! session) {
-    redirect("/login");
+  if (!session) {
+    router.replace("/login");
+    return null;
   }
 
   return (
@@ -30,15 +37,21 @@ export default function DashboardPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-3xl font-bold mb-4">Welcome, {session.user?.name}!</h2>
-          <p className="text-gray-600 mb-4">Email: {session.user?.email}</p>
-          
+          <h2 className="text-3xl font-bold mb-4">
+            Welcome, {session.user?.name}!
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Email: {session.user?.email}
+          </p>
+
           {session.user?.image && (
             <div className="mb-6">
-              <img
-                src={session. user.image}
+              <Image
+                src={session.user.image}
                 alt={session.user.name || "User"}
-                className="w-24 h-24 rounded-full"
+                width={96}
+                height={96}
+                className="rounded-full"
               />
             </div>
           )}
@@ -46,17 +59,23 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
             <div className="bg-blue-50 rounded-lg p-6">
               <h3 className="font-semibold text-lg mb-2">My Bookings</h3>
-              <p className="text-gray-600">View your upcoming bookings and past experiences</p>
+              <p className="text-gray-600">
+                View your upcoming bookings and past experiences
+              </p>
             </div>
-            
+
             <div className="bg-green-50 rounded-lg p-6">
               <h3 className="font-semibold text-lg mb-2">Saved Destinations</h3>
-              <p className="text-gray-600">Access your favorite destinations and activities</p>
+              <p className="text-gray-600">
+                Access your favorite destinations and activities
+              </p>
             </div>
-            
+
             <div className="bg-orange-50 rounded-lg p-6">
               <h3 className="font-semibold text-lg mb-2">My Reviews</h3>
-              <p className="text-gray-600">Manage reviews and ratings for your experiences</p>
+              <p className="text-gray-600">
+                Manage reviews and ratings for your experiences
+              </p>
             </div>
           </div>
         </div>
