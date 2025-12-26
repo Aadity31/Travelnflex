@@ -52,7 +52,7 @@ export default function Navbar() {
         shadow-lg shadow-orange-200/10 dark:shadow-orange-900/10
         border-b border-white/10 
         py-2.5`}>
-        <div className="max-w-[90vw] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[95vw] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-10">
             {/* Logo */}
             <Link href="/" className="flex items-center group cursor-pointer">
