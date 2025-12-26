@@ -50,16 +50,7 @@ export default function Navbar() {
 
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-8">
-              {links.map(l => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300
-                  hover:text-orange-600 dark:hover:text-orange-400 transition"
-                >
-                  {l.label}
-                </Link>
-              ))}
+              
               <button className="px-4 py-2 rounded-full bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition">
                 Login
               </button>
