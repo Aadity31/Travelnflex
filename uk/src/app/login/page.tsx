@@ -1,19 +1,20 @@
-'use client';
+"use client";
 
-import { useState, ChangeEvent } from 'react';
+import Link from "next/link";
+import { useState, ChangeEvent } from "react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   const handleLogin = (): void => {
-    console.log('Login submitted:', { email, password, rememberMe });
+    console.log("Login submitted:", { email, password, rememberMe });
   };
 
   const handleGoogleLogin = (): void => {
-    console.log('Google login clicked');
+    console.log("Google login clicked");
   };
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -59,12 +60,15 @@ export default function LoginPage() {
 
           {/* Google Login Button */}
           <button
-            onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-300 rounded-lg px-4 py-3 mb-6 hover:bg-gray-50 transition-colors"
+            onClick={() => handleGoogleLogin}
+            className="w-full flex items-center justify-center gap-3 border-2 border-gray-200 rounded-xl py-3.5 font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group"
           >
-            <span className="text-gray-700 font-medium">
-              Continue with Google
-            </span>
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-5 h-5 group-hover:scale-110 transition-transform duration-300"
+            />
+            <span className="text-gray-700">Sign up with Google</span>
           </button>
 
           {/* Divider */}
@@ -83,7 +87,9 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={handleEmailChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg 
+             text-gray-900 placeholder-gray-400
+             focus:outline-none focus:border-orange-500"
               placeholder="Enter your email"
             />
           </div>
@@ -94,10 +100,12 @@ export default function LoginPage() {
               Password
             </label>
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={handlePasswordChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg 
+             text-gray-900 placeholder-gray-400
+             focus:outline-none focus:border-orange-500"
               placeholder="Enter your password"
             />
           </div>
@@ -110,9 +118,7 @@ export default function LoginPage() {
                 checked={rememberMe}
                 onChange={handleRememberMeChange}
               />
-              <span className="text-sm text-gray-700">
-                Remember me
-              </span>
+              <span className="text-sm text-gray-700">Remember me</span>
             </label>
           </div>
 
@@ -125,11 +131,14 @@ export default function LoginPage() {
           </button>
 
           {/* Signup */}
-          <p className="text-center text-gray-700 mt-6">
-            Don&apos;t have an account?{' '}
-            <a className="text-orange-500 font-semibold hover:underline">
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/signup"
+              className="font-semibold text-orange-600 hover:text-red-600 underline-offset-4 hover:underline transition"
+            >
               Sign up
-            </a>
+            </Link>
           </p>
         </div>
       </div>
