@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -9,13 +11,14 @@ export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // ✅ client-side redirect must be inside useEffect
+  // ✅ redirect only on client after auth status is known
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/login");
     }
   }, [status, router]);
 
+  // ✅ loading state (build-safe)
   if (status === "loading") {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -24,6 +27,7 @@ export default function DashboardPage() {
     );
   }
 
+  // ✅ prevent render before redirect
   if (!session) {
     return null;
   }
