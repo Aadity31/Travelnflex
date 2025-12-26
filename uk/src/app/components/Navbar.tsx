@@ -2,110 +2,149 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, MapPin } from 'lucide-react';
+import { Menu, X, LogIn, MapPin } from 'lucide-react';
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [hideNav, setHideNav] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
 
-  const links = [
+      // ---- TOP SAFE ZONE ----
+      if (currentScrollY < 200) {
+        setHideNav(false);
+        setLastScrollY(currentScrollY);
+        return;
+      }
+
+      // ---- FOLLOW LOGIC ----
+      if (currentScrollY > lastScrollY) {
+        setHideNav(true); // scroll down
+      } else {
+        setHideNav(false); // scroll up
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
+  const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/destinations', label: 'Destinations' },
     { href: '/activities', label: 'Activities' },
-    { href: '/retreats', label: 'Retreats' },
+    { href: '#', label: 'Retreats' },
   ];
 
   return (
     <>
+      {/* Navbar */}
       <nav
-        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300
-        ${scrolled
-          ? 'bg-white/70 backdrop-blur-xl shadow-sm'
-          : 'bg-transparent'}
-        border-b border-black/5`}
-      >
-        <div className="max-w-[90vw] mx-auto px-4">
-          <div className="h-16 flex items-center justify-between">
-
+        className={`fixed w-full top-0 z-50
+        transition-transform duration-300 ease-in-out
+        ${hideNav ? '-translate-y-full' : 'translate-y-0'}
+        backdrop-blur-xl bg-white/10 dark:bg-slate-950/20
+        shadow-lg shadow-orange-200/10 dark:shadow-orange-900/10
+        border-b border-white/10 
+        py-2.5`}>
+        <div className="max-w-[90vw] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-10">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white">
-                <MapPin size={18} />
-              </div>
-              <div className="leading-tight">
-                <div className="font-semibold text-lg tracking-tight">
-                  Devbhoomi
-                </div>
-                <div className="text-[10px] tracking-widest text-orange-500">
-                  DARSHAN
+            <Link href="/" className="flex items-center group cursor-pointer">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-400 via-red-400 to-orange-500 rounded-lg opacity-0 group-hover:opacity-20 blur-lg transition-all duration-300" />
+
+                <div className="relative flex items-center gap-2 px-3 py-2">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <MapPin size={22} />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <span className="text-xl font-bold bg-gradient-to-r from-orange-600 via-red-500 to-orange-600 bg-clip-text text-transparent">
+                      Devbhoomi
+                    </span>
+                    <span className="text-xs font-semibold text-orange-500 tracking-widest">
+                      DARSHAN
+                    </span>
+                  </div>
                 </div>
               </div>
             </Link>
 
-            {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-8">
-              {links.map(l => (
+            
+
+            {/* Right Section */}
+            <div className="flex items-center gap-3">{/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-1">
+              {navLinks.map((link) => (
                 <Link
-                  key={l.href}
-                  href={l.href}
-                  className="text-sm font-medium text-gray-700
-                  hover:text-orange-600 transition"
+                  key={link.href}
+                  href={link.href}
+                  className="relative px-4 py-2 text-sm font-medium text-white dark:text-white transition-all duration-300 group"
                 >
-                  {l.label}
+                  <span className="relative z-10">{link.label}</span>
+                  <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-orange-400 to-red-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                 </Link>
               ))}
-
-              <Link href="/login">
-                <button className="px-4 py-2 rounded-full bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition">
-                  Login
-                </button>
-              </Link>
             </div>
+              <button className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold text-sm shadow-lg hover:shadow-orange-400/50 transition-all duration-300 relative overflow-hidden group">
+                <span className="relative z-10 flex items-center gap-2">
+                  <LogIn size={18} />
+                  Login
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </button>
 
-            {/* Mobile Toggle */}
-            <button
-              onClick={() => setOpen(!open)}
-              className="md:hidden p-2 rounded-lg hover:bg-black/5"
-            >
-              {open ? <X size={22} /> : <Menu size={22} />}
-            </button>
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-white/10 transition"
+              >
+                {isOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
       {/* Mobile Menu */}
       <div
-        className={`fixed inset-0 z-40 md:hidden transition-all duration-300
-        ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
       >
         <div
-          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-          onClick={() => setOpen(false)}
+          className="absolute inset-0 backdrop-blur-sm bg-black/30"
+          onClick={() => setIsOpen(false)}
         />
 
-        <div
-          className={`absolute top-16 inset-x-4 rounded-2xl bg-white
-          p-6 shadow-xl transition-all duration-300
-          ${open ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}
-        >
-          <div className="flex flex-col gap-4">
-            <Link href="/login">
-              <button className="mt-2 w-full py-3 rounded-xl bg-orange-500 text-white font-medium">
-                Login
-              </button>
-            </Link>
+        <div className="absolute top-20 left-4 right-4 p-6 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl">
+          <div className="flex flex-col gap-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="px-4 py-3 rounded-lg font-medium hover:bg-orange-100 dark:hover:bg-orange-900/30 transition"
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            <button className="mt-4 px-4 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold flex items-center justify-center gap-2">
+              <LogIn size={18} />
+              Login
+            </button>
           </div>
         </div>
       </div>
 
       {/* Spacer */}
-      <div className="h-16" />
+      <div className="h-10" />
     </>
   );
 }
