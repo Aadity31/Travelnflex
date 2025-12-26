@@ -92,6 +92,7 @@ export default function Navbar() {
                 </Link>
               ))}
             </div>
+            <Link href="/login">
               <button className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold text-sm shadow-lg hover:shadow-orange-400/50 transition-all duration-300 relative overflow-hidden group">
                 <span className="relative z-10 flex items-center gap-2">
                   <LogIn size={18} />
@@ -99,6 +100,7 @@ export default function Navbar() {
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </button>
+            </Link>
 
               <button
                 onClick={() => setIsOpen(!isOpen)}
@@ -134,11 +136,12 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-
+            <Link href="/login" onClick={() => setIsOpen(false)}>
             <button className="mt-4 px-4 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold flex items-center justify-center gap-2">
               <LogIn size={18} />
               Login
             </button>
+            </Link>
           </div>
         </div>
       </div>
