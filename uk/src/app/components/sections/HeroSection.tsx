@@ -14,7 +14,6 @@ const heroSlides = [
       "Experience spiritual journeys with expert local guides along the holy Ganges",
     cta: "Book Your Journey",
     secondaryCta: "Watch Video",
-    badge: "✨ Most Popular",
   },
   {
     id: 2,
@@ -23,7 +22,6 @@ const heroSlides = [
     subtitle: "White-water rafting to bungee jumping in the Himalayas",
     cta: "Explore Activities",
     secondaryCta: "View Gallery",
-    badge: "🏔️ Adventure",
   },
   {
     id: 3,
@@ -32,7 +30,6 @@ const heroSlides = [
     subtitle: "Authentic yoga retreats at world-renowned ashrams",
     cta: "Book Retreat",
     secondaryCta: "Learn More",
-    badge: "🧘 Wellness",
   },
 ];
 
@@ -83,11 +80,6 @@ export default function HeroSection() {
       {/* Content - Bottom Aligned */}
       <div className="absolute bottom-0 left-0 right-0 z-10 pb-24 md:pb-32">
         <div className="text-center text-white max-w-5xl mx-auto px-4">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full text-sm font-medium mb-4 animate-fade-in">
-            {currentHero.badge}
-          </div>
-
           {/* Title with Animation */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 leading-tight animate-slide-up">
             {currentHero.title}
@@ -155,26 +147,6 @@ export default function HeroSection() {
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 right-8 hidden md:block z-10 animate-bounce">
-        <div className="flex flex-col items-center gap-2 text-white/70">
-          <span className="text-xs font-medium">Scroll</span>
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
-            />
-          </svg>
-        </div>
       </div>
     </section>
   );
