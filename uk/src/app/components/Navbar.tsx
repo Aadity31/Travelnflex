@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Menu, X, LogIn, MapPin } from 'lucide-react';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Menu, X, LogIn, MapPin } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,15 +30,15 @@ export default function Navbar() {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
   const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/destinations', label: 'Destinations' },
-    { href: '/activities', label: 'Activities' },
-    { href: '#', label: 'Retreats' },
+    { href: "/", label: "Home" },
+    { href: "/destinations", label: "Destinations" },
+    { href: "/activities", label: "Activities" },
+    { href: "#", label: "Retreats" },
   ];
 
   return (
@@ -47,11 +47,12 @@ export default function Navbar() {
       <nav
         className={`fixed w-full top-0 z-50
         transition-transform duration-300 ease-in-out
-        ${hideNav ? '-translate-y-full' : 'translate-y-0'}
+        ${hideNav ? "-translate-y-full" : "translate-y-0"}
         backdrop-blur-xl bg-white/10 dark:bg-slate-950/20
         shadow-lg shadow-orange-200/10 dark:shadow-orange-900/10
         border-b border-white/10 
-        py-2.5`}>
+        py-2.5`}
+      >
         <div className="max-w-[95vw] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-10">
             {/* Logo */}
@@ -76,31 +77,30 @@ export default function Navbar() {
               </div>
             </Link>
 
-            
-
             {/* Right Section */}
-            <div className="flex items-center gap-3">{/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="relative px-4 py-2 text-sm font-medium text-white dark:text-white transition-all duration-300 group"
-                >
-                  <span className="relative z-10">{link.label}</span>
-                  <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-orange-400 to-red-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-                </Link>
-              ))}
-            </div>
-            <Link href="/login">
-              <button className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold text-sm shadow-lg hover:shadow-orange-400/50 transition-all duration-300 relative overflow-hidden group">
-                <span className="relative z-10 flex items-center gap-2">
-                  <LogIn size={18} />
-                  Login
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </button>
-            </Link>
+            <div className="flex items-center gap-3">
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex items-center gap-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="relative px-4 py-1 text-sm font-medium text-white dark:text-white transition-all duration-300 group"
+                  >
+                    <span className="relative z-10">{link.label}</span>
+                    <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-orange-400 to-red-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                  </Link>
+                ))}
+              </div>
+              <Link href="/login">
+                <button className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold text-sm shadow-lg hover:shadow-orange-400/50 transition-all duration-300 relative overflow-hidden group">
+                  <span className="relative z-10 flex items-center gap-2">
+                    <LogIn size={18} />
+                    Login
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </button>
+              </Link>
 
               <button
                 onClick={() => setIsOpen(!isOpen)}
@@ -116,7 +116,9 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div
         className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
       >
         <div
@@ -137,10 +139,10 @@ export default function Navbar() {
               </Link>
             ))}
             <Link href="/login" onClick={() => setIsOpen(false)}>
-            <button className="mt-4 px-4 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold flex items-center justify-center gap-2">
-              <LogIn size={18} />
-              Login
-            </button>
+              <button className="mt-4 px-4 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold flex items-center justify-center gap-2">
+                <LogIn size={18} />
+                Login
+              </button>
             </Link>
           </div>
         </div>

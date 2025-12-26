@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
+import FooterWithCredits from "./components/FooterWithCredits";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Devbhoomi Darshan - Sacred Adventures & Spiritual Journeys",
-  description: "Discover sacred adventures in Rishikesh & Haridwar with expert local guides, adventure activities, and customized spiritual journeys",
+  description:
+    "Discover sacred adventures in Rishikesh & Haridwar with expert local guides, adventure activities, and customized spiritual journeys",
 };
 
 export default function RootLayout({
@@ -30,6 +32,7 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
+        <FooterWithCredits />
       </body>
     </html>
   );
