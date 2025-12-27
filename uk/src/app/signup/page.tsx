@@ -753,7 +753,7 @@ export default function SignupPage() {
 
                 {/* Help Text */}
                 <p className="text-[10px] text-gray-500 text-center mt-4 leading-relaxed">
-                  Didn't receive the code? Check your spam folder or click
+                  Didn't receive the code? click
                   resend.
                 </p>
               </div>
