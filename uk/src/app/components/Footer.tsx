@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Credits from "./FooterCredits";
+import Credits from "./Credits";
 
 export default function FooterWithCredits() {
   const socialLinks = [
@@ -141,14 +141,6 @@ export default function FooterWithCredits() {
           </div>
         </div>
       </div>
-
-      {/* Credits Component */}
-      <Credits
-        designerName="Sudhanshu.dev"
-        designerUrl="https://yourwebsite.com"
-        showLicense={true}
-        licenseNumber="TL-UK-2024-XXXX"
-      />
     </footer>
   );
 }

@@ -9,10 +9,10 @@ interface CreditsProps {
 }
 
 export default function Credits({
-  designerName = "Sudhanshu.dev",
+  designerName = "APS-Group.dev",
   designerUrl = "https://yourwebsite.com",
   showLicense = true,
-  licenseNumber = "TL-UK-2024-XXXX",
+  // licenseNumber = "TL-UK-2024-XXXX",
   className = "",
 }: CreditsProps) {
   const currentYear = new Date().getFullYear();
@@ -27,11 +27,11 @@ export default function Credits({
           </div>
 
           {/* Center - License (Optional) */}
-          {showLicense && (
+          {/* {showLicense && (
             <div className="hidden md:block">
               <p>Tourism License: {licenseNumber}</p>
             </div>
-          )}
+          )} */}
 
           {/* Right - Credits */}
           <div className="text-center md:text-right">
