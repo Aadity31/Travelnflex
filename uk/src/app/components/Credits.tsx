@@ -11,7 +11,7 @@ interface CreditsProps {
 export default function Credits({
   designerName = "APS-Group.dev",
   designerUrl = "https://yourwebsite.com",
-  showLicense = true,
+  // showLicense = true,
   // licenseNumber = "TL-UK-2024-XXXX",
   className = "",
 }: CreditsProps) {
