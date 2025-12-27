@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, ChangeEvent } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
@@ -14,9 +15,9 @@ export default function LoginPage() {
     console.log("Login submitted:", { email, password, rememberMe });
   };
 
-  const handleGoogleLogin = (): void => {
-    console.log("Google login clicked");
-  };
+  const handleGoogleLogin = () => {
+  signIn("google", { callbackUrl: "/" });
+};
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.target.value);
