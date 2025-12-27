@@ -60,8 +60,11 @@ export async function POST(request: Request) {
       { message: "New OTP sent to your email" },
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error("Resend OTP error:", error);
+  } catch (error: unknown) {
+    console.error(
+      "Resend OTP error:",
+      error instanceof Error ? error.message : error
+    );
     return NextResponse.json(
       { message: "Failed to resend OTP. Please try again." },
       { status: 500 }

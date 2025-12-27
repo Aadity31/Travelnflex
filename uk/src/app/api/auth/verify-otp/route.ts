@@ -134,10 +134,15 @@ export async function POST(request: Request) {
       },
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error("OTP verification error:", error);
+  } catch (error: unknown) {
+    console.error(
+      "OTP verification error:",
+      error instanceof Error ? error.message : error
+    );
 
-    if (error.code === '23505') {
+    const errObj = error as { code?: string; message?: string } | undefined;
+
+    if (errObj?.code === '23505') {
       return NextResponse.json(
         { message: "An account with this email already exists." },
         { status: 409 }
@@ -147,7 +152,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message: "Verification failed. Please try again.",
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        error: process.env.NODE_ENV === 'development' ? (errObj?.message ?? (typeof error === 'string' ? error : undefined)) : undefined,
       },
       { status: 500 }
     );

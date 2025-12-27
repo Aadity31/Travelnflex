@@ -90,18 +90,23 @@ export async function POST(request: Request) {
       },
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error("Signup error:", error);
+  } catch (error: unknown) {
+    console.error(
+      "Signup error:",
+      error instanceof Error ? error.message : error
+    );
     
+    const errObj = error as { code?: string; message?: string } | undefined;
+
     // Handle duplicate email in otp_verifications table
-    if (error.code === '23505') {
+    if (errObj?.code === '23505') {
       return NextResponse.json(
         { message: "An OTP request is already pending for this email. Please wait or try resending." },
         { status: 409 }
       );
     }
     
-    if (error.message === 'Failed to send OTP email') {
+    if (errObj?.message === 'Failed to send OTP email') {
       return NextResponse.json(
         { message: "Failed to send verification email. Please try again." },
         { status: 500 }
@@ -111,7 +116,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message: "Failed to process signup. Please try again.",
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        error: process.env.NODE_ENV === 'development' ? (errObj?.message ?? (typeof error === 'string' ? error : undefined)) : undefined,
       },
       { status: 500 }
     );
