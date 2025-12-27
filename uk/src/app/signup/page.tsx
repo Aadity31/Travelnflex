@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 import {
@@ -107,8 +108,10 @@ export default function SignupPage() {
           document.getElementById("otp-0")?.focus();
         }, 100);
       }
-    } catch (error: any) {
-      setError(error.message || "Failed to create account");
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Failed to create account"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -181,8 +184,8 @@ export default function SignupPage() {
       setTimeout(() => {
         window.location.href = "/login";
       }, 2000);
-    } catch (error: any) {
-      setError(error.message || "Verification failed");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Verification failed");
     } finally {
       setIsLoading(false);
     }
@@ -217,8 +220,8 @@ export default function SignupPage() {
       setTimer(60);
       setCanResend(false);
       document.getElementById("otp-0")?.focus();
-    } catch (error: any) {
-      setError(error.message || "Failed to resend OTP");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to resend OTP");
     } finally {
       setIsLoading(false);
     }
@@ -269,8 +272,8 @@ export default function SignupPage() {
             </h1>
             <p className="text-white/90 text-base max-w-md leading-relaxed mb-6">
               {step === "signup"
-                ? "Create your account to explore sacred destinations, save your spiritual journeys, and manage your pilgrimage experiences with ease."
-                : "We've sent a 6-digit verification code to your email. Please enter it below to complete your registration."}
+                ? `Create your account to explore sacred destinations, save your spiritual journeys, and manage your pilgrimage experiences with ease.`
+                : `We've sent a 6-digit verification code to your email. Please enter it below to complete your registration.`}
             </p>
 
             {step === "signup" && (
@@ -346,10 +349,12 @@ export default function SignupPage() {
                   type="button"
                   className="w-full flex items-center justify-center gap-2.5 border-2 border-gray-200 rounded-lg py-2.5 text-sm font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed mb-4"
                 >
-                  <img
+                  <Image
                     src="https://www.svgrepo.com/show/475656/google-color.svg"
                     alt="Google"
-                    className="w-4 h-4 group-hover:scale-110 transition-transform duration-300"
+                    width={16}
+                    height={16}
+                    className="group-hover:scale-110 transition-transform duration-300"
                   />
                   <span className="text-gray-700">Sign up with Google</span>
                 </button>
