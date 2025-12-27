@@ -3,72 +3,65 @@
 import Link from "next/link";
 import { useState, ChangeEvent } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { signIn } from "next-auth/react";    
+import { signIn } from "next-auth/react";
+
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const handleLogin = async () => {
-  const res = await fetch("/api/auth/manual-login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      password,
-      rememberMe,
-    }),
-  });
+    setError("");
 
-  if (!res.ok) {
-    alert("Invalid email or password");
-    return;
-  }
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter email and password");
+      return;
+    }
 
-  // login successful
-  window.location.href = "/";
-};
+    if (isLoading) return;
 
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/manual-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          rememberMe,
+        }),
+      });
+
+      if (!res.ok) {
+        setError("Invalid email or password");
+        return;
+      }
+
+      window.location.href = "/";
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleGoogleLogin = () => {
-  signIn("google", { callbackUrl: "/" });
-};
-
-  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setPassword(e.target.value);
-  };
-
-  const handleRememberMeChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setRememberMe(e.target.checked);
-  };
-
-  const togglePasswordVisibility = (): void => {
-    setShowPassword(!showPassword);
+    signIn("google", { callbackUrl: "/" });
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white relative overflow-hidden">
-      {/* Enhanced Animated Background Circles - Original Colors */}
-      {/* Top Right Circle - Orange to Emerald */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-orange-300 to-emerald-400 rounded-full opacity-80 transform translate-x-32 -translate-y-32 animate-pulse"></div>
 
-      {/* Bottom Left Circle - Orange to Purple */}
       <div
         className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-orange-500 to-purple-400 rounded-full opacity-70 transform -translate-x-32 translate-y-32 animate-pulse"
         style={{ animationDelay: "1s" }}
       ></div>
 
-      {/* Login Card */}
       <div className="relative z-10 w-full max-w-sm mx-4">
         <div className="bg-white rounded-2xl shadow-2xl p-6 border border-gray-100">
-          {/* Logo */}
           <div className="flex items-center justify-center gap-2 mb-6">
             <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
               <svg
@@ -84,7 +77,6 @@ export default function LoginPage() {
             </span>
           </div>
 
-          {/* Title */}
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-1">
               Welcome back
@@ -94,10 +86,16 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Google Login Button */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600 text-sm">
+              {error}
+            </div>
+          )}
+
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-2.5 border-2 border-gray-200 rounded-lg py-2.5 text-sm font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group mb-5"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-2.5 border-2 border-gray-200 rounded-lg py-2.5 text-sm font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group mb-5 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -107,14 +105,12 @@ export default function LoginPage() {
             <span className="text-gray-700">Continue with Google</span>
           </button>
 
-          {/* Divider */}
           <div className="flex items-center gap-3 mb-5">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
             <span className="text-gray-500 text-xs font-medium">OR</span>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
           </div>
 
-          {/* Email Input */}
           <div className="mb-3.5 group">
             <label className="block text-gray-700 font-medium text-xs mb-1.5">
               Email Address
@@ -124,7 +120,10 @@ export default function LoginPage() {
               <input
                 type="email"
                 value={email}
-                onChange={handleEmailChange}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError("");
+                }}
                 className="w-full pl-10 pr-3 py-2.5 border-2 border-gray-200 rounded-lg 
                 text-sm text-gray-900 placeholder:text-gray-400 bg-white
                 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300"
@@ -133,7 +132,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Password Input */}
           <div className="mb-3 group">
             <label className="block text-gray-700 font-medium text-xs mb-1.5">
               Password
@@ -143,7 +141,10 @@ export default function LoginPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={handlePasswordChange}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
                 className="w-full pl-10 pr-10 py-2.5 border-2 border-gray-200 rounded-lg 
                 text-sm text-gray-900 placeholder:text-gray-400 bg-white
                 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300"
@@ -151,7 +152,7 @@ export default function LoginPage() {
               />
               <button
                 type="button"
-                onClick={togglePasswordVisibility}
+                onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors"
               >
                 {showPassword ? (
@@ -163,14 +164,13 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Remember me & Forgot Password */}
           <div className="flex items-center justify-between mb-5">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={rememberMe}
-                onChange={handleRememberMeChange}
-                className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 focus:ring-2 cursor-pointer"
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500 focus:ring-0 cursor-pointer"
               />
               <span className="text-xs text-gray-700">Remember me</span>
             </label>
@@ -182,15 +182,39 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          {/* Login Button */}
           <button
             onClick={handleLogin}
-            className="w-full py-2.5 text-sm rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-500/30"
+            disabled={isLoading}
+            className="w-full py-2.5 text-sm rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Log in
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg
+                  className="animate-spin h-4 w-4"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                Logging in...
+              </span>
+            ) : (
+              "Log in"
+            )}
           </button>
 
-          {/* Signup Link */}
           <p className="mt-5 text-center text-xs text-gray-600">
             Don&apos;t have an account?{" "}
             <Link
@@ -202,7 +226,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Bottom Text */}
         <p className="text-center text-[10px] text-gray-500 mt-4">
           Protected by reCAPTCHA and subject to the{" "}
           <Link href="/privacy" className="text-orange-600 hover:underline">
