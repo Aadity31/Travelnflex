@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useState, ChangeEvent } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { signIn } from "next-auth/react";
-
+import { signIn } from "next-auth/react";    
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
