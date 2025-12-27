@@ -14,6 +14,10 @@ export default function SignupPage() {
     password: "",
   });
 
+  const handleGoogleLogin = () => {
+  signIn("google", { callbackUrl: "/" });
+};
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -96,7 +100,7 @@ export default function SignupPage() {
 
             {/* OAuth Signup with Icon */}
             <button
-              onClick={() => signIn("google")}
+              onClick={handleGoogleLogin}
               className="w-full flex items-center justify-center gap-2.5 border-2 border-gray-200 rounded-lg py-2.5 text-sm font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group"
             >
               <img

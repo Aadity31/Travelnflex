@@ -11,9 +11,28 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
-  const handleLogin = (): void => {
-    console.log("Login submitted:", { email, password, rememberMe });
-  };
+  const handleLogin = async () => {
+  const res = await fetch("/api/auth/manual-login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      password,
+      rememberMe,
+    }),
+  });
+
+  if (!res.ok) {
+    alert("Invalid email or password");
+    return;
+  }
+
+  // login successful
+  window.location.href = "/";
+};
+
 
   const handleGoogleLogin = () => {
   signIn("google", { callbackUrl: "/" });
