@@ -1,5 +1,6 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import type { Profile } from "next-auth";
 import pool from "@/lib/db";
 
 export const authOptions: NextAuthOptions = {
@@ -17,10 +18,20 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, account, profile }) {
       if (account?.provider === "google" && profile) {
-        const email = profile.email as string;
-        const name = profile.name as string;
-        const image = (profile as any).picture as string;
-        const googleId = profile.sub as string;
+        /**
+         * Strictly typed Google profile
+         * NO `any`
+         * Vercel + ESLint safe
+         */
+        const googleProfile = profile as Profile & {
+          picture?: string;
+          sub?: string;
+        };
+
+        const email = googleProfile.email!;
+        const name = googleProfile.name!;
+        const image = googleProfile.picture ?? null;
+        const googleId = googleProfile.sub!;
 
         const existingUser = await pool.query(
           "SELECT id FROM users WHERE email = $1",
@@ -38,6 +49,7 @@ export const authOptions: NextAuthOptions = {
             `,
             [name, email, image, googleId]
           );
+
           userId = newUser.rows[0].id;
         } else {
           userId = existingUser.rows[0].id;
