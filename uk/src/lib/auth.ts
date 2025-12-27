@@ -7,13 +7,11 @@ import { User } from "@/types/users";
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    // Google OAuth Provider
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
 
-    // Manual Credentials Provider
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -26,7 +24,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // Find user by email
           const result = await pool.query<User>(
             "SELECT * FROM users WHERE email = $1 AND auth_provider = 'credentials'",
             [credentials.email.toLowerCase()]
@@ -38,7 +35,10 @@ export const authOptions: NextAuthOptions = {
             throw new Error("No account found with this email");
           }
 
-          // Check password
+          if (!user.email_verified) {
+            throw new Error("Please verify your email first");
+          }
+
           if (!user.password_hash) {
             throw new Error("Invalid login method");
           }
@@ -56,11 +56,14 @@ export const authOptions: NextAuthOptions = {
             id: user.id,
             email: user.email,
             name: user.name,
-            image: user.image,
+            image: user.image || null,
           };
-        } catch (error: any) {
+        } catch (error) {
           console.error("Auth error:", error);
-          throw new Error(error.message || "Authentication failed");
+          if (error instanceof Error) {
+            throw new Error(error.message);
+          }
+          throw new Error("Authentication failed");
         }
       },
     }),
@@ -73,25 +76,26 @@ export const authOptions: NextAuthOptions = {
 
   pages: {
     signIn: "/login",
-    // signUp: "/signup",
     error: "/login",
   },
 
   callbacks: {
-    async signIn({ user, account, profile }) {
-      // Google Sign In
+    async signIn({ user, account }) {
       if (account?.provider === "google") {
         try {
           const email = user.email?.toLowerCase();
-          
-          // Check if user exists
+
+          if (!email) {
+            console.error("No email provided by Google");
+            return false;
+          }
+
           const existingUser = await pool.query(
             "SELECT * FROM users WHERE email = $1",
             [email]
           );
 
           if (existingUser.rows.length === 0) {
-            // Create new Google user
             await pool.query(
               `INSERT INTO users (name, email, image, auth_provider, google_id, email_verified)
                VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -99,13 +103,12 @@ export const authOptions: NextAuthOptions = {
                 user.name,
                 email,
                 user.image,
-                'google',
+                "google",
                 account.providerAccountId,
-                true
+                true,
               ]
             );
           } else {
-            // Update existing user
             await pool.query(
               `UPDATE users 
                SET name = $1, image = $2, google_id = $3, email_verified = $4, updated_at = NOW()
@@ -113,7 +116,7 @@ export const authOptions: NextAuthOptions = {
               [user.name, user.image, account.providerAccountId, true, email]
             );
           }
-          
+
           return true;
         } catch (error) {
           console.error("Google sign-in error:", error);
@@ -124,27 +127,23 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
 
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
-        token.picture = user.image;
       }
       return token;
     },
 
+    // ✅ This is fine - NextAuth limitation workaround
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
-        session.user.image = token.picture as string;
+      if (session?.user) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (session.user as any).id = token.id;
       }
       return session;
     },
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
+  debug: process.env.NODE_ENV === "development",
 };

@@ -1,9 +1,9 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 // Create SMTP transporter
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
+  host: process.env.SMTP_HOST || "smtp-relay.brevo.com",
+  port: parseInt(process.env.SMTP_PORT || "587"),
   secure: false, // false for port 587, true for 465
   auth: {
     user: process.env.SMTP_USER,
@@ -14,9 +14,9 @@ const transporter = nodemailer.createTransport({
 // Verify connection
 transporter.verify((error) => {
   if (error) {
-    console.error('❌ SMTP Connection Failed:', error.message);
+    console.error("❌ SMTP Connection Failed:", error.message);
   } else {
-    console.log('✅ SMTP Server Ready');
+    console.log("✅ SMTP Server Ready");
   }
 });
 
@@ -30,7 +30,7 @@ export async function sendOTPEmail(email: string, otp: string, name: string) {
   const mailOptions = {
     from: `${process.env.SMTP_FROM_NAME} <${process.env.SMTP_FROM_EMAIL}>`,
     to: email,
-    subject: '🔐 Verify Your Email - Devbhoomi Darshan',
+    subject: "🔐 Verify Your Email - Devbhoomi Darshan",
     html: `
       <!DOCTYPE html>
       <html>
@@ -99,11 +99,13 @@ Valid for 10 minutes.
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Email sent to:', email);
-    console.log('📨 Message ID:', info.messageId);
+    console.log("✅ Email sent to:", email);
+    console.log("📨 Message ID:", info.messageId);
     return true;
-  } catch (error: any) {
-    console.error('❌ Email failed:', error.message);
-    throw new Error('Failed to send OTP email');
+  } catch (error) {
+    const err = error as Error;
+    console.error("❌ Email sending failed");
+    console.error("Error:", err.message);
+    throw new Error("Failed to send OTP email");
   }
 }
