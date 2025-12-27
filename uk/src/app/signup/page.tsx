@@ -753,8 +753,7 @@ export default function SignupPage() {
 
                 {/* Help Text */}
                 <p className="text-[10px] text-gray-500 text-center mt-4 leading-relaxed">
-                  Didn't receive the code? click
-                  resend.
+                  Did&#39;t receive the code? Click resend.
                 </p>
               </div>
             </div>
