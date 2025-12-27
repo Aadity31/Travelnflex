@@ -6,6 +6,7 @@ import TopActivities from "./components/sections/TopActivities";
 import TestimonialsSection from "./components/sections/TestimonialsSection";
 import FeaturedGuides from "./components/sections/FeaturedGuides";
 import CTASection from "./components/sections/CTASection";
+import FooterWithCredits from "./components/Footer";
 
 export const metadata: Metadata = {
   title:
@@ -61,6 +62,7 @@ export default function HomePage() {
         <FeaturedGuides />
         <TestimonialsSection />
         <CTASection />
+        <FooterWithCredits />
       </main>
     </>
   );
