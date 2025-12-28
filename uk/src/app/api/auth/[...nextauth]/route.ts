@@ -1,73 +1,116 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import type { Profile } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import pool from "@/lib/db";
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    /* ---------------- GOOGLE LOGIN ---------------- */
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
+
+    /* ---------------- MANUAL / CREDENTIALS LOGIN ---------------- */
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password required");
+        }
+
+        const result = await pool.query(
+          `
+          SELECT id, name, email, image, password_hash
+          FROM users
+          WHERE email = $1
+            AND auth_provider = 'credentials'
+          `,
+          [credentials.email.toLowerCase()]
+        );
+
+        const user = result.rows[0];
+
+        if (!user || !user.password_hash) {
+          throw new Error("Invalid email or password");
+        }
+
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password_hash
+        );
+
+        if (!isValid) {
+          throw new Error("Invalid email or password");
+        }
+
+        /* 🔑 THIS RETURN CREATES SESSION */
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        };
+      },
+    }),
   ],
 
+  /* ---------------- SESSION ---------------- */
   session: {
     strategy: "jwt",
   },
 
+  /* ---------------- CALLBACKS ---------------- */
   callbacks: {
-    async jwt({ token, account, profile }) {
-      if (account?.provider === "google" && profile) {
-        /**
-         * Strictly typed Google profile
-         * NO `any`
-         * Vercel + ESLint safe
-         */
-        const googleProfile = profile as Profile & {
-          picture?: string;
-          sub?: string;
-        };
-
-        const email = googleProfile.email!;
-        const name = googleProfile.name!;
-        const image = googleProfile.picture ?? null;
-        const googleId = googleProfile.sub!;
+    async signIn({ user, account }) {
+      /* Google user DB sync */
+      if (account?.provider === "google") {
+        const email = user.email?.toLowerCase();
+        if (!email) return false;
 
         const existingUser = await pool.query(
           "SELECT id FROM users WHERE email = $1",
           [email]
         );
 
-        let userId: string;
-
         if (existingUser.rowCount === 0) {
-          const newUser = await pool.query(
+          await pool.query(
             `
-            INSERT INTO users (name, email, image, auth_provider, google_id, email_verified)
-            VALUES ($1, $2, $3, 'google', $4, true)
-            RETURNING id
+            INSERT INTO users
+              (name, email, image, auth_provider, google_id, email_verified)
+            VALUES
+              ($1, $2, $3, 'google', $4, true)
             `,
-            [name, email, image, googleId]
+            [user.name, email, user.image, account.providerAccountId]
           );
-
-          userId = newUser.rows[0].id;
         } else {
-          userId = existingUser.rows[0].id;
-
           await pool.query(
             `
             UPDATE users
-            SET google_id = COALESCE(google_id, $1),
-                image = COALESCE(image, $2)
-            WHERE id = $3
+            SET image = COALESCE($1, image),
+                google_id = COALESCE($2, google_id),
+                email_verified = true,
+                updated_at = NOW()
+            WHERE email = $3
             `,
-            [googleId, image, userId]
+            [user.image, account.providerAccountId, email]
           );
         }
-
-        token.userId = userId;
       }
 
+      return true;
+    },
+
+    async jwt({ token, user }) {
+      if (user) {
+        token.userId = user.id;
+      }
       return token;
     },
 
@@ -79,9 +122,13 @@ export const authOptions: NextAuthOptions = {
     },
   },
 
+  /* ---------------- PAGES ---------------- */
   pages: {
     signIn: "/login",
   },
+
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 };
 
 const handler = NextAuth(authOptions);

@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Devbhoomi Darshan - Sacred Adventures & Spiritual Journeys",
-  description:
-    "Discover sacred adventures in Rishikesh & Haridwar with expert local guides, adventure activities, and customized spiritual journeys",
+  metadataBase: new URL("https://devbhoomi-darshan.vercel.app/"), // ← yahan apna domain
+  title: "Devbhoomi Darshan",
+  description: "Sacred journeys made simple",
 };
 
 export default function RootLayout({
