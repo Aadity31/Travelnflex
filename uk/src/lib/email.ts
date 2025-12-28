@@ -54,7 +54,7 @@ export async function sendOTPEmail(email: string, otp: string, name: string) {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🕉️ Devbhoomi Darshan</h1>
+            <h1>Devbhoomi Darshan</h1>
             <p>Email Verification</p>
           </div>
           <div class="content">

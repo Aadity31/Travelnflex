@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import UserAvatar from "@/app/components/UserAvatar";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
-  User,
-  Mail,
   Phone,
   MapPin,
   Calendar,
@@ -16,7 +15,6 @@ import {
   Clock,
   Award,
   Settings,
-  Shield,
   ChevronRight,
   Sparkles,
   Star,
@@ -48,7 +46,6 @@ export default function ProfilePage() {
         if (data?.user) {
           setUser(data.user);
         } else {
-          // User not found or not logged in
           router.push("/login");
         }
       } catch (error) {
@@ -76,7 +73,7 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-14 pb-6 px-4">
+    <div className="min-h-screen bg-gray-50 pt-24 pb-6 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* LEFT SIDEBAR - Profile Info */}
@@ -102,11 +99,13 @@ export default function ProfilePage() {
                   </button>
                 </div>
 
+
                 {/* Name & Email */}
                 <h1 className="text-xl font-bold text-gray-900 mb-1">
                   {user.name}
                 </h1>
                 <p className="text-gray-500 text-sm mb-4">{user.email}</p>
+
                 {/* Edit Button */}
                 <button
                   onClick={() => router.push("/profile/edit")}
@@ -115,8 +114,10 @@ export default function ProfilePage() {
                   <Edit2 size={14} />
                   Edit Profile
                 </button>
+
                 {/* Divider */}
                 <div className="my-4 border-t border-gray-100" />
+
                 {/* Contact Info */}
                 <div className="space-y-3 text-left">
                   {user.phone && (
@@ -173,7 +174,7 @@ export default function ProfilePage() {
                     Spiritual Explorer
                   </h3>
                   <p className="text-xs text-gray-600 leading-relaxed">
-                    You've completed 12 sacred journeys. Keep exploring the
+                    You&apos;ve completed 12 sacred journeys. Keep exploring the
                     divine!
                   </p>
                 </div>
@@ -290,7 +291,7 @@ function StatBox({
   label,
   value,
 }: {
-  icon: any;
+  icon: React.ElementType;
   label: string;
   value: string;
 }) {
@@ -310,7 +311,7 @@ function QuickLink({
   description,
   href,
 }: {
-  icon: any;
+  icon: React.ElementType;
   title: string;
   description: string;
   href: string;
@@ -321,7 +322,7 @@ function QuickLink({
       className="flex items-center justify-between p-5 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition group"
     >
       <div className="flex items-start gap-3">
-        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition">
+        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition shadow-lg">
           <Icon className="text-white" size={20} />
         </div>
         <div>
@@ -344,7 +345,7 @@ function Activity({
   description,
   time,
 }: {
-  icon: any;
+  icon: React.ElementType;
   title: string;
   description: string;
   time: string;
@@ -378,10 +379,11 @@ function RecommendationCard({
   return (
     <div className="group cursor-pointer">
       <div className="relative h-32 rounded-lg overflow-hidden mb-2">
-        <img
+        <Image
           src={image}
           alt={title}
-          className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+          fill
+          className="object-cover group-hover:scale-110 transition duration-300"
         />
         <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1">
           <Star size={12} className="text-orange-500 fill-orange-500" />

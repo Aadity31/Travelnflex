@@ -173,12 +173,12 @@ export async function PUT(request: NextRequest) {
         joinedDate: updatedUser.created_at,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     await client.query("ROLLBACK");
     console.error("Profile update error:", error);
 
     // Handle unique constraint violation
-    if (error.code === "23505") {
+    if (error instanceof Error && "code" in error && error.code === "23505") {
       return NextResponse.json(
         { error: "Email already exists" },
         { status: 400 }
