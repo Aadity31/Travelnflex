@@ -129,7 +129,7 @@ export default function Navbar() {
                 ))}
               </div>
 
-              {/* AUTH */}
+              {/* AUTH - DESKTOP ONLY */}
               {!user ? (
                 <Link href="/login">
                   <button className="hidden sm:flex gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white text-sm font-semibold">
@@ -138,8 +138,8 @@ export default function Navbar() {
                   </button>
                 </Link>
               ) : (
-                <div className="relative" ref={dropdownRef}>
-                  {/* Profile Button */}
+                <div className="relative hidden md:block" ref={dropdownRef}>
+                  {/* Profile Button - DESKTOP ONLY */}
                   <button
                     onClick={() => setMenuOpen(!menuOpen)}
                     className="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-white/10 transition-all duration-300 group"
@@ -152,15 +152,13 @@ export default function Navbar() {
                         View Profile
                       </span>
                     </div>
-                    <div className="relative">
-                      <div className="w-9 h-9 rounded-full ring-2 ring-orange-400/60 overflow-hidden group-hover:ring-orange-400 transition-all">
-                        <img
-                          src={user.image || "/avatar.png"}
-                          className="w-full h-full object-cover"
-                          alt="avatar"
-                        />
-                      </div>
-                      <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full ring-2 ring-slate-950" />
+                    {/* Profile Image - NO GREEN DOT */}
+                    <div className="w-9 h-9 rounded-full ring-2 ring-orange-400/60 overflow-hidden group-hover:ring-orange-400 transition-all">
+                      <img
+                        src={user.image || "/avatar.png"}
+                        className="w-full h-full object-cover"
+                        alt="avatar"
+                      />
                     </div>
                   </button>
 
@@ -290,7 +288,7 @@ export default function Navbar() {
         />
 
         <div className="absolute top-20 left-4 right-4 p-6 rounded-2xl bg-white/95 dark:bg-slate-900/95 shadow-2xl">
-          {/* User Info in Mobile Menu */}
+          {/* User Info in Mobile Menu - NO GREEN DOT */}
           {user && (
             <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-3">
