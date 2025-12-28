@@ -23,8 +23,8 @@ export default function FooterWithCredits() {
   return (
     <footer className="bg-gray-900 text-gray-300">
       {/* Main Footer */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-3 md:grid-cols-[1.3fr_1fr_1fr] gap-6 md:gap-16 mb-2">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-3">
