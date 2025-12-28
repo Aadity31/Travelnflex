@@ -9,6 +9,10 @@ import {
   MapPin,
   User,
   LogOut,
+  Settings,
+  Heart,
+  BookMarked,
+  Calendar,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -79,6 +83,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     await signOut({ redirect: false });
+    setMenuOpen(false);
     window.location.href = "/";
   };
 
@@ -134,32 +139,126 @@ export default function Navbar() {
                 </Link>
               ) : (
                 <div className="relative" ref={dropdownRef}>
+                  {/* Profile Button */}
                   <button
                     onClick={() => setMenuOpen(!menuOpen)}
-                    className="w-9 h-9 rounded-full ring-2 ring-orange-400/60 overflow-hidden"
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <img
-                      src={user.image || "/avatar.png"}
-                      className="w-full h-full object-cover"
-                      alt="avatar"
-                    />
+                    <div className="hidden lg:flex flex-col items-end">
+                      <span className="text-xs font-semibold text-white">
+                        {user.name}
+                      </span>
+                      <span className="text-[10px] text-gray-300">
+                        View Profile
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <div className="w-9 h-9 rounded-full ring-2 ring-orange-400/60 overflow-hidden group-hover:ring-orange-400 transition-all">
+                        <img
+                          src={user.image || "/avatar.png"}
+                          className="w-full h-full object-cover"
+                          alt="avatar"
+                        />
+                      </div>
+                      <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full ring-2 ring-slate-950" />
+                    </div>
                   </button>
 
+                  {/* Dropdown Menu - GLASS EFFECT */}
                   {menuOpen && (
-                    <div className="absolute right-0 mt-3 w-44 rounded-xl bg-white dark:bg-slate-900 shadow-xl border overflow-hidden">
-                      <Link
-                        href="/profile"
-                        onClick={() => setMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-3 text-sm hover:bg-orange-50"
-                      >
-                        <User size={16} /> Profile
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50"
-                      >
-                        <LogOut size={16} /> Logout
-                      </button>
+                    <div className="absolute right-0 mt-3 w-72 rounded-2xl backdrop-blur-md bg-white/80 dark:bg-slate-900/80 shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                      {/* User Info Header */}
+                      <div className="px-4 py-4 bg-gradient-to-br from-orange-500/10 to-red-600/10 border-b border-gray-200/50 dark:border-gray-700/50">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={user.image || "/avatar.png"}
+                            className="w-12 h-12 rounded-full ring-2 ring-orange-400"
+                            alt={user.name}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                              {user.name}
+                            </p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                              {user.email}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Menu Items */}
+                      <div className="py-2">
+                        <Link
+                          href="/profile"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
+                        >
+                          <User
+                            size={18}
+                            className="text-orange-600 dark:text-orange-500"
+                          />
+                          <span className="font-medium">My Profile</span>
+                        </Link>
+
+                        <Link
+                          href="/profile/bookings"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
+                        >
+                          <Calendar
+                            size={18}
+                            className="text-orange-600 dark:text-orange-500"
+                          />
+                          <span className="font-medium">My Bookings</span>
+                        </Link>
+
+                        <Link
+                          href="/profile/favorites"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
+                        >
+                          <Heart
+                            size={18}
+                            className="text-orange-600 dark:text-orange-500"
+                          />
+                          <span className="font-medium">Favorites</span>
+                        </Link>
+
+                        <Link
+                          href="/profile/saved"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
+                        >
+                          <BookMarked
+                            size={18}
+                            className="text-orange-600 dark:text-orange-500"
+                          />
+                          <span className="font-medium">Saved Places</span>
+                        </Link>
+
+                        <Link
+                          href="/profile/settings"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
+                        >
+                          <Settings
+                            size={18}
+                            className="text-orange-600 dark:text-orange-500"
+                          />
+                          <span className="font-medium">Settings</span>
+                        </Link>
+                      </div>
+
+                      {/* Logout Button */}
+                      <div className="border-t border-gray-200/50 dark:border-gray-700/50 p-2">
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-500/10 dark:hover:bg-red-500/20 rounded-lg transition-colors"
+                        >
+                          <LogOut size={18} />
+                          <span>Logout</span>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -177,7 +276,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* ================= MOBILE MENU (FROM CODE 1) ================= */}
+      {/* ================= MOBILE MENU ================= */}
       <div
         className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
           isOpen
@@ -191,6 +290,27 @@ export default function Navbar() {
         />
 
         <div className="absolute top-20 left-4 right-4 p-6 rounded-2xl bg-white/95 dark:bg-slate-900/95 shadow-2xl">
+          {/* User Info in Mobile Menu */}
+          {user && (
+            <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-3">
+                <img
+                  src={user.image || "/avatar.png"}
+                  className="w-12 h-12 rounded-full ring-2 ring-orange-400"
+                  alt={user.name}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col gap-2">
             {navLinks.map((link) => (
               <Link
@@ -202,6 +322,47 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+
+            {/* Profile Links in Mobile */}
+            {user && (
+              <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                <Link
+                  href="/profile"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
+                >
+                  <User size={18} className="text-orange-600" />
+                  <span className="font-medium">My Profile</span>
+                </Link>
+
+                <Link
+                  href="/profile/bookings"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
+                >
+                  <Calendar size={18} className="text-orange-600" />
+                  <span className="font-medium">My Bookings</span>
+                </Link>
+
+                <Link
+                  href="/profile/favorites"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
+                >
+                  <Heart size={18} className="text-orange-600" />
+                  <span className="font-medium">Favorites</span>
+                </Link>
+
+                <Link
+                  href="/profile/settings"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
+                >
+                  <Settings size={18} className="text-orange-600" />
+                  <span className="font-medium">Settings</span>
+                </Link>
+              </div>
+            )}
 
             {!user ? (
               <Link href="/login" onClick={() => setIsOpen(false)}>
