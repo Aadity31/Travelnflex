@@ -80,6 +80,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (existingUser.rowCount === 0) {
+          // Create new user with UUID (database default)
           await pool.query(
             `
             INSERT INTO users
@@ -90,6 +91,7 @@ export const authOptions: NextAuthOptions = {
             [user.name, email, user.image, account.providerAccountId]
           );
         } else {
+          // Update existing user
           await pool.query(
             `
             UPDATE users
@@ -107,10 +109,24 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      // For credentials login
       if (user) {
         token.userId = user.id;
       }
+
+      // For Google login - fetch UUID from database
+      if (account?.provider === "google" && token.email) {
+        const result = await pool.query(
+          "SELECT id FROM users WHERE email = $1",
+          [token.email.toLowerCase()]
+        );
+
+        if (result.rows.length > 0) {
+          token.userId = result.rows[0].id; // Store UUID in token
+        }
+      }
+
       return token;
     },
 

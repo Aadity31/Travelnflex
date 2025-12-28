@@ -8,6 +8,7 @@ import pool from "@/lib/db";
 async function getUserId(): Promise<string | null> {
   const session = await getServerSession(authOptions);
   if (session?.user?.id) {
+    console.log("🔍 Google User ID:", session.user.id); // ⭐ YEH LINE ADD KARO
     return session.user.id;
   }
 
@@ -18,6 +19,7 @@ async function getUserId(): Promise<string | null> {
     const payload = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as {
       userId: string;
     };
+    console.log("🔍 Manual User ID:", payload.userId); // ⭐ YEH LINE ADD KARO
     return payload.userId;
   } catch {
     return null;
@@ -73,21 +75,25 @@ export async function PUT(request: NextRequest) {
 
     await client.query("BEGIN");
 
-    // Get current user
+    console.log("🔍 Searching for userId:", userId);
+
+    // Get current user - CAST id to text
     const currentUser = await client.query(
-      "SELECT email FROM users WHERE id = $1",
+      "SELECT email FROM users WHERE id::text = $1",
       [userId]
     );
+
+    console.log("🔍 Query result:", currentUser.rows);
 
     if (currentUser.rows.length === 0) {
       await client.query("ROLLBACK");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Check email uniqueness
+    // Check email uniqueness - CAST id to text
     if (email !== currentUser.rows[0].email) {
       const emailCheck = await client.query(
-        "SELECT id FROM users WHERE email = $1 AND id != $2",
+        "SELECT id FROM users WHERE email = $1 AND id::text != $2",
         [email, userId]
       );
 
@@ -100,16 +106,16 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // Update users table
+    // Update users table - CAST id to text
     const userQuery = `
       UPDATE users 
       SET name = $1, email = $2, updated_at = NOW()
-      WHERE id = $3
+      WHERE id::text = $3
       RETURNING id, name, email, image, created_at
     `;
     const userResult = await client.query(userQuery, [name, email, userId]);
 
-    // Update profiles table (only active fields)
+    // Update profiles table - user_id bhi text me cast karo
     const profileQuery = `
       INSERT INTO profiles (
         user_id, 
@@ -117,7 +123,10 @@ export async function PUT(request: NextRequest) {
         traveller_type, 
         passport_number
       )
-      VALUES ($1, $2, $3, $4)
+      VALUES (
+        (SELECT id FROM users WHERE id::text = $1),
+        $2, $3, $4
+      )
       ON CONFLICT (user_id) 
       DO UPDATE SET
         phone = EXCLUDED.phone,
