@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://devbhoomi-darshan.vercel.app/"), // ← yahan apna domain
+  metadataBase: new URL("https://devbhoomi-darshan.vercel.app/"),
   title: "Devbhoomi Darshan",
   description: "Sacred journeys made simple",
 };
@@ -28,6 +28,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* ⭐ Cloudinary Upload Widget Script */}
+        <script
+          src="https://upload-widget.cloudinary.com/global/all.js"
+          type="text/javascript"
+        />
+      </head>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import UserAvatar from "@/app/components/UserAvatar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -35,7 +35,101 @@ type UserType = {
 export default function ProfilePage() {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const router = useRouter();
+  const widgetRef = useRef<any>();
+
+  // ⭐ Cloudinary Widget Setup
+  useEffect(() => {
+    console.log("🔍 Checking for Cloudinary...");
+    if (typeof window !== "undefined" && (window as any).cloudinary) {
+      console.log("✅ Cloudinary found, creating widget..."); // ⭐ ADD
+      widgetRef.current = (window as any).cloudinary.createUploadWidget(
+        {
+          cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+          uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+          sources: ["local", "camera"],
+          multiple: false,
+          maxFileSize: 5000000, // 5MB
+          clientAllowedFormats: ["jpg", "png", "jpeg", "webp"],
+          cropping: true,
+          croppingAspectRatio: 1, // Square crop
+          showSkipCropButton: false,
+        },
+        async (error: any, result: any) => {
+          if (!error && result && result.event === "success") {
+            const imageUrl = result.info.secure_url;
+
+            setUploading(true);
+            try {
+              // Step 1: Fetch current user
+              const userResponse = await fetch("/api/auth/user");
+              const userData = await userResponse.json();
+
+              // ⭐ Check if user exists
+              if (!userData || !userData.user) {
+                alert("❌ Please refresh the page and try again");
+                setUploading(false);
+                return;
+              }
+
+              const currentUser = userData.user;
+
+              // ⭐ Validate required fields
+              if (!currentUser.name || !currentUser.email) {
+                console.error("❌ Missing user name/email:", currentUser);
+                alert(
+                  "❌ User profile incomplete. Please update your profile first."
+                );
+                setUploading(false);
+                return;
+              }
+
+              console.log("🔍 Updating with data:", {
+                name: currentUser.name,
+                email: currentUser.email,
+                phone: currentUser.phone || "0000000000",
+              });
+
+              // Step 2: Update profile
+              const response = await fetch("/api/profile/update", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  name: currentUser.name,
+                  email: currentUser.email,
+                  phone: currentUser.phone || "0000000000",
+                  traveller_type: currentUser.traveller_type || "indian",
+                  passport_number: currentUser.passport_number || null,
+                  image: imageUrl,
+                }),
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                setUser((prev) => (prev ? { ...prev, image: imageUrl } : null));
+                alert("✅ Profile picture updated!");
+              } else {
+                alert(`❌ Failed: ${data.error || "Unknown error"}`);
+              }
+            } catch (err) {
+              alert(
+                "❌ Error updating profile picture. Check console for details."
+              );
+            } finally {
+              setUploading(false);
+            }
+          }
+
+          if (error) {
+            console.error("❌ Upload error:", error);
+            alert("❌ Upload failed");
+          }
+        }
+      );
+    }
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -58,6 +152,20 @@ export default function ProfilePage() {
 
     fetchUser();
   }, [router]);
+
+  // ⭐ Handle Camera Button Click
+  const handleUploadClick = () => {
+    console.log("🔍 Camera button clicked!"); // ⭐ ADD
+    console.log("🔍 Widget ref:", widgetRef.current); // ⭐ ADD
+
+    if (widgetRef.current) {
+      console.log("✅ Opening widget..."); // ⭐ ADD
+      widgetRef.current.open();
+    } else {
+      console.error("❌ Widget not ready!");
+      alert("Upload widget not ready. Please refresh the page.");
+    }
+  };
 
   if (loading) {
     return (
@@ -89,16 +197,25 @@ export default function ProfilePage() {
                   <UserAvatar
                     name={user.name}
                     image={user.image}
-                    size={96}                 // ⬅️ w-24 h-24
+                    size={96}
                     textSize="text-xl"
                     className="ring-4 ring-white bg-white shadow-lg"
                   />
 
-                  <button className="absolute bottom-0 right-0 w-8 h-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-md transition">
-                    <Camera size={14} />
+                  {/* ⭐ Camera Button with Upload */}
+                  <button
+                    onClick={handleUploadClick}
+                    disabled={uploading}
+                    className="absolute bottom-0 right-0 w-8 h-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Change profile picture"
+                  >
+                    {uploading ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Camera size={14} />
+                    )}
                   </button>
                 </div>
-
 
                 {/* Name & Email */}
                 <h1 className="text-xl font-bold text-gray-900 mb-1">
