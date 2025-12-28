@@ -206,9 +206,16 @@ export default function SignupPage() {
 };
 
 
-  const handleGoogleSignup = () => {
-    console.log("Google signup clicked");
-  };
+  const handleGoogleLogin = async () => {
+  if (isLoading) return;
+
+  setIsLoading(true);
+
+  await signIn("google", {
+    callbackUrl: "/",
+  });
+};
+
 
   const handleResendOtp = async () => {
     if (!canResend) return;
@@ -359,7 +366,7 @@ export default function SignupPage() {
 
                 {/* Google Signup */}
                 <button
-                  onClick={handleGoogleSignup}
+                  onClick={handleGoogleLogin}
                   disabled={isLoading}
                   type="button"
                   className="w-full flex items-center justify-center gap-2.5 border-2 border-gray-200 rounded-lg py-2.5 text-sm font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed mb-4"
