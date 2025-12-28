@@ -92,7 +92,7 @@ export default function FooterWithCredits() {
                   href="/destinations"
                   className="hover:text-orange-400 transition-colors"
                 >
-                  Destinations
+                  Destinationss
                 </Link>
               </li>
               <li>
