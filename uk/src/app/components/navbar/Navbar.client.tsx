@@ -23,22 +23,17 @@ type UserType = {
   image?: string | null;
 };
 
-export default function Navbar() {
+export default function Navbar({
+  user,
+}: {
+  user: UserType | null;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [hideNav, setHideNav] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-
-  const [user, setUser] = useState<UserType | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  /* ---------- AUTH ---------- */
-  useEffect(() => {
-    fetch("/api/auth/user")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setUser(data?.user || null))
-      .catch(() => {});
-  }, []);
 
   /* ---------- SCROLL ---------- */
   useEffect(() => {
