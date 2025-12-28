@@ -8,7 +8,7 @@ import pool from "@/lib/db";
 declare module "next-auth" {
   interface Session {
     user: {
-      id: string;            // ✅ ADD THIS
+      id: string;
       name?: string | null;
       email?: string | null;
       image?: string | null;
@@ -20,18 +20,31 @@ declare module "next-auth" {
   }
 }
 
-
 export async function GET() {
   // 1️⃣ Try NextAuth session (Google)
   const session = await getServerSession(authOptions);
 
   if (session?.user?.id) {
     const userRes = await pool.query(
-      "SELECT id, name, email, image FROM users WHERE id = $1",
+      `SELECT 
+        u.id, u.name, u.email, u.image, u.created_at,
+        p.phone, p.location, p.bio
+      FROM users u
+      LEFT JOIN profiles p ON u.id = p.user_id
+      WHERE u.id = $1`,
       [session.user.id]
     );
 
-    return NextResponse.json({ user: userRes.rows[0] });
+    if (userRes.rows.length === 0) {
+      return NextResponse.json({ user: null }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      user: {
+        ...userRes.rows[0],
+        joinedDate: userRes.rows[0].created_at,
+      },
+    });
   }
 
   // 2️⃣ Try manual JWT cookie
@@ -42,18 +55,32 @@ export async function GET() {
   }
 
   try {
-    const payload = jwt.verify(
-      token,
-      process.env.NEXTAUTH_SECRET!
-    ) as { userId: string };
+    const payload = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as {
+      userId: string;
+    };
 
     const userRes = await pool.query(
-      "SELECT id, name, email, image FROM users WHERE id = $1",
+      `SELECT 
+        u.id, u.name, u.email, u.image, u.created_at,
+        p.phone, p.location, p.bio
+      FROM users u
+      LEFT JOIN profiles p ON u.id = p.user_id
+      WHERE u.id = $1`,
       [payload.userId]
     );
 
-    return NextResponse.json({ user: userRes.rows[0] });
-  } catch {
+    if (userRes.rows.length === 0) {
+      return NextResponse.json({ user: null }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      user: {
+        ...userRes.rows[0],
+        joinedDate: userRes.rows[0].created_at,
+      },
+    });
+  } catch (error) {
+    console.error("JWT verification failed:", error);
     return NextResponse.json({ user: null }, { status: 401 });
   }
 }

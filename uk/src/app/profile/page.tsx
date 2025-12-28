@@ -39,24 +39,26 @@ export default function ProfilePage() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/auth/user")
-      .then((res) => {
-        if (!res.ok) {
-          router.push("/login");
-          return null;
-        }
-        return res.json();
-      })
-      .then((data) => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/auth/user");
+        const data = await res.json();
+
         if (data?.user) {
           setUser(data.user);
+        } else {
+          // User not found or not logged in
+          router.push("/login");
         }
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching user:", error);
         router.push("/login");
-      });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, [router]);
 
   if (loading) {
@@ -97,22 +99,21 @@ export default function ProfilePage() {
                     <Camera size={14} />
                   </button>
                 </div>
-
                 {/* Name & Email */}
                 <h1 className="text-xl font-bold text-gray-900 mb-1">
                   {user.name}
                 </h1>
                 <p className="text-gray-500 text-sm mb-4">{user.email}</p>
-
                 {/* Edit Button */}
-                <button className="w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg text-sm font-medium transition flex items-center justify-center gap-2">
+                <button
+                  onClick={() => router.push("/profile/edit")}
+                  className="w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
+                >
                   <Edit2 size={14} />
                   Edit Profile
                 </button>
-
                 {/* Divider */}
                 <div className="my-4 border-t border-gray-100" />
-
                 {/* Contact Info */}
                 <div className="space-y-3 text-left">
                   {user.phone && (
