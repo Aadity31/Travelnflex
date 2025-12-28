@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import UserAvatar from "@/app/components/UserAvatar";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -88,25 +89,19 @@ export default function ProfilePage() {
               <div className="px-6 pb-6 -mt-12 text-center">
                 {/* Profile Picture */}
                 <div className="relative inline-block group mb-4">
-                  <div className="w-24 h-24 rounded-full ring-4 ring-white bg-white shadow-lg overflow-hidden">
-                    {user.image ? (
-                      <img
-                        src={user.image}
-                        alt={user.name}
-                        width={36}
-                        height={36}
-                        className="rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                        <User className="text-gray-400" size={36} />
-                      </div>
-                    )}
-                  </div>
+                  <UserAvatar
+                    name={user.name}
+                    image={user.image}
+                    size={96}                 // ⬅️ w-24 h-24
+                    textSize="text-xl"
+                    className="ring-4 ring-white bg-white shadow-lg"
+                  />
+
                   <button className="absolute bottom-0 right-0 w-8 h-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-md transition">
                     <Camera size={14} />
                   </button>
                 </div>
+
                 {/* Name & Email */}
                 <h1 className="text-xl font-bold text-gray-900 mb-1">
                   {user.name}
