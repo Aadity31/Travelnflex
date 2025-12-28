@@ -89,11 +89,19 @@ export default function ProfilePage() {
                 {/* Profile Picture */}
                 <div className="relative inline-block group mb-4">
                   <div className="w-24 h-24 rounded-full ring-4 ring-white bg-white shadow-lg overflow-hidden">
-                    <img
-                      src={user.image || "/avatar.png"}
-                      alt={user.name}
-                      className="w-full h-full object-cover"
-                    />
+                    {user.image ? (
+                      <img
+                        src={user.image}
+                        alt={user.name}
+                        width={36}
+                        height={36}
+                        className="rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <User className="text-gray-400" size={36} />
+                      </div>
+                    )}
                   </div>
                   <button className="absolute bottom-0 right-0 w-8 h-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-md transition">
                     <Camera size={14} />
