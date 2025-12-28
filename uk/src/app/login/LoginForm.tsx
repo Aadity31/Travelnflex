@@ -40,11 +40,12 @@ export default function LoginPage() {
   if (isLoading) return;
 
   setIsLoading(true);
-200
+
   await signIn("google", {
     callbackUrl: "/",
   });
 };
+
 
 
   return (
