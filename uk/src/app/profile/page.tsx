@@ -38,6 +38,16 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const getInitials = (name: string) => {
+    if (!name) return "";
+
+    const parts = name.trim().split(" ");
+    const first = parts[0]?.[0] ?? "";
+    const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+
+    return (first + last).toUpperCase();
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -98,8 +108,8 @@ export default function ProfilePage() {
                         className="rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                        <User className="text-gray-400" size={36} />
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white text-sm font-bold">
+                        {getInitials(user.name)}
                       </div>
                     )}
                   </div>
