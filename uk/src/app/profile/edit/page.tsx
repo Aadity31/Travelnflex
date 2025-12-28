@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   User,
   Mail,
@@ -121,6 +122,7 @@ export default function EditProfilePage() {
         toast.error(data.error || "Failed to update profile");
       }
     } catch (error) {
+      console.error("Error updating profile:", error);
       toast.error("Something went wrong");
     } finally {
       setSaving(false);
@@ -169,9 +171,11 @@ export default function EditProfilePage() {
               <div className="flex items-center gap-6">
                 <div className="relative group">
                   <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-gray-100">
-                    <img
+                    <Image
                       src={imagePreview}
                       alt="Profile"
+                      width={96}
+                      height={96}
                       className="w-full h-full object-cover"
                     />
                   </div>
