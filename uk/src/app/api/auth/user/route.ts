@@ -7,11 +7,9 @@ import pool from "@/lib/db";
 
 export async function GET() {
   try {
-    /* ───────────── 1️⃣ GOOGLE / NEXTAUTH SESSION ───────────── */
     const session = await getServerSession(authOptions);
 
     if (session?.user?.email) {
-      // ✅ email is safe & unique
       const userRes = await pool.query(
         `
         SELECT 
@@ -21,8 +19,8 @@ export async function GET() {
           u.image,
           u.created_at,
           p.phone,
-          p.location,
-          p.bio
+          p.traveller_type,
+          p.passport_number
         FROM users u
         LEFT JOIN profiles p ON u.id = p.user_id
         WHERE u.email = $1
@@ -44,7 +42,6 @@ export async function GET() {
       });
     }
 
-    /* ───────────── 2️⃣ MANUAL JWT LOGIN ───────────── */
     const token = (await cookies()).get("manual-auth-token")?.value;
 
     if (!token) {
@@ -65,8 +62,8 @@ export async function GET() {
         u.image,
         u.created_at,
         p.phone,
-        p.location,
-        p.bio
+        p.traveller_type,
+        p.passport_number
       FROM users u
       LEFT JOIN profiles p ON u.id = p.user_id
       WHERE u.id = $1

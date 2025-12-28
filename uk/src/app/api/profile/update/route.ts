@@ -6,13 +6,11 @@ import { cookies } from "next/headers";
 import pool from "@/lib/db";
 
 async function getUserId(): Promise<string | null> {
-  // 1️⃣ Try NextAuth session (Google)
   const session = await getServerSession(authOptions);
   if (session?.user?.id) {
     return session.user.id;
   }
 
-  // 2️⃣ Try manual JWT cookie
   const token = (await cookies()).get("manual-auth-token")?.value;
   if (!token) return null;
 
@@ -37,12 +35,12 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, email, phone, location, bio, image } = body;
+    const { name, email, phone, traveller_type, passport_number } = body;
 
     // Validation
-    if (!name || !email) {
+    if (!name || !email || !phone) {
       return NextResponse.json(
-        { error: "Name and email are required" },
+        { error: "Name, email and phone are required" },
         { status: 400 }
       );
     }
@@ -56,26 +54,23 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Phone validation (optional)
-    if (phone && phone.length > 0) {
-      const phoneRegex = /^[\d\s\+\-\(\)]+$/;
-      if (!phoneRegex.test(phone)) {
-        return NextResponse.json(
-          { error: "Invalid phone number" },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Bio length validation
-    if (bio && bio.length > 500) {
+    // Phone validation
+    const phoneRegex = /^[\d\s\+\-\(\)]+$/;
+    if (!phoneRegex.test(phone)) {
       return NextResponse.json(
-        { error: "Bio must be less than 500 characters" },
+        { error: "Invalid phone number" },
         { status: 400 }
       );
     }
 
-    // Start transaction
+    // Passport validation for foreign travellers
+    if (traveller_type === "foreign" && !passport_number) {
+      return NextResponse.json(
+        { error: "Passport number is required for foreign travellers" },
+        { status: 400 }
+      );
+    }
+
     await client.query("BEGIN");
 
     // Get current user
@@ -89,7 +84,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Check if email already exists for another user
+    // Check email uniqueness
     if (email !== currentUser.rows[0].email) {
       const emailCheck = await client.query(
         "SELECT id FROM users WHERE email = $1 AND id != $2",
@@ -105,55 +100,43 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // Update users table (name, email, image)
-    const userUpdateFields = [];
-    const userValues = [];
-    let userParamCount = 1;
-
-    userUpdateFields.push(`name = $${userParamCount++}`);
-    userValues.push(name);
-
-    userUpdateFields.push(`email = $${userParamCount++}`);
-    userValues.push(email);
-
-    if (image) {
-      userUpdateFields.push(`image = $${userParamCount++}`);
-      userValues.push(image);
-    }
-
-    userUpdateFields.push(`updated_at = NOW()`);
-    userValues.push(userId);
-
+    // Update users table
     const userQuery = `
       UPDATE users 
-      SET ${userUpdateFields.join(", ")}
-      WHERE id = $${userParamCount}
+      SET name = $1, email = $2, updated_at = NOW()
+      WHERE id = $3
       RETURNING id, name, email, image, created_at
     `;
+    const userResult = await client.query(userQuery, [name, email, userId]);
 
-    const userResult = await client.query(userQuery, userValues);
-
-    // Update or insert profile table (phone, location, bio)
+    // Update profiles table (only active fields)
     const profileQuery = `
-      INSERT INTO profiles (user_id, phone, location, bio)
+      INSERT INTO profiles (
+        user_id, 
+        phone, 
+        traveller_type, 
+        passport_number
+      )
       VALUES ($1, $2, $3, $4)
       ON CONFLICT (user_id) 
       DO UPDATE SET
         phone = EXCLUDED.phone,
-        location = EXCLUDED.location,
-        bio = EXCLUDED.bio,
+        traveller_type = EXCLUDED.traveller_type,
+        passport_number = EXCLUDED.passport_number,
         updated_at = NOW()
-      RETURNING phone, location, bio
+      RETURNING 
+        phone, 
+        traveller_type, 
+        passport_number
     `;
 
     const profileResult = await client.query(profileQuery, [
       userId,
-      phone || null,
-      location || null,
-      bio || null,
+      phone,
+      traveller_type || "indian",
+      traveller_type === "foreign" ? passport_number : null,
     ]);
 
-    // Commit transaction
     await client.query("COMMIT");
 
     const updatedUser = userResult.rows[0];
@@ -168,8 +151,8 @@ export async function PUT(request: NextRequest) {
         email: updatedUser.email,
         image: updatedUser.image,
         phone: updatedProfile.phone,
-        location: updatedProfile.location,
-        bio: updatedProfile.bio,
+        traveller_type: updatedProfile.traveller_type,
+        passport_number: updatedProfile.passport_number,
         joinedDate: updatedUser.created_at,
       },
     });
@@ -177,7 +160,6 @@ export async function PUT(request: NextRequest) {
     await client.query("ROLLBACK");
     console.error("Profile update error:", error);
 
-    // Handle unique constraint violation
     if (error instanceof Error && "code" in error && error.code === "23505") {
       return NextResponse.json(
         { error: "Email already exists" },
