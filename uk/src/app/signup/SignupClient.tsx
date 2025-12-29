@@ -4,8 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-
-
 import {
   Mail,
   Lock,
@@ -24,7 +22,6 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
   const [timer, setTimer] = useState(0);
   const [canResend, setCanResend] = useState(false);
 
@@ -59,12 +56,45 @@ export default function SignupPage() {
     setError("");
   };
 
+  // ⭐ RESET FUNCTION - Sab kuch clear kar dega
+  const handleBackToSignup = () => {
+    // Reset step
+    setStep("signup");
+
+    // Clear OTP
+    setOtp(["", "", "", "", "", ""]);
+
+    // Clear timer
+    setTimer(0);
+    setCanResend(false);
+
+    // Clear messages
+    setError("");
+    setSuccess("");
+
+    // Reset form data (optional - user ki marzi)
+    // Agar chahte ho ki form bhi clear ho jaye to uncomment karo
+    // setFormData({
+    //   name: "",
+    //   email: "",
+    //   password: "",
+    //   confirmPassword: "",
+    // });
+
+    // Show info message
+    setError("OTP expired. Please signup again.");
+
+    // Clear error after 3 seconds
+    setTimeout(() => {
+      setError("");
+    }, 3000);
+  };
+
   const handleSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    // Frontend validation
     if (!formData.name.trim()) {
       setError("Name is required");
       return;
@@ -105,7 +135,6 @@ export default function SignupPage() {
         setStep("otp");
         setTimer(60); // 60 seconds countdown
         setCanResend(false);
-        // Focus first OTP input
         setTimeout(() => {
           document.getElementById("otp-0")?.focus();
         }, 100);
@@ -120,15 +149,14 @@ export default function SignupPage() {
   };
 
   const handleOtpChange = (index: number, value: string) => {
-    if (value.length > 1) value = value[0]; // Only one digit
-    if (!/^\d*$/.test(value)) return; // Only numbers
+    if (value.length > 1) value = value[0];
+    if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
     setError("");
 
-    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       nextInput?.focus();
@@ -155,67 +183,58 @@ export default function SignupPage() {
   };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const otpString = otp.join("");
+    const otpString = otp.join("");
 
-  if (otpString.length !== 6) {
-    setError("Please enter complete OTP");
-    return;
-  }
+    if (otpString.length !== 6) {
+      setError("Please enter complete OTP");
+      return;
+    }
 
-  setIsLoading(true);
-  setError("");
-  setSuccess("");
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
 
-  try {
-    // 🔹 STEP 1: Verify OTP
-    const res = await fetch("/api/auth/verify-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          otp: otpString,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Verification failed");
+      }
+
+      const loginRes = await signIn("credentials", {
         email: formData.email,
-        otp: otpString,
-      }),
-    });
+        password: formData.password,
+        redirect: false,
+      });
 
-    const data = await res.json();
+      if (loginRes?.error) {
+        throw new Error("Auto login failed. Please login manually.");
+      }
 
-    if (!res.ok) {
-      throw new Error(data.message || "Verification failed");
+      window.location.href = "/";
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Verification failed");
+    } finally {
+      setIsLoading(false);
     }
-
-    // 🔹 STEP 2: AUTO LOGIN via NextAuth
-    const loginRes = await signIn("credentials", {
-      email: formData.email,
-      password: formData.password,
-      redirect: false,
-    });
-
-    if (loginRes?.error) {
-      throw new Error("Auto login failed. Please login manually.");
-    }
-
-    // 🔹 STEP 3: Redirect
-    window.location.href = "/";
-  } catch (err) {
-    setError(err instanceof Error ? err.message : "Verification failed");
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
 
   const handleGoogleLogin = async () => {
-  if (isLoading) return;
-
-  setIsLoading(true);
-
-  await signIn("google", {
-    callbackUrl: "/",
-  });
-};
-
+    if (isLoading) return;
+    setIsLoading(true);
+    await signIn("google", { callbackUrl: "/" });
+  };
 
   const handleResendOtp = async () => {
     if (!canResend) return;
@@ -249,7 +268,6 @@ export default function SignupPage() {
     }
   };
 
-  // Password strength indicator
   const getPasswordStrength = (password: string) => {
     if (password.length === 0) return { strength: "", color: "", text: "" };
     if (password.length < 6)
@@ -264,8 +282,8 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-1 grid grid-cols-1 lg:grid-cols-2 bg-gray-50">
-        {/* LEFT – Branding */}
-        <div className="hidden lg:flex flex-col justify-center px-12 bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 text-white relative overflow-hidden">
+        {/* LEFT – Branding (Desktop Only) */}
+        <div className="hidden lg:flex flex-col justify-center px-8 xl:px-12 bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 text-white relative overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-20 left-20 w-64 h-64 bg-white rounded-full blur-3xl animate-pulse"></div>
             <div
@@ -276,9 +294,9 @@ export default function SignupPage() {
 
           <div className="relative z-10">
             <div className="mb-6">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
+              <div className="w-10 h-10 xl:w-12 xl:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
                 <svg
-                  className="w-7 h-7"
+                  className="w-6 h-6 xl:w-7 xl:h-7"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -287,26 +305,26 @@ export default function SignupPage() {
               </div>
             </div>
 
-            <h1 className="text-4xl font-bold mb-4 leading-tight">
+            <h1 className="text-3xl xl:text-4xl font-bold mb-3 xl:mb-4 leading-tight">
               {step === "signup"
                 ? "Begin Your Sacred Journey"
                 : "Verify Your Email"}
             </h1>
-            <p className="text-white/90 text-base max-w-md leading-relaxed mb-6">
+            <p className="text-white/90 text-sm xl:text-base max-w-md leading-relaxed mb-4 xl:mb-6">
               {step === "signup"
                 ? `Create your account to explore sacred destinations, save your spiritual journeys, and manage your pilgrimage experiences with ease.`
                 : `We've sent a 6-digit verification code to your email. Please enter it below to complete your registration.`}
             </p>
 
             {step === "signup" && (
-              <div className="flex flex-wrap gap-2 mt-8">
-                <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium">
+              <div className="flex flex-wrap gap-2 mt-6 xl:mt-8">
+                <span className="px-2.5 xl:px-3 py-1 xl:py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-[10px] xl:text-xs font-medium">
                   🗺️ Explore Destinations
                 </span>
-                <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium">
+                <span className="px-2.5 xl:px-3 py-1 xl:py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-[10px] xl:text-xs font-medium">
                   📖 Save Journeys
                 </span>
-                <span className="px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium">
+                <span className="px-2.5 xl:px-3 py-1 xl:py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-[10px] xl:text-xs font-medium">
                   ✨ Track Experiences
                 </span>
               </div>
@@ -315,9 +333,9 @@ export default function SignupPage() {
         </div>
 
         {/* RIGHT – Forms Container */}
-        <div className="flex items-center justify-center px-6 py-8 relative overflow-hidden">
+        <div className="flex items-center justify-center px-3 sm:px-4 md:px-6 py-6 sm:py-8 relative overflow-hidden">
           <div className="w-full max-w-sm relative">
-            {/* SIGNUP FORM */}
+            {/* SIGNUP FORM - Same as before */}
             <div
               className={`transition-all duration-500 ease-in-out ${
                 step === "signup"
@@ -326,10 +344,10 @@ export default function SignupPage() {
               }`}
             >
               {/* Mobile Logo */}
-              <div className="lg:hidden mb-6 text-center">
-                <div className="inline-flex w-11 h-11 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl items-center justify-center mb-3">
+              <div className="lg:hidden mb-4 sm:mb-6 text-center">
+                <div className="inline-flex w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg sm:rounded-xl items-center justify-center mb-2 sm:mb-3">
                   <svg
-                    className="w-6 h-6 text-white"
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -338,28 +356,27 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-2xl shadow-orange-500/10 p-6 border border-gray-100">
-                <div className="mb-5">
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-1">
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl shadow-orange-500/10 p-4 sm:p-6 border border-gray-100">
+                <div className="mb-4 sm:mb-5">
+                  <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-0.5 sm:mb-1">
                     Create Account
                   </h2>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs sm:text-sm">
                     Sign up to get started on your spiritual journey
                   </p>
                 </div>
 
-                {/* Success Message */}
+                {/* Messages */}
                 {success && step === "signup" && (
-                  <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-green-700 text-sm">
-                    <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                  <div className="mb-3 sm:mb-4 p-2 sm:p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-1.5 sm:gap-2 text-green-700 text-xs sm:text-sm">
+                    <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                     {success}
                   </div>
                 )}
 
-                {/* Error Message */}
                 {error && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600 text-sm">
-                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <div className="mb-3 sm:mb-4 p-2 sm:p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-1.5 sm:gap-2 text-red-600 text-xs sm:text-sm">
+                    <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                     {error}
                   </div>
                 )}
@@ -369,34 +386,39 @@ export default function SignupPage() {
                   onClick={handleGoogleLogin}
                   disabled={isLoading}
                   type="button"
-                  className="w-full flex items-center justify-center gap-2.5 border-2 border-gray-200 rounded-lg py-2.5 text-sm font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+                  className="w-full flex items-center justify-center gap-2 sm:gap-2.5 border-2 border-gray-200 rounded-lg py-2 sm:py-2.5 text-xs sm:text-sm font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed mb-3 sm:mb-4"
                 >
                   <Image
                     src="https://www.svgrepo.com/show/475656/google-color.svg"
                     alt="Google"
                     width={16}
                     height={16}
-                    className="group-hover:scale-110 transition-transform duration-300"
+                    className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform duration-300"
                   />
                   <span className="text-gray-700">Sign up with Google</span>
                 </button>
 
                 {/* Divider */}
-                <div className="flex items-center gap-3 my-4">
+                <div className="flex items-center gap-2 sm:gap-3 my-3 sm:my-4">
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-                  <span className="text-xs text-gray-500 font-medium">OR</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500 font-medium">
+                    OR
+                  </span>
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
                 </div>
 
                 {/* Signup Form */}
-                <form onSubmit={handleSignupSubmit} className="space-y-3">
+                <form
+                  onSubmit={handleSignupSubmit}
+                  className="space-y-2.5 sm:space-y-3"
+                >
                   {/* Name */}
                   <div className="group">
-                    <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                    <label className="block text-[11px] sm:text-xs font-medium text-gray-700 mb-1 sm:mb-1.5">
                       Full Name
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+                      <User className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
                       <input
                         type="text"
                         name="name"
@@ -404,7 +426,7 @@ export default function SignupPage() {
                         onChange={handleChange}
                         placeholder="Enter your full name"
                         disabled={isLoading}
-                        className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 rounded-lg border-2 border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 rounded-lg border-2 border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         required
                       />
                     </div>
@@ -412,11 +434,11 @@ export default function SignupPage() {
 
                   {/* Email */}
                   <div className="group">
-                    <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                    <label className="block text-[11px] sm:text-xs font-medium text-gray-700 mb-1 sm:mb-1.5">
                       Email Address
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+                      <Mail className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
                       <input
                         type="email"
                         name="email"
@@ -424,7 +446,7 @@ export default function SignupPage() {
                         onChange={handleChange}
                         placeholder="Enter your email"
                         disabled={isLoading}
-                        className="w-full pl-10 pr-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 rounded-lg border-2 border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 rounded-lg border-2 border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         required
                       />
                     </div>
@@ -432,14 +454,13 @@ export default function SignupPage() {
 
                   {/* Password */}
                   <div className="group">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <label className="block text-xs font-medium text-gray-700">
+                    <div className="flex items-center justify-between mb-1 sm:mb-1.5">
+                      <label className="block text-[11px] sm:text-xs font-medium text-gray-700">
                         Password
                       </label>
-                      {/* Inline Password Strength - Better Design */}
                       {formData.password && (
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          className={`text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full ${
                             passwordStrength.strength === "weak"
                               ? "bg-red-50 text-red-600"
                               : passwordStrength.strength === "medium"
@@ -452,7 +473,7 @@ export default function SignupPage() {
                       )}
                     </div>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+                      <Lock className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
                       <input
                         type={showPassword ? "text" : "password"}
                         name="password"
@@ -460,7 +481,7 @@ export default function SignupPage() {
                         onChange={handleChange}
                         placeholder="At least 6 characters"
                         disabled={isLoading}
-                        className="w-full pl-10 pr-10 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 rounded-lg border-2 border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full pl-9 sm:pl-10 pr-9 sm:pr-10 py-2 sm:py-2.5 text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 rounded-lg border-2 border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         required
                         minLength={6}
                       />
@@ -468,12 +489,12 @@ export default function SignupPage() {
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         disabled={isLoading}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors disabled:cursor-not-allowed"
+                        className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors disabled:cursor-not-allowed"
                       >
                         {showPassword ? (
-                          <EyeOff className="w-4 h-4" />
+                          <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         ) : (
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         )}
                       </button>
                     </div>
@@ -481,14 +502,13 @@ export default function SignupPage() {
 
                   {/* Confirm Password */}
                   <div className="group">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <label className="block text-xs font-medium text-gray-700">
+                    <div className="flex items-center justify-between mb-1 sm:mb-1.5">
+                      <label className="block text-[11px] sm:text-xs font-medium text-gray-700">
                         Confirm Password
                       </label>
-                      {/* Inline Password Match Indicator - Better Design */}
                       {formData.confirmPassword && (
                         <div
-                          className={`flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          className={`flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full ${
                             formData.password === formData.confirmPassword
                               ? "bg-green-50 text-green-600"
                               : "bg-orange-50 text-orange-600"
@@ -497,7 +517,7 @@ export default function SignupPage() {
                           {formData.password === formData.confirmPassword ? (
                             <>
                               <svg
-                                className="w-3 h-3"
+                                className="w-2.5 h-2.5 sm:w-3 sm:h-3"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -512,7 +532,7 @@ export default function SignupPage() {
                           ) : (
                             <>
                               <svg
-                                className="w-3 h-3"
+                                className="w-2.5 h-2.5 sm:w-3 sm:h-3"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -529,7 +549,7 @@ export default function SignupPage() {
                       )}
                     </div>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+                      <Lock className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
                       <input
                         type={showConfirmPassword ? "text" : "password"}
                         name="confirmPassword"
@@ -537,7 +557,7 @@ export default function SignupPage() {
                         onChange={handleChange}
                         placeholder="Re-enter your password"
                         disabled={isLoading}
-                        className="w-full pl-10 pr-10 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 rounded-lg border-2 border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full pl-9 sm:pl-10 pr-9 sm:pr-10 py-2 sm:py-2.5 text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 rounded-lg border-2 border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         required
                       />
                       <button
@@ -546,12 +566,12 @@ export default function SignupPage() {
                           setShowConfirmPassword(!showConfirmPassword)
                         }
                         disabled={isLoading}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors disabled:cursor-not-allowed"
+                        className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors disabled:cursor-not-allowed"
                       >
                         {showConfirmPassword ? (
-                          <EyeOff className="w-4 h-4" />
+                          <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         ) : (
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         )}
                       </button>
                     </div>
@@ -561,12 +581,12 @@ export default function SignupPage() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-2.5 text-sm rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+                    className="w-full py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed mt-3 sm:mt-4"
                   >
                     {isLoading ? (
-                      <span className="flex items-center justify-center gap-2">
+                      <span className="flex items-center justify-center gap-1.5 sm:gap-2">
                         <svg
-                          className="animate-spin h-4 w-4"
+                          className="animate-spin h-3.5 w-3.5 sm:h-4 sm:w-4"
                           viewBox="0 0 24 24"
                         >
                           <circle
@@ -593,8 +613,8 @@ export default function SignupPage() {
                 </form>
 
                 {/* Footer */}
-                <div className="mt-4 text-center">
-                  <p className="text-xs text-gray-600">
+                <div className="mt-3 sm:mt-4 text-center">
+                  <p className="text-[10px] sm:text-xs text-gray-600">
                     Already have an account?{" "}
                     <Link
                       href="/login"
@@ -606,7 +626,7 @@ export default function SignupPage() {
                 </div>
 
                 {/* Terms */}
-                <p className="text-[10px] text-gray-500 text-center mt-3 leading-relaxed">
+                <p className="text-[9px] sm:text-[10px] text-gray-500 text-center mt-2 sm:mt-3 leading-relaxed">
                   By signing up, you agree to our{" "}
                   <Link
                     href="/terms"
@@ -625,7 +645,7 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* OTP VERIFICATION FORM - Same as before */}
+            {/* OTP VERIFICATION FORM */}
             <div
               className={`transition-all duration-500 ease-in-out ${
                 step === "otp"
@@ -634,10 +654,10 @@ export default function SignupPage() {
               }`}
             >
               {/* Mobile Logo */}
-              <div className="lg:hidden mb-6 text-center">
-                <div className="inline-flex w-11 h-11 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl items-center justify-center mb-3">
+              <div className="lg:hidden mb-4 sm:mb-6 text-center">
+                <div className="inline-flex w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg sm:rounded-xl items-center justify-center mb-2 sm:mb-3">
                   <svg
-                    className="w-6 h-6 text-white"
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -647,54 +667,57 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-2xl shadow-orange-500/10 p-6 border border-gray-100">
-                {/* Back Button */}
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl shadow-orange-500/10 p-4 sm:p-6 border border-gray-100">
+                {/* ⭐ UPDATED BACK BUTTON - Ab reset karega sab kuch */}
                 <button
-                  onClick={() => setStep("signup")}
-                  className="flex items-center gap-2 text-gray-600 hover:text-orange-600 text-sm mb-4 transition-colors"
+                  onClick={handleBackToSignup}
+                  disabled={isLoading}
+                  className="flex items-center gap-1.5 sm:gap-2 text-gray-600 hover:text-orange-600 text-xs sm:text-sm mb-3 sm:mb-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:-translate-x-1 transition-transform" />
                   Back to signup
                 </button>
 
-                <div className="mb-6">
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-1">
+                <div className="mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-0.5 sm:mb-1">
                     Verify Your Email
                   </h2>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs sm:text-sm">
                     Enter the 6-digit code sent to
                     <br />
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-gray-900 text-xs sm:text-sm truncate block">
                       {formData.email}
                     </span>
                   </p>
                 </div>
 
-                {/* Success Message */}
+                {/* Messages */}
                 {success && step === "otp" && (
-                  <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-green-700 text-sm">
-                    <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                  <div className="mb-3 sm:mb-4 p-2 sm:p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-1.5 sm:gap-2 text-green-700 text-xs sm:text-sm">
+                    <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                     {success}
                   </div>
                 )}
 
-                {/* Error Message */}
                 {error && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600 text-sm">
-                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <div className="mb-3 sm:mb-4 p-2 sm:p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-1.5 sm:gap-2 text-red-600 text-xs sm:text-sm">
+                    <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                     {error}
                   </div>
                 )}
 
                 {/* OTP Form */}
-                <form onSubmit={handleVerifyOtp} className="space-y-6">
+                <form
+                  onSubmit={handleVerifyOtp}
+                  className="space-y-4 sm:space-y-6"
+                >
                   {/* OTP Input */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-3 text-center">
+                    <label className="block text-[11px] sm:text-xs font-medium text-gray-700 mb-2 sm:mb-3 text-center">
                       Enter Verification Code
                     </label>
                     <div
-                      className="flex gap-2 justify-center"
+                      className="flex gap-1.5 sm:gap-2 justify-center"
                       onPaste={handleOtpPaste}
                     >
                       {otp.map((digit, index) => (
@@ -710,16 +733,16 @@ export default function SignupPage() {
                           }
                           onKeyDown={(e) => handleOtpKeyDown(index, e)}
                           disabled={isLoading}
-                          className="w-12 h-14 text-center text-2xl font-bold text-gray-900 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-9 h-11 sm:w-12 sm:h-14 text-center text-lg sm:text-2xl font-bold text-gray-900 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       ))}
                     </div>
                   </div>
 
-                  {/* Resend Link with Timer */}
+                  {/* Resend Link */}
                   <div className="text-center">
                     {timer > 0 ? (
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs sm:text-sm text-gray-600">
                         Resend code in{" "}
                         <span className="font-semibold text-orange-600">
                           {Math.floor(timer / 60)}:
@@ -731,7 +754,7 @@ export default function SignupPage() {
                         type="button"
                         onClick={handleResendOtp}
                         disabled={!canResend || isLoading}
-                        className="text-sm text-orange-600 font-semibold hover:text-red-600 hover:underline transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-xs sm:text-sm text-orange-600 font-semibold hover:text-red-600 hover:underline transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Resend OTP
                       </button>
@@ -742,12 +765,12 @@ export default function SignupPage() {
                   <button
                     type="submit"
                     disabled={isLoading || otp.join("").length !== 6}
-                    className="w-full py-2.5 text-sm rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading ? (
-                      <span className="flex items-center justify-center gap-2">
+                      <span className="flex items-center justify-center gap-1.5 sm:gap-2">
                         <svg
-                          className="animate-spin h-4 w-4"
+                          className="animate-spin h-3.5 w-3.5 sm:h-4 sm:w-4"
                           viewBox="0 0 24 24"
                         >
                           <circle
@@ -774,8 +797,8 @@ export default function SignupPage() {
                 </form>
 
                 {/* Help Text */}
-                <p className="text-[10px] text-gray-500 text-center mt-4 leading-relaxed">
-                  Did&#39;t receive the code? Click resend.
+                <p className="text-[9px] sm:text-[10px] text-gray-500 text-center mt-3 sm:mt-4 leading-relaxed">
+                  Didn&#39;t receive the code? Click resend.
                 </p>
               </div>
             </div>

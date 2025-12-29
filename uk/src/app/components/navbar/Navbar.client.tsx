@@ -141,10 +141,10 @@ export default function Navbar({
                 ))}
               </div>
 
-              {/* AUTH - DESKTOP ONLY */}
+              {/* AUTH - DESKTOP ONLY - ⭐ Changed from sm:flex to md:flex */}
               {!currentUser ? (
                 <Link href="/login">
-                  <button className="hidden sm:flex gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white text-sm font-semibold">
+                  <button className="hidden md:flex gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white text-sm font-semibold">
                     <LogIn size={18} />
                     Login
                   </button>
