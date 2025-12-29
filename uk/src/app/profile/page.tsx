@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import { useLoading } from "@/lib/use-loading";
 import UserAvatar from "@/app/components/UserAvatar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -67,15 +68,19 @@ declare global {
 
 export default function ProfilePage() {
   const { data: session, update } = useSession();
+  const { showLoading, hideLoading } = useLoading();
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const router = useRouter();
   const widgetRef = useRef<{
     open: () => void;
     close: () => void;
   } | null>(null);
+
+  const hasFetched = useRef(false);
+
+  const { withLoading } = useLoading();
 
   /* ---------- AUTH CHECK ---------- */
   useEffect(() => {
@@ -101,68 +106,60 @@ export default function ProfilePage() {
           eager: [{ width: 400, height: 400, crop: "fill", gravity: "face" }],
           eager_async: false,
         },
-        async (
-          error: CloudinaryUploadWidgetError | null,
-          result: CloudinaryUploadWidgetResult
-        ) => {
+        async (error, result) => {
           if (!error && result?.event === "success") {
             const imageUrl = result.info.secure_url;
-            setUploading(true);
 
-            const uploadToast = toast.loading("Uploading profile picture...");
+            // ⭐ 1. IMAGE UPLOAD - withLoading use karo
+            await withLoading(async () => {
+              try {
+                // Delete old image if exists
+                if (user?.image) {
+                  await fetch("/api/profile/delete-image", {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ imageUrl: user.image }),
+                  });
+                }
 
-            try {
-              if (user?.image) {
-                await fetch("/api/profile/delete-image", {
-                  method: "DELETE",
+                // Get current user
+                const userRes = await fetch("/api/auth/user");
+                const userData = await userRes.json();
+
+                if (!userData?.user) {
+                  toast.error("Please refresh and try again");
+                  return;
+                }
+
+                // Update profile picture
+                const res = await fetch("/api/profile/update", {
+                  method: "PUT",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ imageUrl: user.image }),
-                });
-              }
-
-              const userRes = await fetch("/api/auth/user");
-              const userData = await userRes.json();
-
-              if (!userData?.user) {
-                toast.error("Please refresh and try again", {
-                  id: uploadToast,
-                });
-                setUploading(false);
-                return;
-              }
-
-              const res = await fetch("/api/profile/update", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  image: imageUrl,
-                }),
-              });
-
-              if (res.ok) {
-                setUser((prev) => (prev ? { ...prev, image: imageUrl } : null));
-                await update({ user: { image: imageUrl } });
-                router.refresh(); // ⭐ THIS IS THE KEY
-
-                toast.success("Profile picture updated successfully! 🎉", {
-                  id: uploadToast,
-                  duration: 3000,
-                  icon: "✨",
+                  body: JSON.stringify({ image: imageUrl }),
                 });
 
-                setTimeout(() => window.location.reload(), 1000);
-              } else {
-                const data = await res.json();
-                toast.error(`Failed: ${data.error}`, { id: uploadToast });
+                if (res.ok) {
+                  setUser((prev) =>
+                    prev ? { ...prev, image: imageUrl } : null
+                  );
+                  await update({ user: { image: imageUrl } });
+                  router.refresh();
+
+                  toast.success("Profile picture updated successfully! 🎉", {
+                    duration: 3000,
+                    icon: "✨",
+                  });
+
+                  setTimeout(() => window.location.reload(), 1000);
+                } else {
+                  const data = await res.json();
+                  toast.error(`Failed: ${data.error}`);
+                }
+              } catch (err) {
+                console.error("Upload error:", err);
+                toast.error("Error updating profile picture");
               }
-            } catch (err) {
-              console.error("Upload error:", err);
-              toast.error("Error updating profile picture", {
-                id: uploadToast,
-              });
-            } finally {
-              setUploading(false);
-            }
+            }, "Uploading profile picture..."); // ⭐ Loading text
           }
 
           if (error) {
@@ -172,21 +169,33 @@ export default function ProfilePage() {
         }
       );
     }
-  }, [user?.image, update]);
+  }, [user?.image, update, withLoading]);
 
   /* ---------- FETCH USER ---------- */
   useEffect(() => {
+    if (hasFetched.current) return; // ⭐ Already fetched
+
     const fetchUser = async () => {
+      showLoading("Loading profile...");
+
       try {
         const res = await fetch("/api/auth/user");
         const data = await res.json();
-        data?.user ? setUser(data.user) : router.push("/login");
+
+        if (data?.user) {
+          setUser(data.user);
+          hasFetched.current = true; // ⭐ Mark as done
+        } else {
+          router.push("/login");
+        }
       } finally {
         setLoading(false);
+        hideLoading();
       }
     };
+
     fetchUser();
-  }, [router]);
+  }, []); // ⭐ EMPTY ARRAY!
 
   /* ---------- IMAGE HANDLERS ---------- */
   const handleCameraClick = () => {
@@ -195,11 +204,9 @@ export default function ProfilePage() {
 
   const handleDeleteImage = async () => {
     if (!user?.image) return;
-
     setShowPhotoModal(false);
-    setUploading(true);
 
-    const deleteToast = toast.loading("Deleting profile picture...");
+    showLoading("Deleting picture...");
 
     try {
       const res = await fetch("/api/profile/delete-image", {
@@ -211,32 +218,19 @@ export default function ProfilePage() {
       if (res.ok) {
         setUser((prev) => (prev ? { ...prev, image: null } : null));
         await update();
-
-        toast.success("Profile picture deleted successfully!", {
-          id: deleteToast,
-          icon: "🗑️",
-          duration: 2000,
-        });
-
+        toast.success("Picture deleted! 🗑️");
         setTimeout(() => window.location.reload(), 800);
-      } else {
-        const data = await res.json();
-        toast.error(`Failed: ${data.error}`, { id: deleteToast });
       }
     } catch (err) {
-      console.error("Delete error:", err);
-      toast.error("Error deleting image", { id: deleteToast });
+      console.error(err);
+      toast.error("Delete failed");
     } finally {
-      setUploading(false);
+      hideLoading();
     }
   };
 
   if (loading || !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return null; // Ya phir <LoadingOverlay /> automatically show hoga
   }
 
   return (
@@ -261,17 +255,12 @@ export default function ProfilePage() {
 
                   <button
                     onClick={handleCameraClick}
-                    disabled={uploading}
-                    className="absolute bottom-0 right-0 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="absolute bottom-0 right-0 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-md transition"
                     title={
                       user.image ? "Change or remove photo" : "Upload photo"
                     }
                   >
-                    {uploading ? (
-                      <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <Camera size={12} className="sm:w-3.5 sm:h-3.5" />
-                    )}
+                    <Camera size={12} className="sm:w-3.5 sm:h-3.5" />
                   </button>
                 </div>
 
