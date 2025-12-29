@@ -8,7 +8,7 @@ import pool from "@/lib/db";
 async function getUserId(): Promise<string | null> {
   const session = await getServerSession(authOptions);
   if (session?.user?.id) {
-    console.log("🔍 Google User ID:", session.user.id); // ⭐ YEH LINE ADD KARO
+    console.log("🔍 Google User ID:", session.user.id);
     return session.user.id;
   }
 
@@ -19,7 +19,7 @@ async function getUserId(): Promise<string | null> {
     const payload = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as {
       userId: string;
     };
-    console.log("🔍 Manual User ID:", payload.userId); // ⭐ YEH LINE ADD KARO
+    console.log("🔍 Manual User ID:", payload.userId);
     return payload.userId;
   } catch {
     return null;
@@ -37,10 +37,19 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, email, phone, traveller_type, passport_number } = body;
+    console.log("🔍 Request Body:", body); // ⭐ Log request body
+
+    const { name, email, phone, traveller_type, passport_number, image } = body;
+
+    console.log("🔍 Extracted values:", { name, email, phone, image }); // ⭐ Log extracted values
 
     // Validation
     if (!name || !email || !phone) {
+      console.log("❌ Validation Failed - Missing required fields:", {
+        hasName: !!name,
+        hasEmail: !!email,
+        hasPhone: !!phone,
+      });
       return NextResponse.json(
         { error: "Name, email and phone are required" },
         { status: 400 }
@@ -50,6 +59,7 @@ export async function PUT(request: NextRequest) {
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      console.log("❌ Invalid email format:", email);
       return NextResponse.json(
         { error: "Invalid email format" },
         { status: 400 }
@@ -59,6 +69,7 @@ export async function PUT(request: NextRequest) {
     // Phone validation
     const phoneRegex = /^[\d\s\+\-\(\)]+$/;
     if (!phoneRegex.test(phone)) {
+      console.log("❌ Invalid phone format:", phone);
       return NextResponse.json(
         { error: "Invalid phone number" },
         { status: 400 }
@@ -67,6 +78,7 @@ export async function PUT(request: NextRequest) {
 
     // Passport validation for foreign travellers
     if (traveller_type === "foreign" && !passport_number) {
+      console.log("❌ Passport required for foreign traveller");
       return NextResponse.json(
         { error: "Passport number is required for foreign travellers" },
         { status: 400 }
@@ -77,7 +89,7 @@ export async function PUT(request: NextRequest) {
 
     console.log("🔍 Searching for userId:", userId);
 
-    // Get current user - CAST id to text
+    // Get current user
     const currentUser = await client.query(
       "SELECT email FROM users WHERE id::text = $1",
       [userId]
@@ -87,10 +99,11 @@ export async function PUT(request: NextRequest) {
 
     if (currentUser.rows.length === 0) {
       await client.query("ROLLBACK");
+      console.log("❌ User not found in database");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Check email uniqueness - CAST id to text
+    // Check email uniqueness
     if (email !== currentUser.rows[0].email) {
       const emailCheck = await client.query(
         "SELECT id FROM users WHERE email = $1 AND id::text != $2",
@@ -99,6 +112,7 @@ export async function PUT(request: NextRequest) {
 
       if (emailCheck.rows.length > 0) {
         await client.query("ROLLBACK");
+        console.log("❌ Email already exists:", email);
         return NextResponse.json(
           { error: "Email already exists" },
           { status: 400 }
@@ -106,16 +120,23 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // Update users table - CAST id to text
+    // Update users table - with image support
     const userQuery = `
       UPDATE users 
-      SET name = $1, email = $2, updated_at = NOW()
-      WHERE id::text = $3
+      SET name = $1, email = $2, image = COALESCE($3, image), updated_at = NOW()
+      WHERE id::text = $4
       RETURNING id, name, email, image, created_at
     `;
-    const userResult = await client.query(userQuery, [name, email, userId]);
+    const userResult = await client.query(userQuery, [
+      name,
+      email,
+      image,
+      userId,
+    ]);
 
-    // Update profiles table - user_id bhi text me cast karo
+    console.log("✅ User table updated");
+
+    // Update profiles table
     const profileQuery = `
       INSERT INTO profiles (
         user_id, 
@@ -146,10 +167,14 @@ export async function PUT(request: NextRequest) {
       traveller_type === "foreign" ? passport_number : null,
     ]);
 
+    console.log("✅ Profile table updated");
+
     await client.query("COMMIT");
 
     const updatedUser = userResult.rows[0];
     const updatedProfile = profileResult.rows[0];
+
+    console.log("✅ Profile update successful");
 
     return NextResponse.json({
       success: true,
@@ -167,7 +192,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     await client.query("ROLLBACK");
-    console.error("Profile update error:", error);
+    console.error("❌ Profile update error:", error);
 
     if (error instanceof Error && "code" in error && error.code === "23505") {
       return NextResponse.json(
