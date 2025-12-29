@@ -6,6 +6,7 @@ import Credits from "./components/Credits";
 import NavbarServer from "./components/navbar/Navbar.server";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
+import LoadingOverlay from "./components/LoadingOverlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default function RootLayout({
         <Providers>
           <NavbarServer />
           {children}
+          <LoadingOverlay />
           <Credits />
 
           {/* ⭐ RESPONSIVE Toast Notifications */}
