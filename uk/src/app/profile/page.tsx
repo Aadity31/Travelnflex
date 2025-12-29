@@ -141,7 +141,8 @@ export default function ProfilePage() {
 
               if (res.ok) {
                 setUser((prev) => (prev ? { ...prev, image: imageUrl } : null));
-                await update();
+                await update({ user: { image: imageUrl } });
+                router.refresh(); // ⭐ THIS IS THE KEY
 
                 toast.success("Profile picture updated successfully! 🎉", {
                   id: uploadToast,

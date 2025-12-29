@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useSession } from "next-auth/react";
 import UserAvatar from "@/app/components/UserAvatar";
 import Link from "next/link";
 import {
@@ -24,33 +23,18 @@ type UserType = {
   email: string;
   image?: string | null;
 };
-
 export default function Navbar({
   user: initialUser,
 }: {
   user: UserType | null;
 }) {
-  const { data: session } = useSession();
-  const [currentUser, setCurrentUser] = useState<UserType | null>(initialUser);
+  const currentUser = initialUser;
+
   const [isOpen, setIsOpen] = useState(false);
   const [hideNav, setHideNav] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  /* ---------- SESSION UPDATE ---------- */
-  useEffect(() => {
-    if (session?.user) {
-      setCurrentUser({
-        id: session.user.id ?? "",
-        name: session.user.name ?? "",
-        email: session.user.email ?? "",
-        image: session.user.image ?? null,
-      });
-    } else if (session === null) {
-      setCurrentUser(null);
-    }
-  }, [session]);
 
   /* ---------- SCROLL ---------- */
   useEffect(() => {
