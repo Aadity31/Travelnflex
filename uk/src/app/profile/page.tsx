@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast"; // ⭐ ADD THIS
 import UserAvatar from "@/app/components/UserAvatar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -33,66 +35,71 @@ type UserType = {
 };
 
 export default function ProfilePage() {
+  const { data: session, update } = useSession();
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
   const router = useRouter();
-  const widgetRef = useRef<any>();
+  const widgetRef = useRef<any>(null);
 
-  // ⭐ Cloudinary Widget Setup
+  /* ---------- CLOUDINARY ---------- */
   useEffect(() => {
-    console.log("🔍 Checking for Cloudinary...");
     if (typeof window !== "undefined" && (window as any).cloudinary) {
-      console.log("✅ Cloudinary found, creating widget..."); // ⭐ ADD
       widgetRef.current = (window as any).cloudinary.createUploadWidget(
         {
           cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
           uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
           sources: ["local", "camera"],
           multiple: false,
-          maxFileSize: 5000000, // 5MB
+          maxFileSize: 5000000,
           clientAllowedFormats: ["jpg", "png", "jpeg", "webp"],
           cropping: true,
-          croppingAspectRatio: 1, // Square crop
+          croppingAspectRatio: 1,
           showSkipCropButton: false,
+          eager: [{ width: 400, height: 400, crop: "fill", gravity: "face" }],
+          eager_async: false,
         },
         async (error: any, result: any) => {
-          if (!error && result && result.event === "success") {
+          if (!error && result?.event === "success") {
             const imageUrl = result.info.secure_url;
-
             setUploading(true);
-            try {
-              // Step 1: Fetch current user
-              const userResponse = await fetch("/api/auth/user");
-              const userData = await userResponse.json();
 
-              // ⭐ Check if user exists
-              if (!userData || !userData.user) {
-                alert("❌ Please refresh the page and try again");
+            // ⭐ Show loading toast
+            const uploadToast = toast.loading("Uploading profile picture...", {
+              style: {
+                background: "#fff",
+                color: "#333",
+                fontWeight: "600",
+                padding: "16px 24px",
+                borderRadius: "12px",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+              },
+            });
+
+            try {
+              if (user?.image) {
+                await fetch("/api/profile/delete-image", {
+                  method: "DELETE",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ imageUrl: user.image }),
+                });
+              }
+
+              const userRes = await fetch("/api/auth/user");
+              const userData = await userRes.json();
+
+              if (!userData?.user) {
+                toast.error("Please refresh and try again", {
+                  id: uploadToast,
+                });
                 setUploading(false);
                 return;
               }
 
               const currentUser = userData.user;
 
-              // ⭐ Validate required fields
-              if (!currentUser.name || !currentUser.email) {
-                console.error("❌ Missing user name/email:", currentUser);
-                alert(
-                  "❌ User profile incomplete. Please update your profile first."
-                );
-                setUploading(false);
-                return;
-              }
-
-              console.log("🔍 Updating with data:", {
-                name: currentUser.name,
-                email: currentUser.email,
-                phone: currentUser.phone || "0000000000",
-              });
-
-              // Step 2: Update profile
-              const response = await fetch("/api/profile/update", {
+              const res = await fetch("/api/profile/update", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -105,18 +112,46 @@ export default function ProfilePage() {
                 }),
               });
 
-              const data = await response.json();
-
-              if (response.ok) {
+              if (res.ok) {
                 setUser((prev) => (prev ? { ...prev, image: imageUrl } : null));
-                alert("✅ Profile picture updated!");
+                await update();
+
+                // ⭐ Success toast with custom styling
+                toast.success("Profile picture updated successfully! 🎉", {
+                  id: uploadToast,
+                  duration: 3000,
+                  icon: "✨",
+                  style: {
+                    background:
+                      "linear-gradient(135deg, #fff 0%, #fef3c7 100%)",
+                    color: "#1f2937",
+                    fontWeight: "600",
+                    padding: "16px 24px",
+                    borderRadius: "12px",
+                    boxShadow: "0 8px 24px rgba(249, 115, 22, 0.3)",
+                    border: "1px solid #fed7aa",
+                  },
+                });
+
+                setTimeout(() => window.location.reload(), 1000);
               } else {
-                alert(`❌ Failed: ${data.error || "Unknown error"}`);
+                const data = await res.json();
+                toast.error(`Failed: ${data.error}`, {
+                  id: uploadToast,
+                  style: {
+                    background: "#fee2e2",
+                    color: "#991b1b",
+                    fontWeight: "600",
+                    padding: "16px 24px",
+                    borderRadius: "12px",
+                    border: "1px solid #fca5a5",
+                  },
+                });
               }
             } catch (err) {
-              alert(
-                "❌ Error updating profile picture. Check console for details."
-              );
+              toast.error("Error updating profile picture", {
+                id: uploadToast,
+              });
             } finally {
               setUploading(false);
             }
@@ -124,61 +159,94 @@ export default function ProfilePage() {
 
           if (error) {
             console.error("❌ Upload error:", error);
-            alert("❌ Upload failed");
+            toast.error("Upload failed. Please try again.", {
+              icon: "❌",
+            });
           }
         }
       );
     }
-  }, []);
+  }, [user?.image, update]);
 
+  /* ---------- FETCH USER ---------- */
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetch("/api/auth/user");
         const data = await res.json();
-
-        if (data?.user) {
-          setUser(data.user);
-        } else {
-          router.push("/login");
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        router.push("/login");
+        data?.user ? setUser(data.user) : router.push("/login");
       } finally {
         setLoading(false);
       }
     };
-
     fetchUser();
   }, [router]);
 
-  // ⭐ Handle Camera Button Click
-  const handleUploadClick = () => {
-    console.log("🔍 Camera button clicked!"); // ⭐ ADD
-    console.log("🔍 Widget ref:", widgetRef.current); // ⭐ ADD
+  /* ---------- IMAGE HANDLERS ---------- */
+  const handleCameraClick = () => {
+    user?.image ? setShowPhotoModal(true) : widgetRef.current?.open();
+  };
 
-    if (widgetRef.current) {
-      console.log("✅ Opening widget..."); // ⭐ ADD
-      widgetRef.current.open();
-    } else {
-      console.error("❌ Widget not ready!");
-      alert("Upload widget not ready. Please refresh the page.");
+  const handleDeleteImage = async () => {
+    if (!user?.image) return;
+
+    setShowPhotoModal(false);
+    setUploading(true);
+
+    // ⭐ Show deleting toast
+    const deleteToast = toast.loading("Deleting profile picture...", {
+      style: {
+        background: "#fff",
+        color: "#333",
+        fontWeight: "600",
+        padding: "16px 24px",
+        borderRadius: "12px",
+      },
+    });
+
+    try {
+      const res = await fetch("/api/profile/delete-image", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageUrl: user.image }),
+      });
+
+      if (res.ok) {
+        setUser((prev) => (prev ? { ...prev, image: null } : null));
+        await update();
+
+        // ⭐ Success toast
+        toast.success("Profile picture deleted successfully!", {
+          id: deleteToast,
+          icon: "🗑️",
+          duration: 2000,
+          style: {
+            background: "#fff",
+            color: "#1f2937",
+            fontWeight: "600",
+            padding: "16px 24px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          },
+        });
+
+        setTimeout(() => window.location.reload(), 800);
+      } else {
+        const data = await res.json();
+        toast.error(`Failed: ${data.error}`, {
+          id: deleteToast,
+        });
+      }
+    } catch (err) {
+      toast.error("Error deleting image", {
+        id: deleteToast,
+      });
+    } finally {
+      setUploading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-12 h-12 border-3 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="mt-3 text-gray-500 text-sm">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) return null;
+  if (loading || !user) return null;
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-6 px-4">
@@ -202,12 +270,14 @@ export default function ProfilePage() {
                     className="ring-4 ring-white bg-white shadow-lg"
                   />
 
-                  {/* ⭐ Camera Button with Upload */}
+                  {/* ⭐ Camera Button */}
                   <button
-                    onClick={handleUploadClick}
+                    onClick={handleCameraClick}
                     disabled={uploading}
                     className="absolute bottom-0 right-0 w-8 h-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Change profile picture"
+                    title={
+                      user.image ? "Change or remove photo" : "Upload photo"
+                    }
                   >
                     {uploading ? (
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -398,6 +468,58 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* ⭐ Photo Options Modal */}
+      {showPhotoModal && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowPhotoModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-bold text-gray-900 mb-3">
+              Profile Picture Options
+            </h3>
+            <p className="text-sm text-gray-600 mb-6">
+              What would you like to do with your profile picture?
+            </p>
+
+            <div className="space-y-3">
+              {/* Change Photo */}
+              <button
+                onClick={() => {
+                  setShowPhotoModal(false);
+                  if (widgetRef.current) {
+                    widgetRef.current.open();
+                  }
+                }}
+                className="w-full px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition flex items-center justify-center gap-2"
+              >
+                <Camera size={16} />
+                Change Photo
+              </button>
+
+              {/* Delete Photo */}
+              <button
+                onClick={handleDeleteImage}
+                className="w-full px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition"
+              >
+                Delete Photo
+              </button>
+
+              {/* Cancel */}
+              <button
+                onClick={() => setShowPhotoModal(false)}
+                className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

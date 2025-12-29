@@ -4,6 +4,7 @@ import "./globals.css";
 import Credits from "./components/Credits";
 import NavbarServer from "./components/navbar/Navbar.server";
 import { Toaster } from "react-hot-toast";
+import { Providers } from "./providers"; // ⭐ ADD THIS
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,36 +40,40 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NavbarServer />
-        {children}
-        <Credits />
-
-        {/* Toast Notifications */}
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: "#fff",
-              color: "#333",
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-              borderRadius: "12px",
-              padding: "16px",
-            },
-            success: {
-              iconTheme: {
-                primary: "#f97316",
-                secondary: "#fff",
+        <Providers>
+          {" "}
+          {/* ⭐ WRAP EVERYTHING */}
+          <NavbarServer />
+          {children}
+          <Credits />
+          {/* Toast Notifications */}
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: "#fff",
+                color: "#333",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                borderRadius: "12px",
+                padding: "16px",
               },
-            },
-            error: {
-              iconTheme: {
-                primary: "#ef4444",
-                secondary: "#fff",
+              success: {
+                iconTheme: {
+                  primary: "#f97316",
+                  secondary: "#fff",
+                },
               },
-            },
-          }}
-        />
+              error: {
+                iconTheme: {
+                  primary: "#ef4444",
+                  secondary: "#fff",
+                },
+              },
+            }}
+          />
+        </Providers>{" "}
+        {/* ⭐ CLOSE WRAP */}
       </body>
     </html>
   );
