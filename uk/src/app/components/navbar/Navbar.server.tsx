@@ -1,20 +1,24 @@
 import NavbarClient from "./Navbar.client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-
-export const dynamic = "force-dynamic";
+import pool from "@/lib/db";
 
 export default async function NavbarServer() {
   const session = await getServerSession(authOptions);
 
-  const user = session?.user
-    ? {
-        id: session.user.id ?? "",
-        name: session.user.name ?? "",
-        email: session.user.email ?? "",
-        image: session.user.image ?? null,
-      }
-    : null;
+  let user = null;
+
+  if (session?.user?.email) {
+    const res = await pool.query(
+      `SELECT id, name, email, image
+       FROM users
+       WHERE email = $1
+       LIMIT 1`,
+      [session.user.email]
+    );
+
+    user = res.rows[0] ?? null;
+  }
 
   return <NavbarClient user={user} />;
 }
