@@ -2,7 +2,6 @@ import NavbarClient from "./Navbar.client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-// ⭐ Optional: Force dynamic rendering for real-time session updates
 export const dynamic = "force-dynamic";
 
 export default async function NavbarServer() {

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script"; // ⭐ ADD THIS
+import Script from "next/script";
 import "./globals.css";
 import Credits from "./components/Credits";
 import NavbarServer from "./components/navbar/Navbar.server";
@@ -34,7 +34,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* ⭐ Cloudinary Script - MOVED HERE & ASYNC */}
+        {/* ⭐ Cloudinary Script */}
         <Script
           src="https://upload-widget.cloudinary.com/global/all.js"
           strategy="lazyOnload"
@@ -45,28 +45,38 @@ export default function RootLayout({
           {children}
           <Credits />
 
-          {/* Toast Notifications */}
+          {/* ⭐ RESPONSIVE Toast Notifications */}
           <Toaster
             position="top-right"
+            containerClassName="!top-16 sm:!top-20"
             toastOptions={{
               duration: 3000,
+              className: "!text-xs sm:!text-sm",
               style: {
                 background: "#fff",
                 color: "#333",
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
                 borderRadius: "12px",
-                padding: "16px",
+                padding: "12px 14px", // Reduced for mobile
+                fontSize: "0.875rem", // 14px
+                maxWidth: "90vw", // Mobile friendly
               },
               success: {
                 iconTheme: {
                   primary: "#f97316",
                   secondary: "#fff",
                 },
+                style: {
+                  padding: "12px 14px",
+                },
               },
               error: {
                 iconTheme: {
                   primary: "#ef4444",
                   secondary: "#fff",
+                },
+                style: {
+                  padding: "12px 14px",
                 },
               },
             }}
