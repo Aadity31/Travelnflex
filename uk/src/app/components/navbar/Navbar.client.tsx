@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useSession } from "next-auth/react";
 import UserAvatar from "@/app/components/UserAvatar";
 import Link from "next/link";
 import {
