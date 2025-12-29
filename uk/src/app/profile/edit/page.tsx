@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react"; // ⭐ Add useRef
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useLoading } from "@/lib/use-loading"; // ⭐ Add this
 import {
   User,
   Mail,
@@ -29,11 +30,10 @@ type UserType = {
 
 export default function EditProfilePage() {
   const [user, setUser] = useState<UserType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const router = useRouter();
   const { update } = useSession();
-
+  const { showLoading, hideLoading } = useLoading(); // ⭐ Add this
+  const hasFetched = useRef(false); // ⭐ Add this
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -42,7 +42,11 @@ export default function EditProfilePage() {
   });
 
   useEffect(() => {
+    if (hasFetched.current) return; // ⭐ Prevent re-fetch
+
     const fetchUser = async () => {
+      showLoading("Loading profile..."); // ⭐ Show loading
+
       try {
         const res = await fetch("/api/auth/user");
         const data = await res.json();
@@ -55,19 +59,21 @@ export default function EditProfilePage() {
             traveller_type: data.user.traveller_type || "indian",
             passport_number: data.user.passport_number || "",
           });
+          hasFetched.current = true; // ⭐ Mark as fetched
         } else {
           router.push("/login");
         }
       } catch (error) {
         console.error("Error fetching user:", error);
+        toast.error("Failed to load profile");
         router.push("/login");
       } finally {
-        setLoading(false);
+        hideLoading(); // ⭐ Hide loading
       }
     };
 
     fetchUser();
-  }, [router]);
+  }, []); // ⭐ Empty dependency array
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -85,9 +91,8 @@ export default function EditProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
 
-    const loadingToast = toast.loading("Updating your profile...");
+    showLoading("Updating profile..."); // ⭐ Show loading
 
     try {
       const response = await fetch("/api/profile/update", {
@@ -102,7 +107,6 @@ export default function EditProfilePage() {
         await update();
 
         toast.success("Profile updated successfully! 🎉", {
-          id: loadingToast,
           duration: 3000,
           icon: "✨",
           style: {
@@ -119,35 +123,15 @@ export default function EditProfilePage() {
           router.push("/profile");
         }, 1000);
       } else {
-        toast.error(data.error || "Failed to update profile", {
-          id: loadingToast,
-        });
+        toast.error(data.error || "Failed to update profile");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error("Something went wrong", {
-        id: loadingToast,
-      });
+      toast.error("Something went wrong");
     } finally {
-      setSaving(false);
+      hideLoading(); // ⭐ Hide loading
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-red-50 px-4">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 border-3 sm:border-4 border-orange-200 rounded-full animate-pulse mx-auto" />
-            <div className="absolute inset-0 w-12 h-12 sm:w-16 sm:h-16 border-3 sm:border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          </div>
-          <p className="mt-3 sm:mt-4 text-sm sm:text-base text-gray-600 font-semibold">
-            Loading profile...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (!user) return null;
 
@@ -427,23 +411,12 @@ export default function EditProfilePage() {
                     </button>
                     <button
                       type="submit"
-                      disabled={saving}
-                      className="flex-1 sm:flex-[2] px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                      // disabled={saving} // ⭐ Remove this
+                      className="flex-1 sm:flex-[2] px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
                     >
-                      {saving ? (
-                        <>
-                          <Loader2
-                            size={16}
-                            className="sm:w-4.5 sm:h-4.5 animate-spin"
-                          />
-                          <span>Saving...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Save size={16} className="sm:w-4.5 sm:h-4.5" />
-                          <span>Save Changes</span>
-                        </>
-                      )}
+                      {/* ⭐ Simplify button content - remove saving condition */}
+                      <Save size={16} className="sm:w-4.5 sm:h-4.5" />
+                      <span>Save Changes</span>
                     </button>
                   </div>
                 </div>

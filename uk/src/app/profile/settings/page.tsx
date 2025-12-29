@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useLoading } from "@/lib/use-loading";
 import toast from "react-hot-toast";
 import {
   User,
@@ -33,7 +34,7 @@ type SettingsData = {
 export default function SettingsPage() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [loading, setLoading] = useState(true);
+  const { showLoading, hideLoading } = useLoading();
   const [activeTab, setActiveTab] = useState("notifications");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -58,20 +59,33 @@ export default function SettingsPage() {
     confirm: false,
   });
 
-  useEffect(() => {
-    setLoading(false);
-  }, []);
-
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
     setMobileMenuOpen(false);
   };
 
-  const handleSaveNotifications = () => {
-    toast.success("Preferences saved successfully!");
+  const handleSaveNotifications = async () => {
+    showLoading("Saving preferences...");
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Ya actual API call:
+      // await fetch('/api/settings/notifications', {
+      //   method: 'PUT',
+      //   body: JSON.stringify(settings)
+      // })
+
+      toast.success("Preferences saved successfully!");
+    } catch (error) {
+      toast.error("Failed to save preferences");
+    } finally {
+      hideLoading();
+    }
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       toast.error("Passwords don't match!");
       return;
@@ -80,21 +94,77 @@ export default function SettingsPage() {
       toast.error("Password must be at least 6 characters");
       return;
     }
-    toast.success("Password changed successfully!");
-    setPasswordData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
+
+    showLoading("Changing password..."); // ⭐ Add this
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Ya actual API call:
+      // await fetch('/api/auth/change-password', {
+      //   method: 'POST',
+      //   body: JSON.stringify(passwordData)
+      // })
+
+      toast.success("Password changed successfully!");
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error) {
+      toast.error("Failed to change password");
+    } finally {
+      hideLoading(); // ⭐ Add this
+    }
   };
 
-  const handleDeleteAccount = () => {
+  const handleSavePreferences = async () => {
+    showLoading("Updating preferences..."); // ⭐ Add this
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      // API call:
+      // await fetch('/api/settings/preferences', {
+      //   method: 'PUT',
+      //   body: JSON.stringify({ language: settings.language, currency: settings.currency })
+      // })
+
+      toast.success("Preferences saved!");
+    } catch (error) {
+      toast.error("Failed to save");
+    } finally {
+      hideLoading(); // ⭐ Add this
+    }
+  };
+
+  const handleDeleteAccount = async () => {
     const confirmText = prompt('Type "DELETE" to confirm:');
     if (confirmText !== "DELETE") {
       toast.error("Deletion cancelled");
       return;
     }
-    toast.success("Account deletion requested");
+
+    showLoading("Deleting account..."); // ⭐ Add this
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // API call:
+      // await fetch('/api/auth/delete-account', { method: 'DELETE' })
+
+      toast.success("Account deletion requested");
+
+      // Redirect to home or logout
+      setTimeout(() => router.push("/"), 1000);
+    } catch (error) {
+      toast.error("Failed to delete account");
+    } finally {
+      hideLoading(); // ⭐ Add this
+    }
   };
 
   const tabs = [
@@ -103,14 +173,6 @@ export default function SettingsPage() {
     { id: "preferences", label: "Preferences", icon: Globe },
     { id: "privacy", label: "Privacy", icon: Shield },
   ];
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 pt-16 sm:pt-20 pb-6 sm:pb-8 px-3 sm:px-4">
@@ -493,7 +555,7 @@ export default function SettingsPage() {
                   </div>
 
                   <button
-                    onClick={() => toast.success("Preferences saved!")}
+                    onClick={handleSavePreferences}
                     className="mt-4 sm:mt-6 w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition text-xs sm:text-sm"
                   >
                     Save Preferences
