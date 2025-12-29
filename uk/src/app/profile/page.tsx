@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import toast from "react-hot-toast"; // ⭐ ADD THIS
+import toast from "react-hot-toast";
 import UserAvatar from "@/app/components/UserAvatar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -34,19 +34,57 @@ type UserType = {
   bio?: string;
 };
 
+// ⭐ Cloudinary types
+interface CloudinaryUploadWidgetError {
+  message: string;
+  http_code?: number;
+}
+
+interface CloudinaryUploadWidgetResult {
+  event: string;
+  info: {
+    secure_url: string;
+    public_id: string;
+    [key: string]: unknown;
+  };
+}
+
+// ⭐ ADD THIS - Window type extension
+declare global {
+  interface Window {
+    cloudinary?: {
+      createUploadWidget: (
+        config: unknown,
+        callback: (
+          error: CloudinaryUploadWidgetError | null,
+          result: CloudinaryUploadWidgetResult
+        ) => void
+      ) => {
+        open: () => void;
+        close: () => void;
+      };
+    };
+  }
+}
+
 export default function ProfilePage() {
-  const { data: session, update } = useSession();
+  const { update } = useSession(); // ⭐ Removed unused 'session'
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const router = useRouter();
-  const widgetRef = useRef<any>(null);
+  const widgetRef = useRef<{
+    open: () => void;
+    close: () => void;
+  } | null>(null); // ⭐ Typed ref
 
   /* ---------- CLOUDINARY ---------- */
   useEffect(() => {
-    if (typeof window !== "undefined" && (window as any).cloudinary) {
-      widgetRef.current = (window as any).cloudinary.createUploadWidget(
+    if (typeof window !== "undefined" && window.cloudinary) {
+      // ⭐ CHANGED
+      widgetRef.current = window.cloudinary.createUploadWidget(
+        // ⭐ CHANGED
         {
           cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
           uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
@@ -60,7 +98,10 @@ export default function ProfilePage() {
           eager: [{ width: 400, height: 400, crop: "fill", gravity: "face" }],
           eager_async: false,
         },
-        async (error: any, result: any) => {
+        async (
+          error: CloudinaryUploadWidgetError | null,
+          result: CloudinaryUploadWidgetResult
+        ) => {
           if (!error && result?.event === "success") {
             const imageUrl = result.info.secure_url;
             setUploading(true);
@@ -116,7 +157,7 @@ export default function ProfilePage() {
                 setUser((prev) => (prev ? { ...prev, image: imageUrl } : null));
                 await update();
 
-                // ⭐ Success toast with custom styling
+                // ⭐ Success toast
                 toast.success("Profile picture updated successfully! 🎉", {
                   id: uploadToast,
                   duration: 3000,
@@ -149,6 +190,7 @@ export default function ProfilePage() {
                 });
               }
             } catch (err) {
+              console.error("Upload error:", err);
               toast.error("Error updating profile picture", {
                 id: uploadToast,
               });
@@ -193,7 +235,6 @@ export default function ProfilePage() {
     setShowPhotoModal(false);
     setUploading(true);
 
-    // ⭐ Show deleting toast
     const deleteToast = toast.loading("Deleting profile picture...", {
       style: {
         background: "#fff",
@@ -215,7 +256,6 @@ export default function ProfilePage() {
         setUser((prev) => (prev ? { ...prev, image: null } : null));
         await update();
 
-        // ⭐ Success toast
         toast.success("Profile picture deleted successfully!", {
           id: deleteToast,
           icon: "🗑️",
@@ -238,6 +278,7 @@ export default function ProfilePage() {
         });
       }
     } catch (err) {
+      console.error("Delete error:", err);
       toast.error("Error deleting image", {
         id: deleteToast,
       });
@@ -256,11 +297,9 @@ export default function ProfilePage() {
           <div className="lg:col-span-4 space-y-6">
             {/* Profile Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              {/* Header gradient */}
               <div className="h-24 bg-gradient-to-r from-orange-500 to-red-500 relative" />
 
               <div className="px-6 pb-6 -mt-12 text-center">
-                {/* Profile Picture */}
                 <div className="relative inline-block group mb-4">
                   <UserAvatar
                     name={user.name}
@@ -270,7 +309,6 @@ export default function ProfilePage() {
                     className="ring-4 ring-white bg-white shadow-lg"
                   />
 
-                  {/* ⭐ Camera Button */}
                   <button
                     onClick={handleCameraClick}
                     disabled={uploading}
@@ -287,13 +325,11 @@ export default function ProfilePage() {
                   </button>
                 </div>
 
-                {/* Name & Email */}
                 <h1 className="text-xl font-bold text-gray-900 mb-1">
                   {user.name}
                 </h1>
                 <p className="text-gray-500 text-sm mb-4">{user.email}</p>
 
-                {/* Edit Button */}
                 <button
                   onClick={() => router.push("/profile/edit")}
                   className="w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
@@ -302,10 +338,8 @@ export default function ProfilePage() {
                   Edit Profile
                 </button>
 
-                {/* Divider */}
                 <div className="my-4 border-t border-gray-100" />
 
-                {/* Contact Info */}
                 <div className="space-y-3 text-left">
                   {user.phone && (
                     <div className="flex items-center gap-3 text-sm text-gray-600">
@@ -369,9 +403,8 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* MAIN CONTENT AREA */}
+          {/* MAIN CONTENT - Same as before */}
           <div className="lg:col-span-8 space-y-6">
-            {/* Welcome Banner */}
             <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-6 text-white">
               <h2 className="text-2xl font-bold mb-2">
                 Welcome back, {user.name?.split(" ")[0]}! 🙏
@@ -382,7 +415,6 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            {/* Quick Actions Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <QuickLink
                 icon={Calendar}
@@ -410,7 +442,6 @@ export default function ProfilePage() {
               />
             </div>
 
-            {/* Recent Activity */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <Clock size={18} className="text-orange-500" />
@@ -444,7 +475,6 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Recommendations */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <Star size={18} className="text-orange-500" />
@@ -469,7 +499,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* ⭐ Photo Options Modal */}
+      {/* Photo Options Modal */}
       {showPhotoModal && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
@@ -487,13 +517,10 @@ export default function ProfilePage() {
             </p>
 
             <div className="space-y-3">
-              {/* Change Photo */}
               <button
                 onClick={() => {
                   setShowPhotoModal(false);
-                  if (widgetRef.current) {
-                    widgetRef.current.open();
-                  }
+                  widgetRef.current?.open();
                 }}
                 className="w-full px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition flex items-center justify-center gap-2"
               >
@@ -501,7 +528,6 @@ export default function ProfilePage() {
                 Change Photo
               </button>
 
-              {/* Delete Photo */}
               <button
                 onClick={handleDeleteImage}
                 className="w-full px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition"
@@ -509,7 +535,6 @@ export default function ProfilePage() {
                 Delete Photo
               </button>
 
-              {/* Cancel */}
               <button
                 onClick={() => setShowPhotoModal(false)}
                 className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition"
@@ -524,7 +549,7 @@ export default function ProfilePage() {
   );
 }
 
-// Stat Box Component
+// Component definitions remain same
 function StatBox({
   icon: Icon,
   label,
@@ -543,7 +568,6 @@ function StatBox({
   );
 }
 
-// Quick Link Component
 function QuickLink({
   icon: Icon,
   title,
@@ -577,7 +601,6 @@ function QuickLink({
   );
 }
 
-// Activity Component
 function Activity({
   icon: Icon,
   title,
@@ -603,7 +626,6 @@ function Activity({
   );
 }
 
-// Recommendation Card Component
 function RecommendationCard({
   image,
   title,

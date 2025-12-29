@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script"; // ⭐ ADD THIS
 import "./globals.css";
 import Credits from "./components/Credits";
 import NavbarServer from "./components/navbar/Navbar.server";
 import { Toaster } from "react-hot-toast";
-import { Providers } from "./providers"; // ⭐ ADD THIS
+import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,23 +30,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* ⭐ Cloudinary Upload Widget Script */}
-        <script
-          src="https://upload-widget.cloudinary.com/global/all.js"
-          type="text/javascript"
-        />
-      </head>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* ⭐ Cloudinary Script - MOVED HERE & ASYNC */}
+        <Script
+          src="https://upload-widget.cloudinary.com/global/all.js"
+          strategy="lazyOnload"
+        />
+
         <Providers>
-          {" "}
-          {/* ⭐ WRAP EVERYTHING */}
           <NavbarServer />
           {children}
           <Credits />
+
           {/* Toast Notifications */}
           <Toaster
             position="top-right"
@@ -72,8 +71,7 @@ export default function RootLayout({
               },
             }}
           />
-        </Providers>{" "}
-        {/* ⭐ CLOSE WRAP */}
+        </Providers>
       </body>
     </html>
   );
