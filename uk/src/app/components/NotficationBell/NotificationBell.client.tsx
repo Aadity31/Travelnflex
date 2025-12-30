@@ -189,7 +189,7 @@ export default function NotificationBellClient({
                   No notifications
                 </p>
                 <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-500">
-                  We'll notify you when something arrives
+                  We&apos;ll notify you when something arrives
                 </p>
               </div>
             ) : (
