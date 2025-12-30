@@ -16,6 +16,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import NotificationBell from "../NotificationBell";
 
 type UserType = {
   id: string;
@@ -124,6 +125,7 @@ export default function Navbar({
                   </Link>
                 ))}
               </div>
+              <NotificationBell />
 
               {/* AUTH - DESKTOP ONLY */}
               {!currentUser ? (
