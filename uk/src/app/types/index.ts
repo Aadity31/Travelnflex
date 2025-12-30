@@ -25,7 +25,7 @@ export interface Activity {
   description: string;
   duration: string;
 
-  createdAt: string; // 👈 ADD (for infinite scroll cursor)
+  createdAt: string;
 
   price: {
     min: number;
@@ -35,9 +35,11 @@ export interface Activity {
   difficulty: 'easy' | 'moderate' | 'difficult';
   location: string;
   images: string[];
-  reviews: Review[];
+   reviewCount: number; 
   rating: number;
   includes: string[];
+
+  reviews?: Review[]; //  MAKE OPTIONAL
 }
 
 
