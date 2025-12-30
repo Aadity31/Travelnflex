@@ -62,7 +62,7 @@ const topActivities: TopActivity[] = [
     difficulty: 'moderate',
     rating: 4.8,
     reviewCount: 1250,
-    images: ['IMG/.png'],
+    images: ['https://img.avianexperiences.com/trek/39aa8571-d346-4514-93b8-036bcaae9a64'],
     highlights: ['Professional guides', 'Safety equipment', 'Scenic views', 'All skill levels'],
     maxGroupSize: 12,
     isPopular: true,
