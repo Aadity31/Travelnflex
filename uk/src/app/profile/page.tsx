@@ -234,7 +234,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16 sm:pt-20 lg:pt-24 pb-4 sm:pb-6 px-3 sm:px-4">
+    <div className="min-h-screen bg-gray-50 pt-14 sm:pt-16 lg:pt-18 pb-4 sm:pb-6 px-3 sm:px-4">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
           {/* LEFT SIDEBAR - Profile Info */}
