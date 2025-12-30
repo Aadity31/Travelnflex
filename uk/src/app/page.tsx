@@ -10,11 +10,11 @@ import FooterWithCredits from "./components/Footer";
 
 export const metadata: Metadata = {
   title:
-    "Sacred Journeys - Spiritual & Adventure Travel in Rishikesh & Haridwar",
+    "Sacred Journeys - Spiritual & Adventure Travel in Uttrakhand,",
   description:
-    "Discover Rishikesh & Haridwar with expert local guides. Book spiritual journeys, adventure activities, and Ganga Aarti tours. Save up to 30% on customized packages!",
+    "Discover uttrakhand uk with expert local guides. Book spiritual journeys, adventure activities, and Ganga Aarti tours. Save up to 30% on customized packages!",
   keywords:
-    "Rishikesh travel, Haridwar tours, Ganga Aarti, yoga retreats, river rafting, spiritual journey, local guides",
+    "Uttrakhand travel, uk , Char Dham,Rishikesh travel, Haridwar tours, Ganga Aarti, yoga retreats, river rafting, spiritual journey, local guides",
   openGraph: {
     title: "Sacred Journeys - Spiritual & Adventure Travel",
     description:
@@ -29,7 +29,7 @@ const structuredData = {
   name: "Sacred Journeys",
   description:
     "Certified local guides for spiritual and adventure experiences in Rishikesh and Haridwar",
-  url: "https://sacredjourneys.com",
+  url: "https://devbhoomi-darshan.apsgroupco.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Near Ram Jhula",

@@ -59,7 +59,7 @@ const featuredGuides: LocalGuide[] = [
   {
     id: 'guide-1',
     name: 'Rajesh Kumar',
-    avatar: '/images/guides/rajesh-kumar.jpg',
+    avatar: 'https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg',
     location: 'Rishikesh',
     specialities: ['Spiritual Tours', 'Yoga Retreats', 'Temple Visits', 'Meditation'],
     languages: ['Hindi', 'English', 'Sanskrit'],
@@ -87,7 +87,7 @@ const featuredGuides: LocalGuide[] = [
   {
     id: 'guide-2',
     name: 'Priya Sharma',
-    avatar: '/images/guides/priya-sharma.jpg',
+    avatar: 'https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg',
     location: 'Haridwar',
     specialities: ['Ganga Aarti', 'Temple Tours', 'Cultural Heritage', 'Photography'],
     languages: ['Hindi', 'English', 'Punjabi'],
@@ -104,7 +104,7 @@ const featuredGuides: LocalGuide[] = [
     certifications: ['Government Licensed Guide', 'Heritage Site Specialist'],
     availabilityStatus: 'available',
     joinedDate: '2020-01-20',
-    profileImages: ['/images/guides/priya-1.jpg'],
+    profileImages: ['https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg'],
     expertise: {
       spiritual: 5,
       adventure: 2,
@@ -115,7 +115,7 @@ const featuredGuides: LocalGuide[] = [
   {
     id: 'guide-3',
     name: 'Arjun Singh',
-    avatar: '/images/guides/arjun-singh.jpg',
+    avatar: 'https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg',
     location: 'Rishikesh',
     specialities: ['River Rafting', 'Bungee Jumping', 'Trekking', 'Adventure Sports'],
     languages: ['Hindi', 'English'],
@@ -132,7 +132,7 @@ const featuredGuides: LocalGuide[] = [
     certifications: ['Rafting Instructor', 'Safety Equipment Certified', 'Wilderness First Aid'],
     availabilityStatus: 'busy',
     joinedDate: '2019-05-10',
-    profileImages: ['/images/guides/arjun-1.jpg', '/images/guides/arjun-2.jpg'],
+    profileImages: ['https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg', 'https://zydushospitals.com/public/theme/front/images/gastrointestinal-surgery.jpg'],
     expertise: {
       spiritual: 3,
       adventure: 5,
@@ -143,7 +143,7 @@ const featuredGuides: LocalGuide[] = [
   {
     id: 'guide-4',
     name: 'Kavita Devi',
-    avatar: '/images/guides/kavita-devi.jpg',
+    avatar: 'https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg',
     location: 'Haridwar & Rishikesh',
     specialities: ['Food Tours', 'Local Cuisine', 'Market Visits', 'Cooking Classes'],
     languages: ['Hindi', 'English', 'Bengali'],
@@ -160,7 +160,7 @@ const featuredGuides: LocalGuide[] = [
     certifications: ['Culinary Expert', 'Food Safety Certified'],
     availabilityStatus: 'available',
     joinedDate: '2021-08-05',
-    profileImages: ['/images/guides/kavita-1.jpg'],
+    profileImages: ['https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg'],
     expertise: {
       spiritual: 3,
       adventure: 2,
