@@ -166,6 +166,10 @@ CREATE TABLE activity_discounts (
     valid_until DATE NOT NULL
 );
 
+ALTER TABLE activities
+ADD COLUMN includes TEXT[] DEFAULT ARRAY[]::text[];
+
+
 5️⃣ 🔥 AUTO SEQUENCE GENERATOR (IMPORTANT)
 Function to generate <AGENCY_CODE>_<ACTIVITY_TYPE>_<SEQ>
 CREATE OR REPLACE FUNCTION generate_activity_id(
