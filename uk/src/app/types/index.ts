@@ -24,6 +24,9 @@ export interface Activity {
   type: 'adventure' | 'spiritual' | 'cultural' | 'food' | 'trekking';
   description: string;
   duration: string;
+
+  createdAt: string; // 👈 ADD (for infinite scroll cursor)
+
   price: {
     min: number;
     max: number;
@@ -36,6 +39,7 @@ export interface Activity {
   rating: number;
   includes: string[];
 }
+
 
 export interface TravelPackage {
   id: string;

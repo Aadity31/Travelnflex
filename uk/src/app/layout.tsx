@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://devbhoomi-darshan.vercel.app/"),
+  metadataBase: new URL("http://devbhoomi-darshan.apsgroupco.com"),
   title: "Devbhoomi Darshan",
   description: "Sacred journeys made simple",
 };
