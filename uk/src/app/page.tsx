@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import HeroSection from "./components/sections/HeroSection";
 import QuickSearchBar from "./components/search/QuickSearchBar";
 import FeaturedDestinations from "./components/sections/FeaturedDestinations";
-import TopActivities from "./components/sections/TopActivities";
+import TopActivities from "./components/sections/TopActivities.server";
 import TestimonialsSection from "./components/sections/TestimonialsSection";
 import FeaturedGuides from "./components/sections/FeaturedGuides";
 import CTASection from "./components/sections/CTASection";

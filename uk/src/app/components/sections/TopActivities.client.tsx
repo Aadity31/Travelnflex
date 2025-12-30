@@ -47,130 +47,7 @@ interface TopActivity {
   };
 }
 
-// Mock data
-const topActivities: TopActivity[] = [
-  {
-    id: 'river-rafting',
-    name: 'White Water Rafting',
-    slug: 'river-rafting-rishikesh',
-    type: 'adventure',
-    description: 'Navigate the mighty Ganges with Grade I-IV rapids suitable for all skill levels. Professional guides and safety equipment provided.',
-    shortDescription: 'Thrilling rapids adventure on the holy Ganges',
-    duration: '3-6 hours',
-    location: 'Rishikesh',
-    price: { min: 999, max: 2499, currency: 'INR' },
-    difficulty: 'moderate',
-    rating: 4.8,
-    reviewCount: 1250,
-    images: ['https://img.avianexperiences.com/trek/39aa8571-d346-4514-93b8-036bcaae9a64'],
-    highlights: ['Professional guides', 'Safety equipment', 'Scenic views', 'All skill levels'],
-    maxGroupSize: 12,
-    isPopular: true,
-    isTrending: false,
-    discount: {
-      percentage: 20,
-      validUntil: '2025-10-15'
-    }
-  },
-  {
-    id: 'ganga-aarti',
-    name: 'Evening Ganga Aarti',
-    slug: 'ganga-aarti-ceremony',
-    type: 'spiritual',
-    description: 'Witness the divine evening prayer ceremony with floating lamps, chanting, and spiritual energy at sacred ghats.',
-    shortDescription: 'Divine prayer ceremony at sacred ghats',
-    duration: '1.5 hours',
-    location: 'Haridwar & Rishikesh',
-    price: { min: 0, max: 599, currency: 'INR' },
-    difficulty: 'easy',
-    rating: 4.9,
-    reviewCount: 2100,
-    images: ['https://img.avianexperiences.com/trek/39aa8571-d346-4514-93b8-036bcaae9a64'],
-    highlights: ['Sacred ceremony', 'Best viewing spots', 'Cultural insights', 'Photography'],
-    maxGroupSize: 50,
-    isPopular: true,
-    isTrending: true
-  },
-  {
-    id: 'yoga-retreat',
-    name: 'Sunrise Yoga Session',
-    slug: 'sunrise-yoga-rishikesh',
-    type: 'spiritual',
-    description: 'Join authentic yoga classes at renowned ashrams with experienced teachers in peaceful Himalayan settings.',
-    shortDescription: 'Peaceful yoga with Himalayan sunrise views',
-    duration: '2 hours',
-    location: 'Rishikesh',
-    price: { min: 799, max: 1499, currency: 'INR' },
-    difficulty: 'easy',
-    rating: 4.7,
-    reviewCount: 850,
-    images: ['https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg'],
-    highlights: ['Certified instructors', 'Sunrise views', 'All levels welcome', 'Equipment provided'],
-    maxGroupSize: 20,
-    isPopular: false,
-    isTrending: true
-  },
-  {
-    id: 'bungee-jumping',
-    name: 'Bungee Jumping',
-    slug: 'bungee-jumping-rishikesh',
-    type: 'adventure',
-    description: 'Experience India\'s highest bungee jump from 83 meters with certified New Zealand technology and safety standards.',
-    shortDescription: 'India\'s highest bungee jump experience',
-    duration: '1 hour',
-    location: 'Rishikesh',
-    price: { min: 3999, max: 3999, currency: 'INR' },
-    difficulty: 'difficult',
-    rating: 4.6,
-    reviewCount: 650,
-    images: ['https://www.jumpinheights.com/wp-content/uploads/2025/08/bungee-jumping-in-india-1024x683.webp', 'https://www.indianholiday.com/wordpress/wp-content/uploads/2016/05/roopkund-trek.jpg'],
-    highlights: ['83m height', 'NZ technology', 'Video recording', 'Certificate'],
-    maxGroupSize: 1,
-    isPopular: false,
-    isTrending: false
-  },
-  {
-    id: 'temple-tour',
-    name: 'Ancient Temples Tour',
-    slug: 'ancient-temples-haridwar',
-    type: 'cultural',
-    description: 'Explore centuries-old temples with rich history and spiritual significance, guided by knowledgeable local experts.',
-    shortDescription: 'Sacred temples with rich spiritual heritage',
-    duration: '4 hours',
-    location: 'Haridwar',
-    price: { min: 1299, max: 1999, currency: 'INR' },
-    difficulty: 'easy',
-    rating: 4.5,
-    reviewCount: 420,
-    images: [
-    'https://www.chardhamtour.in/blog/wp-content/uploads/2017/08/Badrinath.jpg',
-    'https://www.pilgrimagetour.in/blog/wp-content/uploads/2023/09/Kedarnath-Temple.jpg'
-  ],
-    highlights: ['Ancient architecture', 'Spiritual stories', 'Local guide', 'Photography'],
-    maxGroupSize: 15,
-    isPopular: false,
-    isTrending: false
-  },
-  {
-    id: 'himalayan-trek',
-    name: 'Himalayan Nature Trek',
-    slug: 'himalayan-trek-rishikesh',
-    type: 'trekking',
-    description: 'Discover hidden waterfalls and pristine nature trails in the foothills of the mighty Himalayas.',
-    shortDescription: 'Scenic trek to hidden waterfalls',
-    duration: '5 hours',
-    location: 'Rishikesh',
-    price: { min: 1799, max: 2499, currency: 'INR' },
-    difficulty: 'moderate',
-    rating: 4.4,
-    reviewCount: 320,
-    images: ['https://lh3.googleusercontent.com/RTgkvYUiqynDKPVJjqk-DxXl-u_gIHxevP_lQ9ED0hyqY08dmm5A9PSj19k-qRxYetGtSkrCj_CmCreIVmb2qz2SlEHqVue-chjRNOJOmaELEbW54OMeer2Y_IIrcNLwZazDGU7wMir_2llokfA6FJI', 'https://www.indianholiday.com/wordpress/wp-content/uploads/2016/05/roopkund-trek.jpg'],
-    highlights: ['Waterfall views', 'Nature trails', 'Bird watching', 'Packed lunch'],
-    maxGroupSize: 10,
-    isPopular: false,
-    isTrending: true
-  }
-];
+
 
 const activityTypes = [
   { value: 'all', label: 'All Activities', icon: SparklesIcon },
@@ -414,15 +291,18 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
 };
 
 // Main TopActivities Component
-const TopActivities: React.FC = () => {
+const TopActivities: React.FC<{
+  activities: TopActivity[];
+}> = ({ activities }) => {
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [likedActivities, setLikedActivities] = useState<Set<string>>(new Set());
 
   const filteredActivities = useMemo(() => {
     if (activeFilter === 'all') {
-      return topActivities;
+      return activities;
+
     }
-    return topActivities.filter(activity => activity.type === activeFilter);
+    return activities.filter(activity => activity.type === activeFilter);
   }, [activeFilter]);
 
   const handleLikeToggle = (activityId: string) => {
@@ -477,7 +357,7 @@ const TopActivities: React.FC = () => {
                   <span className={`px-2 py-0.5 rounded-full text-xs ${
                     isActive ? 'bg-white/20' : 'bg-gray-200'
                   }`}>
-                    {topActivities.filter(a => a.type === type.value).length}
+                    {activities.filter(a => a.type === type.value).length}
                   </span>
                 )}
               </button>
