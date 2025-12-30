@@ -104,32 +104,10 @@ export default function NotificationBellClient({
         className="relative p-1.5 sm:p-2 text-white hover:text-orange-600 dark:text-white dark:hover:text-orange-500 rounded-lg transition-all"
         aria-label="Notifications"
       >
-        <Bell size={18} className="sm:w-[20px] sm:h-[20px]" />
+        <Bell size={20} className="sm:w-[20px] sm:h-[20px]" />
 
         {unreadCount > 0 && (
-          <span
-            className="
-    absolute -top-2 -right-2
-
-    w-4 h-4              /* 📱 mobile: visible circle */
-    sm:w-5 sm:h-5        /* tablet */
-    lg:w-5 lg:h-5        /* laptop */
-
-    bg-red-500
-    text-white
-    rounded-full
-    flex items-center justify-center
-
-    text-[8px]
-    sm:text-[10px]
-    lg:text-[12px]
-
-    font-bold
-    leading-none
-    shadow
-    pointer-events-none
-  "
-          >
+          <span className="absolute -top-1.5 -right-1.5 w-4 h-4 sm:w-5 sm:h-5 bg-red-500 text-white text-[8px] sm:text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
