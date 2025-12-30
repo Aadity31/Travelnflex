@@ -8,6 +8,7 @@ import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
 import LoadingOverlay from "./components/LoadingOverlay";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
