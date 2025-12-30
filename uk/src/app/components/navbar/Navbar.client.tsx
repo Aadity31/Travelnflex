@@ -120,10 +120,25 @@ export default function Navbar({
                   <Link
                     key={l.href}
                     href={l.href}
-                    className="relative px-4 py-1 text-sm text-white group"
+                    className="
+        relative px-4 py-1
+        text-sm text-white
+        hover:text-orange-400
+        transition-colors
+        group
+      "
                   >
                     {l.label}
-                    <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-orange-400 to-red-500 scale-x-0 group-hover:scale-x-100 transition" />
+
+                    <div
+                      className="
+          absolute bottom-0 left-4 right-4
+          h-0.5
+          bg-gradient-to-r from-orange-400 to-red-500
+          scale-x-0 group-hover:scale-x-100
+          transition-transform
+        "
+                    />
                   </Link>
                 ))}
               </div>
