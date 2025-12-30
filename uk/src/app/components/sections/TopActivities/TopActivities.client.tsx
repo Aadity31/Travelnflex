@@ -133,14 +133,14 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
           <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button
               onClick={prevImage}
-              className="bg-white/80 hover:bg-white rounded-full p-2 transition-colors"
+              className="bg-black/70 hover:bg-black rounded-full p-2 transition-colors"
               aria-label="Previous image"
             >
               <ChevronLeftIcon className="w-4 h-4" />
             </button>
             <button
               onClick={nextImage}
-              className="bg-white/80 hover:bg-white rounded-full p-2 transition-colors"
+              className="bg-black/70 hover:bg-black rounded-full p-2 transition-colors"
               aria-label="Next image"
             >
               <ChevronRightIcon className="w-4 h-4" />
