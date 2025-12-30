@@ -11,7 +11,7 @@ interface CreditsProps {
 
 export default function Credits({
   designerName = "APS-Group.dev",
-  designerUrl = "https://yourwebsite.com",
+  designerUrl = "https://www.apsgroupco.com",
   className = "",
 }: CreditsProps) {
   const currentYear = new Date().getFullYear();
