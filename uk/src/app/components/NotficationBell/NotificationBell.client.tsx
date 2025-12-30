@@ -118,7 +118,7 @@ export default function NotificationBellClient({
         <div
           className={`
   fixed top-16 left-1/2 -translate-x-1/2
-  w-[calc(100%-2rem)]
+  w-[calc(100%-3rem)]
   max-w-md
   max-h-[60vh]
 
@@ -126,10 +126,11 @@ export default function NotificationBellClient({
   sm:w-[350px]
   sm:max-h-[400px]
 
-  lg:w-72
-  2xl:w-80
+  lg:w-90
+  2xl:w-98
+  pb-2 sm:pb-3
 
-  mt-0 sm:mt-3
+  mt-0 sm:mt-5
   rounded-2xl
   backdrop-blur-md
   bg-white/90 dark:bg-slate-900/90
@@ -251,6 +252,7 @@ export default function NotificationBellClient({
           </div>
 
           {/* Footer - Responsive */}
+          {/* 
           {notifications.length > 0 && (
             <div className="p-2.5 sm:p-3 xl:p-4 border-t border-gray-200/50 dark:border-gray-700/50 text-center bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
               <button
@@ -264,6 +266,7 @@ export default function NotificationBellClient({
               </button>
             </div>
           )}
+          */}
         </div>
       )}
     </div>
