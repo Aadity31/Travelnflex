@@ -29,14 +29,12 @@ export default function Navbar({
 }: {
   user: UserType | null;
 }) {
-const [currentUser] = useState(initialUser);
+  const [currentUser] = useState(initialUser);
   const [isOpen, setIsOpen] = useState(false);
   const [hideNav, setHideNav] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
- 
 
   /* ---------- SCROLL ---------- */
   useEffect(() => {
