@@ -1,4 +1,5 @@
 import NavbarClient from "./Navbar.client";
+import NotificationBellServer from "../NotficationBell/NotificationBell.server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import pool from "@/lib/db";
@@ -20,5 +21,10 @@ export default async function NavbarServer() {
     user = res.rows[0] ?? null;
   }
 
-  return <NavbarClient user={user} />;
+  return (
+    <NavbarClient
+      user={user}
+      notificationComponent={<NotificationBellServer />}
+    />
+  );
 }

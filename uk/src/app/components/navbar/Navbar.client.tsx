@@ -16,7 +16,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import NotificationBell from "../NotificationBell";
+import NotificationBellServer from "../NotficationBell/NotificationBell.server";
 
 type UserType = {
   id: string;
@@ -27,8 +27,10 @@ type UserType = {
 
 export default function Navbar({
   user: initialUser,
+  notificationComponent,
 }: {
   user: UserType | null;
+  notificationComponent?: React.ReactNode;
 }) {
   const [currentUser] = useState(initialUser);
   const [isOpen, setIsOpen] = useState(false);
@@ -125,7 +127,9 @@ export default function Navbar({
                   </Link>
                 ))}
               </div>
-              <NotificationBell />
+
+              {/* ⭐ Notification Bell */}
+              {notificationComponent}
 
               {/* AUTH - DESKTOP ONLY */}
               {!currentUser ? (
@@ -264,7 +268,6 @@ export default function Navbar({
                   )}
                 </div>
               )}
-
               {/* MOBILE TOGGLE */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
