@@ -1,6 +1,6 @@
 import pool from '@/lib/db';
 
-export async function getActivities() {
+export async function getActivities(limit = 6) {
   const { rows } = await pool.query(`
     SELECT
       a.id,
@@ -32,7 +32,12 @@ export async function getActivities() {
     JOIN activity_prices p ON p.activity_id = a.id
     LEFT JOIN activity_discounts d ON d.activity_id = a.id
     WHERE a.is_active = TRUE
-  `);
+    ORDER BY
+      a.is_trending DESC,
+      a.is_popular DESC,
+      a.rating DESC
+    LIMIT $1
+  `, [limit]);
 
   return rows.map(row => ({
     id: row.id,
