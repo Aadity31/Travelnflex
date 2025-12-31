@@ -24,6 +24,9 @@ export interface Activity {
   type: 'adventure' | 'spiritual' | 'cultural' | 'food' | 'trekking';
   description: string;
   duration: string;
+
+  createdAt: string;
+
   price: {
     min: number;
     max: number;
@@ -32,10 +35,13 @@ export interface Activity {
   difficulty: 'easy' | 'moderate' | 'difficult';
   location: string;
   images: string[];
-  reviews: Review[];
+   reviewCount: number; 
   rating: number;
   includes: string[];
+
+  reviews?: Review[]; //  MAKE OPTIONAL
 }
+
 
 export interface TravelPackage {
   id: string;
