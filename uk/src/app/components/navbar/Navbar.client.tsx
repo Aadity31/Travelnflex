@@ -183,9 +183,9 @@ export default function Navbar({
 
                   {/* Dropdown Menu */}
                   {menuOpen && (
-                    <div className="absolute right-0 mt-3 w-72 rounded-2xl backdrop-blur-md bg-white/80 dark:bg-slate-900/80 shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="absolute right-0 mt-3 w-72 rounded-2xl backdrop-blur-md bg-white/80 dark:bg-slate-900/90 shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                       {/* ⭐ User Info Header */}
-                      <div className="px-4 py-4 bg-gradient-to-br from-orange-500/10 to-red-600/10 border-b border-gray-200/50 dark:border-gray-700/50">
+                      <div className="px-4 py-4 bg-gradient-to-br from-orange-500/10 to-red-600/10 border-b border-gray-200/50 dark:border-gray-900/50">
                         <div className="flex items-center gap-3">
                           <UserAvatar
                             name={currentUser.name}
@@ -207,7 +207,7 @@ export default function Navbar({
                       </div>
 
                       {/* Menu Items */}
-                      <div className="py-2">
+                      <div className="py-2 dark:bg-slate-900/90">
                         <Link
                           href="/profile"
                           onClick={() => setMenuOpen(false)}
@@ -270,7 +270,7 @@ export default function Navbar({
                       </div>
 
                       {/* Logout Button */}
-                      <div className="border-t border-gray-200/50 dark:border-gray-700/50 p-2">
+                      <div className="border-t border-gray-200/50 dark:bg-slate-900/90 dark:border-gray-700/50 p-2">
                         <button
                           onClick={handleLogout}
                           className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-500/10 dark:hover:bg-red-500/20 rounded-lg transition-colors"

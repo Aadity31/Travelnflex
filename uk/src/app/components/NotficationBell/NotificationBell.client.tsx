@@ -115,33 +115,7 @@ export default function NotificationBellClient({
 
       {/* Dropdown Menu - Fully Responsive */}
       {isOpen && (
-        <div
-          className={`
-  fixed top-16 left-1/2 -translate-x-1/2
-  w-[calc(100%-3rem)]
-  max-w-md
-  max-h-[60vh]
-
-  sm:absolute sm:top-full sm:right-0 sm:left-auto sm:translate-x-0
-  sm:w-[350px]
-  sm:max-h-[400px]
-
-  lg:w-90
-  2xl:w-98
-  pb-2 sm:pb-3
-
-  mt-0 sm:mt-5
-  rounded-2xl
-  backdrop-blur-md
-  bg-white/90 dark:bg-slate-900/90
-  shadow-2xl
-  border border-white/20 dark:border-gray-700/50
-  z-50
-
-  flex flex-col        
-  overflow-hidden      
-`}
-        >
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-md max-h-[60vh] sm:absolute sm:top-full sm:right-0 sm:left-auto sm:translate-x-0 sm:w-[350px] sm:max-h-[400px] lg:w-90 2xl:w-98 pb-2 sm:pb-3 mt-0 sm:mt-5 rounded-2xl backdrop-blur-md bg-white/90 dark:bg-slate-900/90 shadow-2xl border border-white/20 dark:border-gray-700/50  z-50 flex flex-col overflow-hidden">
           {/* Header - Responsive padding */}
           <div className="px-3 py-3 sm:px-4 sm:py-4 bg-gradient-to-br from-orange-500/10 to-red-600/10 border-b border-gray-200/50 dark:border-gray-700/50">
             <div className="flex items-center justify-between">
@@ -149,11 +123,11 @@ export default function NotificationBellClient({
                 <h3 className="text-xs sm:text-sm xl:text-base font-bold text-gray-900 dark:text-white">
                   Notifications
                 </h3>
-                <p className="text-[9px] sm:text-[10px] xl:text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                {/* <p className="text-[9px] sm:text-[10px] xl:text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                   {unreadCount > 0
-                    ? `${unreadCount} unread`
+                    ? `${unreadCount} Unread`
                     : "All caught up! 🎉"}
-                </p>
+                </p> */}
               </div>
 
               <div className="flex items-center gap-1 sm:gap-1.5 xl:gap-2">
@@ -162,16 +136,14 @@ export default function NotificationBellClient({
                     onClick={markAllAsRead}
                     className="text-[9px] sm:text-[10px] xl:text-xs text-orange-600 dark:text-orange-500 hover:text-orange-700 dark:hover:text-orange-400 font-semibold px-1.5 py-1 sm:px-2 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-lg transition"
                   >
-                    Mark all
+                    Mark all as read
                   </button>
                 )}
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-1 sm:p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition text-gray-700 dark:text-gray-300"
-                  aria-label="Close"
-                >
-                  <X size={14} className="sm:w-4 sm:h-4" />
-                </button>
+                {unreadCount === 0 && (
+                  <span className="text-[9px] sm:text-[10px] xl:text-xs text-gray-500 dark:text-gray-400 px-1.5 py-1 sm:px-2">
+                    You&apos;re all caught up!
+                  </span>
+                )}
               </div>
             </div>
           </div>
