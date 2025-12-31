@@ -154,7 +154,7 @@ export default function ActivitiesClient({
           </div>
         </section>
 
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+        <div className="max-w-7xl xl:max-w-[90rem] mx-auto px-4 lg:px-6 py-6">
           {/* Mobile Filter Button - RESPONSIVE */}
           <div className="lg:hidden mb-4 sm:mb-6">
             <button
@@ -172,9 +172,9 @@ export default function ActivitiesClient({
           </div>
 
           {/* Layout - RESPONSIVE */}
-          <div className="flex flex-col lg:flex-row gap-4 sm:gap-5 md:gap-6">
+          <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
             {/* Desktop Filters */}
-            <div className="hidden lg:block">
+            <div className="hidden lg:block lg:w-64 xl:w-80 2xl:w-96">
               <ActivityFilters
                 filters={filters}
                 onFilterChange={setFilters}
@@ -193,14 +193,27 @@ export default function ActivitiesClient({
                 {filteredActivities.map((activity) => (
                   <article
                     key={activity.id}
-                    className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row"
+                    className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col lg:flex-row lg:min-h-[260px] xl:min-h-[300px]
+"
                   >
                     {/* Image Section - RESPONSIVE */}
-                    <div className="relative w-full sm:w-64 md:w-80 lg:w-96 h-48 sm:h-52 md:h-56 lg:h-64 flex-shrink-0">
+                    <div
+                      className="relative w-full 
+aspect-[4/3]
+sm:aspect-[16/9]
+lg:w-[300px] lg:aspect-[4/3]
+xl:w-[380px]
+2xl:w-[460px]
+
+"
+                    >
                       <Image
                         src={activity.images[0]}
                         alt={activity.name}
+                        priority={false}
+                        loading="lazy"
                         fill
+                        sizes="(min-width: 1536px) 480px, (min-width: 1280px) 420px, (min-width: 1024px) 360px, 100vw"
                         className="object-cover"
                       />
 
@@ -225,17 +238,18 @@ export default function ActivitiesClient({
                       </div>
 
                       {/* Image Thumbnails - RESPONSIVE */}
-                      <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 flex gap-1">
+                      <div className="absolute bottom-3 left-3 flex gap-2">
                         {activity.images.slice(0, 4).map((img, idx) => (
                           <div
                             key={idx}
-                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-md overflow-hidden border-2 border-white shadow-sm"
+                            className="w-12 h-12 lg:w-14 lg:h-14 rounded-lg overflow-hidden border-2 border-white shadow-md bg-gray-200"
                           >
                             <Image
                               src={img}
                               alt={`${activity.name} ${idx + 1}`}
-                              width={48}
-                              height={48}
+                              priority={false}
+                              loading="lazy"
+                              fill
                               className="object-cover"
                             />
                           </div>
@@ -251,12 +265,12 @@ export default function ActivitiesClient({
                     </div>
 
                     {/* Content Section - RESPONSIVE */}
-                    <div className="flex-1 p-3 sm:p-4 md:p-5 flex flex-col">
+                    <div className="flex-1 p-3 sm:p-4 lg:p-4 xl:p-6 flex flex-col">
                       <div className="flex-1">
                         {/* Title and Location - RESPONSIVE */}
                         <div className="mb-2">
                           <div className="flex items-start justify-between gap-2 mb-1">
-                            <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-2">
+                            <h3 className="text-sm sm:text-base lg:text-lg xl:text-xl font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-2">
                               <Link href={`/activities/${activity.slug}`}>
                                 {activity.name}
                               </Link>
@@ -271,7 +285,7 @@ export default function ActivitiesClient({
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-1 sm:gap-1.5 text-gray-600 text-xs sm:text-sm">
+                          <div className="flex items-center gap-1 lg:gap-1.5 text-gray-600 text-xs lg:text-sm">
                             <MapPinIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                             <span className="line-clamp-1">
                               {activity.location}
@@ -280,7 +294,7 @@ export default function ActivitiesClient({
                         </div>
 
                         {/* Description - RESPONSIVE */}
-                        <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2">
+                        <p className="text-gray-600 text-xs sm:text-sm lg:text-sm mb-2 lg:mb-3 line-clamp-2">
                           {activity.description}
                         </p>
 
@@ -292,7 +306,7 @@ export default function ActivitiesClient({
                               .map((item, index) => (
                                 <div
                                   key={index}
-                                  className="flex items-center gap-0.5 sm:gap-1 text-xs text-gray-700"
+                                  className="flex items-center gap-0.5 lg:gap-1 text-xs lg:text-sm text-gray-700"
                                 >
                                   <svg
                                     className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0"
@@ -330,7 +344,7 @@ export default function ActivitiesClient({
                             ₹{Math.round(activity.price.min * 1.2)}
                           </div>
                           <div className="flex items-baseline gap-0.5 sm:gap-1">
-                            <span className="text-xl sm:text-2xl font-bold text-gray-900">
+                            <span className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900">
                               ₹{activity.price.min}
                             </span>
                             {activity.price.min !== activity.price.max && (
@@ -344,7 +358,11 @@ export default function ActivitiesClient({
 
                         <Link
                           href={`/activities/${activity.slug}`}
-                          className="bg-orange-600 hover:bg-orange-700 text-white py-2 sm:py-2.5 px-4 sm:px-6 rounded-lg font-semibold transition-colors duration-200 text-xs sm:text-sm whitespace-nowrap"
+                          className="bg-orange-600 hover:bg-orange-700 text-white 
+py-2 lg:py-2.5 xl:py-3 
+px-4 lg:px-5 xl:px-6 
+rounded-lg font-semibold transition-colors duration-200 
+text-xs lg:text-sm xl:text-base whitespace-nowrap"
                         >
                           View Details
                         </Link>
