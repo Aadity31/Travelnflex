@@ -206,3 +206,45 @@ WHERE is_active = true
 ORDER BY
     CASE WHEN agency_code = 'APS' THEN 0 ELSE 1 END,
     rating DESC;
+
+
+
+    CREATE TABLE destinations (
+    id TEXT PRIMARY KEY,   -- <AGENCY_CODE>_DST_<SEQ>
+
+    agency_code TEXT NOT NULL
+        REFERENCES agencies(code) ON UPDATE CASCADE,
+
+    name TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+
+    short_description TEXT NOT NULL,
+    description TEXT,
+
+    cover_image TEXT NOT NULL,
+    gallery_images TEXT[] DEFAULT '{}',
+
+    location TEXT NOT NULL,               -- string ref (Rishikesh, Uttarakhand)
+
+    best_time_to_visit TEXT,
+
+    average_rating NUMERIC(2,1) DEFAULT 0,
+    review_count INT DEFAULT 0,
+
+    highlights TEXT[] DEFAULT '{}',
+    popular_activities TEXT[] DEFAULT '{}',
+
+    starting_price INT,                   -- optional (UI only)
+    badge_text TEXT,                      -- optional
+    badge_type TEXT CHECK (
+        badge_type IN ('popular','trending','new')
+    ),
+
+    is_active BOOLEAN DEFAULT TRUE,
+
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+
+    -- 🔒 SAFETY
+    CHECK (id LIKE agency_code || '\_DST\_%')
+);
