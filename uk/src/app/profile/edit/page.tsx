@@ -138,9 +138,7 @@ export default function EditProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 lg:py-16">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8 lg:mb-12">
-          <button
+        <button
             onClick={() => router.back()}
             className="group inline-flex items-center gap-1.5 sm:gap-2 text-gray-600 hover:text-orange-600 transition-all mb-4 sm:mb-6 bg-white/80 backdrop-blur-sm px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl hover:shadow-md"
           >
@@ -152,6 +150,10 @@ export default function EditProfilePage() {
               Back to Profile
             </span>
           </button>
+          
+          {/* Header */}
+        <div className="mb-6 sm:mb-8 lg:mb-12">
+          
 
           <div className="flex items-center gap-2.5 sm:gap-4 mb-2">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
