@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { 
-  StarIcon, 
-  ClockIcon, 
-  MapPinIcon, 
+import { useState, useMemo } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  StarIcon,
+  ClockIcon,
+  MapPinIcon,
   CurrencyRupeeIcon,
   UserGroupIcon,
   FireIcon,
@@ -14,16 +14,19 @@ import {
   HeartIcon,
   PlayCircleIcon,
   ChevronLeftIcon,
-  ChevronRightIcon
-} from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon, StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
+import {
+  HeartIcon as HeartSolidIcon,
+  StarIcon as StarSolidIcon,
+} from "@heroicons/react/24/solid";
 
 // Types
 interface TopActivity {
   id: string;
   name: string;
   slug: string;
-  type: 'adventure' | 'spiritual' | 'cultural' | 'food' | 'trekking';
+  type: "adventure" | "spiritual" | "cultural" | "food" | "trekking";
   description: string;
   shortDescription: string;
   duration: string;
@@ -31,9 +34,9 @@ interface TopActivity {
   price: {
     min: number;
     max: number;
-    currency: 'INR';
+    currency: "INR";
   };
-  difficulty: 'easy' | 'moderate' | 'difficult';
+  difficulty: "easy" | "moderate" | "difficult";
   rating: number;
   reviewCount: number;
   images: string[];
@@ -47,14 +50,12 @@ interface TopActivity {
   };
 }
 
-
-
 const activityTypes = [
-  { value: 'all', label: 'All Activities', icon: SparklesIcon },
-  { value: 'adventure', label: 'Adventure', icon: FireIcon },
-  { value: 'spiritual', label: 'Spiritual', icon: HeartIcon },
-  { value: 'cultural', label: 'Cultural', icon: StarIcon },
-  { value: 'trekking', label: 'Trekking', icon: MapPinIcon }
+  { value: "all", label: "All Activities", icon: SparklesIcon },
+  { value: "adventure", label: "Adventure", icon: FireIcon },
+  { value: "spiritual", label: "Spiritual", icon: HeartIcon },
+  { value: "cultural", label: "Cultural", icon: StarIcon },
+  { value: "trekking", label: "Trekking", icon: MapPinIcon },
 ];
 
 // Activity Card Component
@@ -64,41 +65,50 @@ interface ActivityCardProps {
   onLikeToggle: (activityId: string) => void;
 }
 
-const ActivityCard: React.FC<ActivityCardProps> = ({ 
-  activity, 
-  isLiked, 
-  onLikeToggle 
+const ActivityCard: React.FC<ActivityCardProps> = ({
+  activity,
+  isLiked,
+  onLikeToggle,
 }) => {
   const [imageLoading, setImageLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'bg-green-100 text-green-800';
-      case 'moderate': return 'bg-yellow-100 text-yellow-800';
-      case 'difficult': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "easy":
+        return "bg-green-100 text-green-800";
+      case "moderate":
+        return "bg-yellow-100 text-yellow-800";
+      case "difficult":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'adventure': return 'bg-red-500';
-      case 'spiritual': return 'bg-purple-500';
-      case 'cultural': return 'bg-blue-500';
-      case 'trekking': return 'bg-green-500';
-      default: return 'bg-gray-500';
+      case "adventure":
+        return "bg-red-500";
+      case "spiritual":
+        return "bg-purple-500";
+      case "cultural":
+        return "bg-blue-500";
+      case "trekking":
+        return "bg-green-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === activity.images.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === 0 ? activity.images.length - 1 : prev - 1
     );
   };
@@ -112,7 +122,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
           alt={`${activity.name} - ${activity.shortDescription}`}
           fill
           className={`object-cover group-hover:scale-110 transition-transform duration-700 ${
-            imageLoading ? 'blur-sm' : 'blur-0'
+            imageLoading ? "blur-sm" : "blur-0"
           }`}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           onLoad={() => setImageLoading(false)}
@@ -151,7 +161,11 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
         {/* Top badges and controls */}
         <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
           <div className="flex items-center gap-2">
-            <span className={`px-2 py-1 rounded-full text-xs font-semibold text-white ${getTypeColor(activity.type)}`}>
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-semibold text-white ${getTypeColor(
+                activity.type
+              )}`}
+            >
               {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
             </span>
             {activity.isPopular && (
@@ -167,14 +181,14 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
               </span>
             )}
           </div>
-          
+
           <button
             onClick={(e) => {
               e.preventDefault();
               onLikeToggle(activity.id);
             }}
             className="bg-white/90 backdrop-blur-sm rounded-full p-2 hover:bg-white transition-colors duration-200"
-            aria-label={isLiked ? 'Remove from favorites' : 'Add to favorites'}
+            aria-label={isLiked ? "Remove from favorites" : "Add to favorites"}
           >
             {isLiked ? (
               <HeartSolidIcon className="w-5 h-5 text-red-500" />
@@ -195,7 +209,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
         <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
           <StarSolidIcon className="w-4 h-4 text-yellow-400" />
           <span className="font-semibold text-sm">{activity.rating}</span>
-          <span className="text-xs text-gray-600">({activity.reviewCount})</span>
+          <span className="text-xs text-gray-600">
+            ({activity.reviewCount})
+          </span>
         </div>
       </div>
 
@@ -249,8 +265,13 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
               <UserGroupIcon className="w-4 h-4" />
               <span>Max {activity.maxGroupSize}</span>
             </div>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(activity.difficulty)}`}>
-              {activity.difficulty.charAt(0).toUpperCase() + activity.difficulty.slice(1)}
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(
+                activity.difficulty
+              )}`}
+            >
+              {activity.difficulty.charAt(0).toUpperCase() +
+                activity.difficulty.slice(1)}
             </span>
           </div>
         </div>
@@ -262,16 +283,21 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
             <div>
               {activity.price.min === activity.price.max ? (
                 <span className="text-2xl font-bold text-gray-900">
-                  {activity.price.min.toLocaleString('en-IN')}
+                  {activity.price.min.toLocaleString("en-IN")}
                 </span>
               ) : (
                 <span className="text-lg font-bold text-gray-900">
-                  {activity.price.min.toLocaleString('en-IN')} - {activity.price.max.toLocaleString('en-IN')}
+                  {activity.price.min.toLocaleString("en-IN")} -{" "}
+                  {activity.price.max.toLocaleString("en-IN")}
                 </span>
               )}
               {activity.discount && (
                 <div className="text-xs text-gray-500 line-through">
-                  ₹{Math.round(activity.price.min / (1 - activity.discount.percentage / 100)).toLocaleString('en-IN')}
+                  ₹
+                  {Math.round(
+                    activity.price.min /
+                      (1 - activity.discount.percentage / 100)
+                  ).toLocaleString("en-IN")}
                 </div>
               )}
             </div>
@@ -294,19 +320,20 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
 const TopActivities: React.FC<{
   activities: TopActivity[];
 }> = ({ activities }) => {
-  const [activeFilter, setActiveFilter] = useState<string>('all');
-  const [likedActivities, setLikedActivities] = useState<Set<string>>(new Set());
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [likedActivities, setLikedActivities] = useState<Set<string>>(
+    new Set()
+  );
 
   const filteredActivities = useMemo(() => {
-    if (activeFilter === 'all') {
+    if (activeFilter === "all") {
       return activities;
-
     }
-    return activities.filter(activity => activity.type === activeFilter);
+    return activities.filter((activity) => activity.type === activeFilter);
   }, [activeFilter]);
 
   const handleLikeToggle = (activityId: string) => {
-    setLikedActivities(prev => {
+    setLikedActivities((prev) => {
       const newLiked = new Set(prev);
       if (newLiked.has(activityId)) {
         newLiked.delete(activityId);
@@ -330,8 +357,8 @@ const TopActivities: React.FC<{
             <span className="text-orange-600 block">Activities</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Discover a perfect blend of thrilling adventures and soul-enriching spiritual experiences 
-            in the sacred lands of Rishikesh and Haridwar.
+            Discover a perfect blend of thrilling adventures and soul-enriching
+            spiritual experiences in the sacred lands of Rishikesh and Haridwar.
           </p>
         </div>
 
@@ -340,24 +367,26 @@ const TopActivities: React.FC<{
           {activityTypes.map((type) => {
             const IconComponent = type.icon;
             const isActive = activeFilter === type.value;
-            
+
             return (
               <button
                 key={type.value}
                 onClick={() => setActiveFilter(type.value)}
                 className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
                   isActive
-                    ? 'bg-orange-600 text-white shadow-lg scale-105'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
+                    ? "bg-orange-600 text-white shadow-lg scale-105"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105"
                 }`}
               >
                 <IconComponent className="w-5 h-5" />
                 {type.label}
-                {type.value !== 'all' && (
-                  <span className={`px-2 py-0.5 rounded-full text-xs ${
-                    isActive ? 'bg-white/20' : 'bg-gray-200'
-                  }`}>
-                    {activities.filter(a => a.type === type.value).length}
+                {type.value !== "all" && (
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs ${
+                      isActive ? "bg-white/20" : "bg-gray-200"
+                    }`}
+                  >
+                    {activities.filter((a) => a.type === type.value).length}
                   </span>
                 )}
               </button>
@@ -380,10 +409,14 @@ const TopActivities: React.FC<{
         {/* No Results */}
         {filteredActivities.length === 0 && (
           <div className="text-center py-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">No activities found</h3>
-            <p className="text-gray-600 mb-6">Try selecting a different category</p>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              No activities found
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Try selecting a different category
+            </p>
             <button
-              onClick={() => setActiveFilter('all')}
+              onClick={() => setActiveFilter("all")}
               className="bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold"
             >
               Show All Activities
