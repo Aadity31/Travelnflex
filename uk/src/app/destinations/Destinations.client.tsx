@@ -34,10 +34,16 @@ export default function DestinationsClient({
     initialDestinations ?? []
   );
 
-  const [cursor, setCursor] = useState<string | null>(() => {
+  const [cursor, setCursor] = useState<{
+    createdAt: string;
+    id: string;
+  } | null>(() => {
     const last = initialDestinations?.at(-1);
-    return last ? last.createdAt : null;
+    return last
+      ? { createdAt: last.createdAt, id: last.id }
+      : null;
   });
+
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -57,7 +63,9 @@ export default function DestinationsClient({
 
         try {
           const url = cursor
-            ? `/api/destinations?cursor=${encodeURIComponent(cursor)}`
+            ? `/api/destinations?createdAt=${encodeURIComponent(
+              cursor.createdAt
+            )}&id=${encodeURIComponent(cursor.id)}`
             : `/api/destinations`;
 
           const res = await fetch(url);
@@ -73,7 +81,12 @@ export default function DestinationsClient({
           const last = next.at(-1);
 
           setDestinations((prev) => [...prev, ...next]);
-          setCursor(last ? last.createdAt : null);
+          setCursor(
+            last
+              ? { createdAt: last.createdAt, id: last.id }
+              : null
+          );
+
         } catch (err) {
           console.error("Destinations infinite scroll failed:", err);
           setHasMore(false);
