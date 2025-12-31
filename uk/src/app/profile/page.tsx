@@ -536,34 +536,44 @@ function QuickLink({
   description,
   href,
 }: {
-  icon: React.ElementType;
+  icon: any;
   title: string;
   description: string;
   href: string;
 }) {
+  const router = useRouter();
+  const { showLoading } = useLoading(); // ✅ Add hook
+
+  const handleClick = () => {
+    // ✅ Show loading based on which page
+    const loadingMessages: { [key: string]: string } = {
+      "/profile/bookings": "Loading bookings...",
+      "/profile/favorites": "Loading favorites...",
+      "/profile/saved": "Loading saved places...",
+      "/profile/settings": "Opening settings...",
+    };
+
+    showLoading(loadingMessages[href] || "Loading..."); // ✅ Dynamic message
+    router.push(href);
+  };
+
   return (
-    <a
-      href={href}
-      className="flex items-center justify-between p-3 sm:p-5 bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition group"
+    <button
+      onClick={handleClick} // ✅ Use handler
+      className="group flex items-center gap-3 xs:gap-3.5 sm:gap-4 p-3 xs:p-3.5 sm:p-3 bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all text-left shadow-sm hover:shadow-md"
     >
-      <div className="flex items-start gap-2 sm:gap-3">
-        <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition shadow-lg">
-          <Icon className="text-white" size={16} />
-        </div>
-        <div className="min-w-0">
-          <h3 className="font-semibold text-gray-900 mb-0.5 text-xs sm:text-sm truncate">
-            {title}
-          </h3>
-          <p className="text-[10px] sm:text-xs text-gray-500 truncate">
-            {description}
-          </p>
-        </div>
+      <div className="w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-lg shadow-orange-500/30">
+        <Icon size={18} className="xs:w-5 xs:h-5 sm:w-6 sm:h-6 text-white" />
       </div>
-      <ChevronRight
-        className="text-gray-400 group-hover:text-orange-500 transition flex-shrink-0"
-        size={16}
-      />
-    </a>
+      <div className="flex-1 min-w-0">
+        <h3 className="text-xs xs:text-sm sm:text-base font-bold text-gray-900 group-hover:text-orange-600 transition">
+          {title}
+        </h3>
+        <p className="text-[10px] xs:text-[11px] sm:text-xs text-gray-600 mt-0.5 truncate">
+          {description}
+        </p>
+      </div>
+    </button>
   );
 }
 

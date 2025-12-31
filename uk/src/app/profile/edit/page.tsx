@@ -75,6 +75,20 @@ export default function EditProfilePage() {
     fetchUser();
   }, []); // ⭐ Empty dependency array
 
+  // ✅ Existing useEffect ke BAAD yeh add karo
+  useEffect(() => {
+    showLoading("Loading profile...");
+
+    const timer = setTimeout(() => {
+      hideLoading();
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+      hideLoading();
+    };
+  }, []);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {

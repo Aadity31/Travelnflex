@@ -14,12 +14,10 @@ import {
   EyeOff,
   Shield,
   Trash2,
-  ChevronLeft,
+  ArrowLeft,
   AlertTriangle,
-  Edit3,
-  ChevronRight,
-  Menu,
-  X,
+  CheckCircle2,
+  Settings as SettingsIcon,
 } from "lucide-react";
 
 type SettingsData = {
@@ -36,7 +34,7 @@ export default function SettingsPage() {
   const { data: session } = useSession();
   const { showLoading, hideLoading } = useLoading();
   const [activeTab, setActiveTab] = useState("notifications");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false); // ✅ Add this
 
   const [settings, setSettings] = useState<SettingsData>({
     emailNotifications: true,
@@ -59,25 +57,45 @@ export default function SettingsPage() {
     confirm: false,
   });
 
-  const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId);
-    setMobileMenuOpen(false);
-  };
+  // ✅ useEffect - hooks section complete
+  useEffect(() => {
+    showLoading("Loading settings...");
+    setIsClient(true);
+
+    const timer = setTimeout(() => {
+      hideLoading();
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+      hideLoading();
+    };
+  }, []);
+
+  // ✅ NOW return after all hooks
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50" />
+    );
+  }
 
   const handleSaveNotifications = async () => {
     showLoading("Saving preferences...");
 
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Ya actual API call:
-      // await fetch('/api/settings/notifications', {
-      //   method: 'PUT',
-      //   body: JSON.stringify(settings)
-      // })
-
-      toast.success("Preferences saved successfully!");
+      toast.success("Preferences saved successfully! 🎉", {
+        duration: 3000,
+        icon: "✨",
+        style: {
+          background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+          color: "#fff",
+          fontWeight: "600",
+          padding: "16px 24px",
+          borderRadius: "16px",
+          boxShadow: "0 8px 24px rgba(16, 185, 129, 0.4)",
+        },
+      });
     } catch (error) {
       toast.error("Failed to save preferences");
     } finally {
@@ -95,19 +113,22 @@ export default function SettingsPage() {
       return;
     }
 
-    showLoading("Changing password..."); // ⭐ Add this
+    showLoading("Changing password...");
 
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Ya actual API call:
-      // await fetch('/api/auth/change-password', {
-      //   method: 'POST',
-      //   body: JSON.stringify(passwordData)
-      // })
-
-      toast.success("Password changed successfully!");
+      toast.success("Password changed successfully! 🎉", {
+        duration: 3000,
+        icon: "🔒",
+        style: {
+          background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+          color: "#fff",
+          fontWeight: "600",
+          padding: "16px 24px",
+          borderRadius: "16px",
+          boxShadow: "0 8px 24px rgba(16, 185, 129, 0.4)",
+        },
+      });
       setPasswordData({
         currentPassword: "",
         newPassword: "",
@@ -116,27 +137,31 @@ export default function SettingsPage() {
     } catch (error) {
       toast.error("Failed to change password");
     } finally {
-      hideLoading(); // ⭐ Add this
+      hideLoading();
     }
   };
 
   const handleSavePreferences = async () => {
-    showLoading("Updating preferences..."); // ⭐ Add this
+    showLoading("Updating preferences...");
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 800));
-
-      // API call:
-      // await fetch('/api/settings/preferences', {
-      //   method: 'PUT',
-      //   body: JSON.stringify({ language: settings.language, currency: settings.currency })
-      // })
-
-      toast.success("Preferences saved!");
+      toast.success("Preferences saved! 🎉", {
+        duration: 3000,
+        icon: "✨",
+        style: {
+          background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+          color: "#fff",
+          fontWeight: "600",
+          padding: "16px 24px",
+          borderRadius: "16px",
+          boxShadow: "0 8px 24px rgba(16, 185, 129, 0.4)",
+        },
+      });
     } catch (error) {
       toast.error("Failed to save");
     } finally {
-      hideLoading(); // ⭐ Add this
+      hideLoading();
     }
   };
 
@@ -147,27 +172,21 @@ export default function SettingsPage() {
       return;
     }
 
-    showLoading("Deleting account..."); // ⭐ Add this
+    showLoading("Deleting account...");
 
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // API call:
-      // await fetch('/api/auth/delete-account', { method: 'DELETE' })
-
       toast.success("Account deletion requested");
-
-      // Redirect to home or logout
       setTimeout(() => router.push("/"), 1000);
     } catch (error) {
       toast.error("Failed to delete account");
     } finally {
-      hideLoading(); // ⭐ Add this
+      hideLoading();
     }
   };
 
   const tabs = [
+    { id: "profile", label: "Edit Profile", icon: User }, // ✅ Add this
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "security", label: "Security", icon: Lock },
     { id: "preferences", label: "Preferences", icon: Globe },
@@ -175,163 +194,263 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16 sm:pt-20 pb-6 sm:pb-8 px-3 sm:px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-4 sm:mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-10 lg:py-12">
+        {/* Header with Back Button */}
+        <div className="mb-3 xs:mb-3.5 sm:mb-4 md:mb-5 lg:mb-6">
+          {/* Back Button */}
           <button
-            onClick={() => router.push("/profile")}
-            className="flex items-center gap-1.5 sm:gap-2 text-gray-600 hover:text-orange-600 mb-3 sm:mb-4 transition"
+            onClick={() => router.back()}
+            className="group inline-flex items-center justify-center sm:justify-start gap-0 sm:gap-1 md:gap-1.5 lg:gap-2 text-gray-600 hover:text-orange-600 transition-all mb-2 xs:mb-2.5 sm:mb-3 md:mb-3 bg-white/80 backdrop-blur-sm w-7 h-7 xs:w-8 xs:h-8 sm:w-auto sm:h-auto sm:px-2.5 md:px-3 lg:px-4 sm:py-1.5 md:py-2 rounded-md sm:rounded-lg hover:shadow-md"
           >
-            <ChevronLeft size={16} className="sm:w-5 sm:h-5" />
-            <span className="text-xs sm:text-sm font-medium">
-              Back to Profile
+            <ArrowLeft
+              size={12}
+              className="xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 md:w-[18px] md:h-[18px] group-hover:-translate-x-1 transition-transform"
+            />
+            <span className="hidden sm:inline text-[10px] xs:text-[11px] sm:text-xs md:text-sm font-semibold">
+              Back
             </span>
           </button>
 
-          <div className="flex items-center justify-between">
+          {/* Settings Header */}
+          <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 md:gap-3 lg:gap-4">
+            <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 xl:w-12 xl:h-12 rounded-md xs:rounded-lg sm:rounded-xl md:rounded-xl lg:rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
+              <SettingsIcon className="text-white w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-[18px] sm:h-[18px] md:w-5 md:h-5" />
+            </div>
             <div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
-                Settings
+              <h1 className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold text-gray-900 leading-tight">
+                Account Settings
               </h1>
-              <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">
+              <p className="text-[9px] xs:text-[10px] sm:text-[11px] md:text-xs lg:text-sm xl:text-base text-gray-600 mt-0.5 sm:mt-1">
                 Manage your account preferences
               </p>
             </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition"
-            >
-              {mobileMenuOpen ? (
-                <X size={20} className="text-gray-700" />
-              ) : (
-                <Menu size={20} className="text-gray-700" />
-              )}
-            </button>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-4 gap-3 sm:gap-4">
-          {/* Sidebar - Desktop */}
-          <div className="hidden lg:block lg:col-span-1">
-            <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-1.5 sm:p-2 sticky top-20">
-              {/* Edit Profile Link */}
-              <button
-                onClick={() => router.push("/profile/edit")}
-                className="w-full flex items-center justify-between px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg text-left transition bg-blue-500 text-white hover:bg-blue-600 mb-1.5 sm:mb-2"
-              >
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <Edit3 size={14} className="sm:w-4 sm:h-4" />
-                  <span className="text-xs sm:text-sm font-semibold">
-                    Edit Profile
-                  </span>
-                </div>
-                <ChevronRight size={14} className="sm:w-4 sm:h-4" />
-              </button>
+        <div className="grid lg:grid-cols-3 gap-3 xs:gap-3.5 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8">
+          {/* Left Sidebar - Desktop Only */}
+          <div className="hidden lg:block space-y-4 xl:space-y-6">
+            {/* Settings Navigation Card */}
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl xl:rounded-3xl p-4 xl:p-6 border border-white/20 shadow-xl shadow-gray-200/50 sticky top-20">
+              <h3 className="text-xs xl:text-sm font-bold text-gray-900 mb-3 xl:mb-4 flex items-center gap-2">
+                <SettingsIcon
+                  size={14}
+                  className="xl:w-4 xl:h-4 text-orange-600"
+                />
+                Settings Menu
+              </h3>
+              <div className="space-y-1.5 xl:space-y-2">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg xl:rounded-xl text-left transition text-xs xl:text-sm font-semibold ${
+                        isActive
+                          ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30"
+                          : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      <Icon size={16} className="xl:w-[18px] xl:h-[18px]" />
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-              {/* Tabs */}
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg text-left transition text-xs sm:text-sm font-medium ${
-                      isActive
-                        ? "bg-orange-500 text-white"
-                        : "text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    <Icon size={14} className="sm:w-4 sm:h-4" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
+            {/* Quick Tips Card */}
+            <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl xl:rounded-3xl p-4 xl:p-6 text-white shadow-xl shadow-orange-500/30">
+              <h3 className="font-bold mb-2 xl:mb-3 text-base xl:text-lg">
+                💡 Quick Tips
+              </h3>
+              <ul className="space-y-1.5 xl:space-y-2 text-xs xl:text-sm text-white/90">
+                <li className="flex items-start gap-1.5 xl:gap-2">
+                  <span className="mt-0.5 xl:mt-1">•</span>
+                  <span>Keep your profile updated for better service</span>
+                </li>
+                <li className="flex items-start gap-1.5 xl:gap-2">
+                  <span className="mt-0.5 xl:mt-1">•</span>
+                  <span>Enable notifications for booking updates</span>
+                </li>
+                <li className="flex items-start gap-1.5 xl:gap-2">
+                  <span className="mt-0.5 xl:mt-1">•</span>
+                  <span>Use a strong password with 8+ characters</span>
+                </li>
+              </ul>
             </div>
           </div>
 
-          {/* Mobile Sidebar Menu */}
-          {mobileMenuOpen && (
-            <div
-              className="lg:hidden fixed inset-0 z-50 bg-black/50"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <div
-                className="absolute right-0 top-0 bottom-0 w-64 bg-white shadow-xl p-4"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-gray-900">Menu</h3>
-                  <button
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="p-1 hover:bg-gray-100 rounded-lg"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-
-                <div className="space-y-1">
-                  {/* Edit Profile */}
-                  <button
-                    onClick={() => {
-                      router.push("/profile/edit");
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition bg-blue-500 text-white hover:bg-blue-600 mb-2"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Edit3 size={16} />
-                      <span className="text-sm font-semibold">
-                        Edit Profile
+          {/* Main Content Area */}
+          <div className="lg:col-span-2">
+            {/* Mobile Tabs */}
+            <div className="lg:hidden mb-3 xs:mb-3.5 sm:mb-4 md:mb-5 bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl border border-white/20 shadow-lg p-1.5 xs:p-2">
+              <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 gap-1.5 xs:gap-2">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex flex-col items-center gap-1 xs:gap-1.5 px-2 xs:px-2.5 sm:px-3 py-2 xs:py-2.5 rounded-lg sm:rounded-xl text-left transition ${
+                        isActive
+                          ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30"
+                          : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      <Icon
+                        size={16}
+                        className="xs:w-[18px] xs:h-[18px] sm:w-5 sm:h-5"
+                      />
+                      <span className="text-[9px] xs:text-[10px] sm:text-xs font-semibold text-center leading-tight">
+                        {tab.label}
                       </span>
-                    </div>
-                    <ChevronRight size={16} />
-                  </button>
-
-                  {/* Tabs */}
-                  {tabs.map((tab) => {
-                    const Icon = tab.icon;
-                    const isActive = activeTab === tab.id;
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => handleTabChange(tab.id)}
-                        className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition text-sm font-medium ${
-                          isActive
-                            ? "bg-orange-500 text-white"
-                            : "text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <Icon size={16} />
-                        <span>{tab.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
-          )}
 
-          {/* Content */}
-          <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-              {/* NOTIFICATIONS */}
-              {activeTab === "notifications" && (
-                <div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                    <Bell size={16} className="sm:w-5 sm:h-5 text-orange-500" />
-                    <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                      Notifications
-                    </h2>
+            <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl lg:rounded-3xl border border-white/20 shadow-xl sm:shadow-2xl shadow-gray-200/50 overflow-hidden">
+              {/* EDIT PROFILE TAB - COMPACT */}
+              {activeTab === "profile" && (
+                <div className="p-3 xs:p-3.5 sm:p-4 md:p-5 lg:p-6 xl:p-8">
+                  <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 mb-3 xs:mb-3.5 sm:mb-4 md:mb-5">
+                    <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-md xs:rounded-lg sm:rounded-xl bg-blue-100 flex items-center justify-center">
+                      <User
+                        size={12}
+                        className="xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 md:w-[18px] md:h-[18px] text-blue-600"
+                      />
+                    </div>
+                    <div>
+                      <h2 className="text-xs xs:text-sm sm:text-base md:text-lg font-bold text-gray-900 leading-tight">
+                        Edit Profile
+                      </h2>
+                      <p className="text-[8px] xs:text-[9px] sm:text-[10px] md:text-xs text-gray-500 leading-tight">
+                        Update your personal information
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
-                    Choose how you want to be notified
-                  </p>
 
-                  <div className="space-y-3 sm:space-y-4">
+                  {/* Profile Info Cards - Compact Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 xs:gap-2.5 sm:gap-3 md:gap-3.5">
+                    {/* Name Card */}
+                    <div className="bg-gray-50 rounded-lg sm:rounded-xl border border-gray-200 p-2 xs:p-2.5 sm:p-3 hover:border-orange-300 transition">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 xs:w-8 xs:h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+                          <User
+                            size={14}
+                            className="xs:w-[15px] xs:h-[15px] text-gray-600"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[8px] xs:text-[9px] sm:text-[10px] text-gray-500 leading-tight">
+                            Full Name
+                          </p>
+                          <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm font-semibold text-gray-900 truncate">
+                            {session?.user?.name || "Not set"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Email Card */}
+                    <div className="bg-gray-50 rounded-lg sm:rounded-xl border border-gray-200 p-2 xs:p-2.5 sm:p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 xs:w-8 xs:h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+                          <Bell
+                            size={14}
+                            className="xs:w-[15px] xs:h-[15px] text-gray-600"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[8px] xs:text-[9px] sm:text-[10px] text-gray-500 leading-tight">
+                            Email
+                          </p>
+                          <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm font-semibold text-gray-900 truncate">
+                            {session?.user?.email || "Not set"}
+                          </p>
+                        </div>
+                        <span className="text-[7px] xs:text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 font-semibold whitespace-nowrap">
+                          ✓
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Phone Card */}
+                    <div className="bg-gray-50 rounded-lg sm:rounded-xl border border-gray-200 p-2 xs:p-2.5 sm:p-3 hover:border-orange-300 transition sm:col-span-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 xs:w-8 xs:h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+                          <Lock
+                            size={14}
+                            className="xs:w-[15px] xs:h-[15px] text-gray-600"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[8px] xs:text-[9px] sm:text-[10px] text-gray-500 leading-tight">
+                            Phone Number
+                          </p>
+                          <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm font-semibold text-gray-900">
+                            +91 XXXXX XXXXX
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Go to Full Edit Page Button - Compact */}
+                  <button
+                    onClick={() => router.push("/profile/edit")}
+                    className="mt-3 xs:mt-3.5 sm:mt-4 md:mt-5 w-full px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 sm:py-2.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-[10px] xs:text-[11px] sm:text-xs md:text-sm flex items-center justify-center gap-1.5"
+                  >
+                    <User
+                      size={14}
+                      className="xs:w-[15px] xs:h-[15px] sm:w-4 sm:h-4"
+                    />
+                    <span>Edit Full Profile</span>
+                  </button>
+
+                  {/* Info Box - Compact */}
+                  <div className="mt-2.5 xs:mt-3 sm:mt-3.5 bg-blue-50 border border-blue-200 rounded-lg sm:rounded-xl p-2 xs:p-2.5 sm:p-3">
+                    <div className="flex items-start gap-1.5 xs:gap-2">
+                      <CheckCircle2
+                        size={12}
+                        className="xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 text-blue-600 mt-0.5 flex-shrink-0"
+                      />
+                      <p className="text-[8px] xs:text-[9px] sm:text-[10px] md:text-xs text-blue-700 leading-relaxed">
+                        Click above to edit details like date of birth, gender,
+                        traveller type, and passport information.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* NOTIFICATIONS TAB */}
+              {activeTab === "notifications" && (
+                <div className="p-3 xs:p-3.5 sm:p-4 md:p-5 lg:p-6 xl:p-8">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-orange-100 flex items-center justify-center">
+                      <Bell
+                        size={16}
+                        className="sm:w-5 sm:h-5 text-orange-600"
+                      />
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-bold text-gray-900">
+                        Notifications
+                      </h2>
+                      <p className="text-[10px] sm:text-xs text-gray-500">
+                        Choose how you want to be notified
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
                     <ToggleItem
                       label="Email Notifications"
                       description="Receive booking confirmations and updates"
@@ -363,32 +482,44 @@ export default function SettingsPage() {
 
                   <button
                     onClick={handleSaveNotifications}
-                    className="mt-4 sm:mt-6 w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition text-xs sm:text-sm"
+                    className="mt-4 xs:mt-5 sm:mt-5 md:mt-6 w-full sm:w-auto px-4 xs:px-5 sm:px-5 md:px-6 py-2 xs:py-2.5 sm:py-2.5 md:py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-xs xs:text-xs sm:text-sm md:text-sm flex items-center justify-center gap-1.5 xs:gap-2"
                   >
-                    Save Preferences
+                    <CheckCircle2
+                      size={16}
+                      className="xs:w-[17px] xs:h-[17px] sm:w-[18px] sm:h-[18px]"
+                    />
+                    <span>Save Preferences</span>
                   </button>
                 </div>
               )}
 
-              {/* SECURITY */}
+              {/* SECURITY TAB */}
               {activeTab === "security" && (
-                <div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                    <Lock size={16} className="sm:w-5 sm:h-5 text-orange-500" />
-                    <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                      Security
-                    </h2>
-                  </div>
-                  <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
-                    Update your password
-                  </p>
-
-                  <div className="space-y-3 sm:space-y-4">
+                <div className="p-3 xs:p-3.5 sm:p-4 md:p-5 lg:p-6 xl:p-8">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-100 flex items-center justify-center">
+                      <Lock size={16} className="sm:w-5 sm:h-5 text-blue-600" />
+                    </div>
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-1.5">
-                        Current Password
+                      <h2 className="text-base sm:text-lg font-bold text-gray-900">
+                        Security
+                      </h2>
+                      <p className="text-[10px] sm:text-xs text-gray-500">
+                        Update your password
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-2">
+                        Current Password <span className="text-red-500">*</span>
                       </label>
-                      <div className="relative">
+                      <div className="relative group">
+                        <Lock
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition"
+                          size={16}
+                        />
                         <input
                           type={showPasswords.current ? "text" : "password"}
                           value={passwordData.currentPassword}
@@ -398,7 +529,7 @@ export default function SettingsPage() {
                               currentPassword: e.target.value,
                             })
                           }
-                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                          className="w-full pl-10 pr-12 py-2.5 text-sm bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:bg-white outline-none transition-all text-gray-900 placeholder:text-gray-400 font-medium"
                           placeholder="Enter current password"
                         />
                         <button
@@ -409,22 +540,26 @@ export default function SettingsPage() {
                               current: !showPasswords.current,
                             })
                           }
-                          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
                           {showPasswords.current ? (
-                            <EyeOff size={14} className="sm:w-4 sm:h-4" />
+                            <EyeOff size={18} />
                           ) : (
-                            <Eye size={14} className="sm:w-4 sm:h-4" />
+                            <Eye size={18} />
                           )}
                         </button>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-1.5">
-                        New Password
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-2">
+                        New Password <span className="text-red-500">*</span>
                       </label>
-                      <div className="relative">
+                      <div className="relative group">
+                        <Lock
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition"
+                          size={16}
+                        />
                         <input
                           type={showPasswords.new ? "text" : "password"}
                           value={passwordData.newPassword}
@@ -434,7 +569,7 @@ export default function SettingsPage() {
                               newPassword: e.target.value,
                             })
                           }
-                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                          className="w-full pl-10 pr-12 py-2.5 text-sm bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:bg-white outline-none transition-all text-gray-900 placeholder:text-gray-400 font-medium"
                           placeholder="Enter new password"
                         />
                         <button
@@ -445,22 +580,27 @@ export default function SettingsPage() {
                               new: !showPasswords.new,
                             })
                           }
-                          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
                           {showPasswords.new ? (
-                            <EyeOff size={14} className="sm:w-4 sm:h-4" />
+                            <EyeOff size={18} />
                           ) : (
-                            <Eye size={14} className="sm:w-4 sm:h-4" />
+                            <Eye size={18} />
                           )}
                         </button>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-1.5">
-                        Confirm New Password
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-2">
+                        Confirm New Password{" "}
+                        <span className="text-red-500">*</span>
                       </label>
-                      <div className="relative">
+                      <div className="relative group">
+                        <Lock
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition"
+                          size={16}
+                        />
                         <input
                           type={showPasswords.confirm ? "text" : "password"}
                           value={passwordData.confirmPassword}
@@ -470,7 +610,7 @@ export default function SettingsPage() {
                               confirmPassword: e.target.value,
                             })
                           }
-                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                          className="w-full pl-10 pr-12 py-2.5 text-sm bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:bg-white outline-none transition-all text-gray-900 placeholder:text-gray-400 font-medium"
                           placeholder="Confirm new password"
                         />
                         <button
@@ -481,12 +621,12 @@ export default function SettingsPage() {
                               confirm: !showPasswords.confirm,
                             })
                           }
-                          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
                           {showPasswords.confirm ? (
-                            <EyeOff size={14} className="sm:w-4 sm:h-4" />
+                            <EyeOff size={18} />
                           ) : (
-                            <Eye size={14} className="sm:w-4 sm:h-4" />
+                            <Eye size={18} />
                           )}
                         </button>
                       </div>
@@ -495,57 +635,62 @@ export default function SettingsPage() {
 
                   <button
                     onClick={handleChangePassword}
-                    className="mt-4 sm:mt-6 w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition text-xs sm:text-sm"
+                    className="mt-6 w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-sm flex items-center justify-center gap-2"
                   >
-                    Change Password
+                    <Lock size={18} />
+                    <span>Change Password</span>
                   </button>
                 </div>
               )}
 
-              {/* PREFERENCES */}
+              {/* PREFERENCES TAB */}
               {activeTab === "preferences" && (
-                <div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                    <Globe
-                      size={16}
-                      className="sm:w-5 sm:h-5 text-orange-500"
-                    />
-                    <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                      Preferences
-                    </h2>
-                  </div>
-                  <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
-                    Customize your experience
-                  </p>
-
-                  <div className="space-y-3 sm:space-y-4">
+                <div className="p-3 xs:p-3.5 sm:p-4 md:p-5 lg:p-6 xl:p-8">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-purple-100 flex items-center justify-center">
+                      <Globe
+                        size={16}
+                        className="sm:w-5 sm:h-5 text-purple-600"
+                      />
+                    </div>
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-1.5">
-                        Language
+                      <h2 className="text-base sm:text-lg font-bold text-gray-900">
+                        Preferences
+                      </h2>
+                      <p className="text-[10px] sm:text-xs text-gray-500">
+                        Customize your experience
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-2">
+                        Language <span className="text-red-500">*</span>
                       </label>
                       <select
                         value={settings.language}
                         onChange={(e) =>
                           setSettings({ ...settings, language: e.target.value })
                         }
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                        className="w-full px-4 py-2.5 text-sm bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:bg-white outline-none transition-all text-gray-900 font-medium cursor-pointer"
                       >
-                        <option value="en">English</option>
-                        <option value="hi">हिन्दी (Hindi)</option>
-                        <option value="mr">मराठी (Marathi)</option>
+                        <option value="en">🇬🇧 English</option>
+                        <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
+                        <option value="mr">🇮🇳 मराठी (Marathi)</option>
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-1.5">
-                        Currency
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-2">
+                        Currency <span className="text-red-500">*</span>
                       </label>
                       <select
                         value={settings.currency}
                         onChange={(e) =>
                           setSettings({ ...settings, currency: e.target.value })
                         }
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                        className="w-full px-4 py-2.5 text-sm bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:bg-white outline-none transition-all text-gray-900 font-medium cursor-pointer"
                       >
                         <option value="INR">₹ INR - Indian Rupee</option>
                         <option value="USD">$ USD - US Dollar</option>
@@ -556,30 +701,35 @@ export default function SettingsPage() {
 
                   <button
                     onClick={handleSavePreferences}
-                    className="mt-4 sm:mt-6 w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition text-xs sm:text-sm"
+                    className="mt-6 w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-sm flex items-center justify-center gap-2"
                   >
-                    Save Preferences
+                    <CheckCircle2 size={18} />
+                    <span>Save Preferences</span>
                   </button>
                 </div>
               )}
 
-              {/* PRIVACY */}
+              {/* PRIVACY TAB */}
               {activeTab === "privacy" && (
-                <div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                    <Shield
-                      size={16}
-                      className="sm:w-5 sm:h-5 text-orange-500"
-                    />
-                    <h2 className="text-base sm:text-lg font-bold text-gray-900">
-                      Privacy & Data
-                    </h2>
+                <div className="p-3 xs:p-3.5 sm:p-4 md:p-5 lg:p-6 xl:p-8">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-green-100 flex items-center justify-center">
+                      <Shield
+                        size={16}
+                        className="sm:w-5 sm:h-5 text-green-600"
+                      />
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-bold text-gray-900">
+                        Privacy & Data
+                      </h2>
+                      <p className="text-[10px] sm:text-xs text-gray-500">
+                        Control your privacy settings
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
-                    Control your privacy settings
-                  </p>
 
-                  <div className="mb-4 sm:mb-6">
+                  <div className="mb-6">
                     <ToggleItem
                       label="Public Profile"
                       description="Allow others to view your profile"
@@ -591,31 +741,52 @@ export default function SettingsPage() {
                   </div>
 
                   {/* Danger Zone */}
-                  <div className="border-2 border-red-200 bg-red-50 rounded-lg p-3 sm:p-4">
-                    <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                      <AlertTriangle
-                        size={16}
-                        className="sm:w-5 sm:h-5 text-red-600 mt-0.5"
-                      />
+                  <div className="border-2 border-red-200 bg-red-50 rounded-xl p-4 sm:p-6">
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+                        <AlertTriangle size={20} className="text-red-600" />
+                      </div>
                       <div>
-                        <h3 className="text-xs sm:text-sm font-bold text-red-900">
+                        <h3 className="text-sm sm:text-base font-bold text-red-900">
                           Danger Zone
                         </h3>
-                        <p className="text-[10px] sm:text-xs text-red-700 mt-0.5">
-                          Permanently delete your account and all data
+                        <p className="text-xs sm:text-sm text-red-700 mt-1">
+                          Permanently delete your account and all data. This
+                          action cannot be undone.
                         </p>
                       </div>
                     </div>
                     <button
                       onClick={handleDeleteAccount}
-                      className="w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2"
+                      className="w-full sm:w-auto px-5 py-2.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-red-600/30 hover:shadow-xl hover:shadow-red-600/40"
                     >
-                      <Trash2 size={14} className="sm:w-4 sm:h-4" />
-                      Delete Account
+                      <Trash2 size={18} />
+                      <span>Delete Account</span>
                     </button>
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Mobile Quick Tips */}
+            <div className="lg:hidden mt-4 xs:mt-5 sm:mt-6 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl sm:rounded-3xl p-4 xs:p-5 sm:p-6 text-white shadow-xl shadow-orange-500/30">
+              <h3 className="font-bold mb-2 xs:mb-2.5 sm:mb-3 text-sm xs:text-base sm:text-lg flex items-center gap-2">
+                <span>💡</span> Quick Tips
+              </h3>
+              <ul className="space-y-1.5 xs:space-y-2 sm:space-y-2.5 text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-white/90">
+                <li className="flex items-start gap-1.5 xs:gap-2">
+                  <span className="mt-0.5">•</span>
+                  <span>Keep your profile updated for better service</span>
+                </li>
+                <li className="flex items-start gap-1.5 xs:gap-2">
+                  <span className="mt-0.5">•</span>
+                  <span>Enable notifications for booking updates</span>
+                </li>
+                <li className="flex items-start gap-1.5 xs:gap-2">
+                  <span className="mt-0.5">•</span>
+                  <span>Use a strong password with 8+ characters</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -624,7 +795,6 @@ export default function SettingsPage() {
   );
 }
 
-// Toggle Component
 function ToggleItem({
   label,
   description,
@@ -637,24 +807,26 @@ function ToggleItem({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between py-2 sm:py-3 border-b border-gray-100 last:border-0">
-      <div className="flex-1 pr-3 sm:pr-4">
-        <h4 className="text-xs sm:text-sm font-semibold text-gray-900">
+    <div className="flex items-center justify-between py-2.5 xs:py-3 sm:py-3.5 md:py-4 px-2.5 xs:px-3 sm:px-3.5 md:px-4 bg-gray-50 rounded-lg sm:rounded-xl border-2 border-gray-200 hover:border-orange-200 transition">
+      <div className="flex-1 pr-2 xs:pr-3 sm:pr-4">
+        <h4 className="text-xs xs:text-xs sm:text-sm md:text-sm font-semibold text-gray-900">
           {label}
         </h4>
-        <p className="text-[10px] sm:text-xs text-gray-600 mt-0.5">
+        <p className="text-[9px] xs:text-[10px] sm:text-[11px] md:text-xs text-gray-600 mt-0.5 xs:mt-1">
           {description}
         </p>
       </div>
       <button
         onClick={() => onChange(!checked)}
-        className={`relative w-10 h-5 sm:w-11 sm:h-6 rounded-full transition flex-shrink-0 ${
+        className={`relative w-10 h-5 xs:w-11 xs:h-6 sm:w-12 sm:h-6 rounded-full transition flex-shrink-0 ${
           checked ? "bg-orange-500" : "bg-gray-300"
         }`}
       >
         <div
-          className={`absolute top-0.5 left-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full transition transform ${
-            checked ? "translate-x-5 sm:translate-x-5" : "translate-x-0"
+          className={`absolute top-0.5 left-0.5 w-4 h-4 xs:w-5 xs:h-5 bg-white rounded-full transition transform shadow-md ${
+            checked
+              ? "translate-x-5 xs:translate-x-5 sm:translate-x-6"
+              : "translate-x-0"
           }`}
         />
       </button>
