@@ -2,7 +2,7 @@ import pool from '@/lib/db';
 
 export async function getActivitiesInfinite({
   limit = 12,
-  cursor, // last activity created_at or id
+  cursor,
 }: {
   limit?: number;
   cursor?: string;
@@ -44,5 +44,34 @@ export async function getActivitiesInfinite({
     [cursor ?? null, limit]
   );
 
-  return rows;
+  return rows.map(row => ({
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    type: row.type,
+    description: row.description,
+    shortDescription: row.short_description,
+    duration: row.duration,
+    location: row.location,
+    difficulty: row.difficulty,
+    rating: Number(row.rating),
+    reviewCount: row.review_count,
+    maxGroupSize: row.max_group_size,
+
+    images: [row.cover_image, ...row.gallery_images],
+    highlights: row.highlights,
+    includes: row.includes,
+
+    isPopular: row.is_popular,
+    isTrending: row.is_trending,
+
+    createdAt: row.created_at.toISOString(),
+    // 🔥 MOST IMPORTANT
+
+    price: {
+      min: row.price_min,
+      max: row.price_max,
+      currency: row.currency,
+    },
+  }));
 }

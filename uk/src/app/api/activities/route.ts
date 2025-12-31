@@ -5,30 +5,34 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
 
-    const cursor = searchParams.get('cursor');
-    const limitParam = searchParams.get('limit');
+    const rawCursor = searchParams.get('cursor');
 
-    const limit = limitParam ? Number(limitParam) : 12;
+    let cursor: string | undefined = undefined;
 
-    // Safety guard
-    if (Number.isNaN(limit) || limit <= 0 || limit > 50) {
-      return NextResponse.json(
-        { error: 'Invalid limit' },
-        { status: 400 }
-      );
+    if (rawCursor) {
+      const parsed = new Date(rawCursor);
+
+      if (isNaN(parsed.getTime())) {
+        return NextResponse.json(
+          { error: 'Invalid cursor format' },
+          { status: 400 }
+        );
+      }
+
+      // 🔥 FORCE ISO UTC — THIS IS THE FIX
+      cursor = parsed.toISOString();
     }
 
     const activities = await getActivitiesInfinite({
-      cursor: cursor ?? undefined,
-      limit,
+      limit: 12,
+      cursor,
     });
 
     return NextResponse.json(activities);
-  } catch (error) {
-    console.error('API /activities error:', error);
-
+  } catch (err) {
+    console.error('API /activities error:', err);
     return NextResponse.json(
-      { error: 'Failed to load activities' },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }

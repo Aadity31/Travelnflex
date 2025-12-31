@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { StarIcon, ClockIcon, MapPinIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/solid';
-import type { Activity, SearchFilters } from '../types';
+import type { Activity, SearchFilters } from '@/app/types';
 
 const activityTypes = [
   { value: '', label: 'All Activities' },
@@ -33,9 +33,10 @@ export default function ActivitiesClient({
   const [filters, setFilters] = useState<SearchFilters>({});
   const [showFilters, setShowFilters] = useState(false);
   const [activities, setActivities] = useState<Activity[]>(initialActivities);
-  const [cursor, setCursor] = useState<string | null>(
-    initialActivities.at(-1)?.createdAt ?? null
-  );
+  const [cursor, setCursor] = useState<string | null>(() => {
+  const last = initialActivities.at(-1);
+  return last ? new Date(last.createdAt).toISOString() : null;
+});
 
 
 
@@ -60,36 +61,48 @@ export default function ActivitiesClient({
 //infinite scroll effect
 
   useEffect(() => {
-    if (!cursor || !hasMore || isLoading) return;
+  if (!loaderRef.current || !hasMore) return;
 
-    const observer = new IntersectionObserver(async ([entry]) => {
-      if (!entry.isIntersecting) return;
+  const observer = new IntersectionObserver(
+    async ([entry]) => {
+      if (!entry.isIntersecting || isLoading) return;
 
       setIsLoading(true);
 
       try {
-        const res = await fetch(`/api/activities?cursor=${cursor}`);
+        const url = cursor
+          ? `/api/activities?cursor=${encodeURIComponent(cursor)}`
+          : `/api/activities`;
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('API failed');
+
         const next: Activity[] = await res.json();
 
         if (next.length === 0) {
-          setHasMore(false); // DB exhausted
+          setHasMore(false);
           return;
         }
-
+const last = next.at(-1);
         setActivities(prev => [...prev, ...next]);
-        setCursor(next.at(-1)?.createdAt ?? null);
-      } catch (e) {
-        console.error('Infinite scroll failed', e);
+        setCursor(last ? new Date(last.createdAt).toISOString() : null); // ✅ SAFE
+      } catch (err) {
+        console.error('Infinite scroll failed:', err);
+        setHasMore(false);
       } finally {
         setIsLoading(false);
       }
-    });
+    },
+    {
+      rootMargin: '200px', // preload before bottom
+    }
+  );
 
-    const el = loaderRef.current;
-    if (el) observer.observe(el);
+  observer.observe(loaderRef.current);
 
-    return () => observer.disconnect();
-  }, [cursor, hasMore, isLoading]);
+  return () => observer.disconnect();
+}, [cursor, hasMore, isLoading]);
+
 
 
 
