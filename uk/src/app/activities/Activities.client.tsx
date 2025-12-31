@@ -52,7 +52,7 @@ export default function ActivitiesClient({
       if (filters.rating && activity.rating < filters.rating) return false;
       return true;
     });
-  }, [filters]);
+  }, [filters, activities]);
 
   // safer updateFilter to satisfy TS when merging partials into SearchFilters
   const updateFilter = <K extends keyof SearchFilters>(key: K, value: SearchFilters[K]) => {
