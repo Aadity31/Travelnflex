@@ -137,39 +137,77 @@ export default function EditProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
-      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 lg:py-16">
-        <button
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-8 lg:py-14">
+        {/* Header with Back Button and Account Information */}
+        <div className="mb-3 sm:mb-4 md:mb-5 lg:mb-6">
+          {/* Back Button - Responsive */}
+          <button
             onClick={() => router.back()}
-            className="group inline-flex items-center gap-1.5 sm:gap-2 text-gray-600 hover:text-orange-600 transition-all mb-4 sm:mb-6 bg-white/80 backdrop-blur-sm px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl hover:shadow-md"
+            className="group inline-flex items-center justify-center sm:justify-start gap-0 sm:gap-1.5 md:gap-2 text-gray-600 hover:text-orange-600 transition-all mb-2 sm:mb-2.5 md:mb-3 bg-white/80 backdrop-blur-sm w-8 h-8 sm:w-auto sm:h-auto sm:px-3 md:px-4 sm:py-2 rounded-md sm:rounded-lg hover:shadow-md"
           >
             <ArrowLeft
-              size={16}
-              className="sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform"
+              size={14}
+              className="sm:w-4 sm:h-4 md:w-[18px] md:h-[18px] group-hover:-translate-x-1 transition-transform"
             />
-            <span className="text-xs sm:text-sm font-semibold">
-              Back to Profile
+            <span className="hidden sm:inline text-xs md:text-sm font-semibold">
+              Back
             </span>
           </button>
-          
-          {/* Header */}
-        <div className="mb-6 sm:mb-8 lg:mb-12">
-          
 
-          <div className="flex items-center gap-2.5 sm:gap-4 mb-2">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
-              <User className="text-white" size={18} />
+          {/* Edit Profile Header */}
+          <div className="flex items-center gap-2 xs:gap-2.5 sm:gap-3 md:gap-4 mb-2.5 sm:mb-3 md:mb-3.5">
+            <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 rounded-lg xs:rounded-xl sm:rounded-xl md:rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
+              <User className="text-white" size={14} />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-gray-900">
+              <h1 className="text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 leading-tight">
                 Edit Your Profile
               </h1>
-              <p className="text-gray-600 text-xs sm:text-sm lg:text-base mt-0.5 sm:mt-1">
+              <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base text-gray-600 mt-0.5 sm:mt-1">
                 Keep your information up to date
               </p>
             </div>
           </div>
-        </div>
 
+          {/* Account Information Card */}
+          <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl border border-white/20 shadow-lg p-3 xs:p-3.5 sm:p-4 md:p-5">
+            <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+              <Shield
+                size={14}
+                className="xs:w-[15px] xs:h-[15px] sm:w-4 sm:h-4 text-orange-600"
+              />
+              <h3 className="text-[11px] xs:text-xs sm:text-sm md:text-base font-bold text-gray-900">
+                Account Information
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2 xs:gap-2.5 sm:gap-3 mt-2 sm:mt-2.5 md:mt-3">
+              <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 rounded-md sm:rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                <Mail
+                  size={13}
+                  className="xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 text-gray-600"
+                />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] xs:text-[11px] sm:text-xs text-gray-500">
+                  Email Address
+                </p>
+                <p className="text-[11px] xs:text-xs sm:text-sm md:text-base font-semibold text-gray-900 truncate">
+                  {user.email}
+                </p>
+              </div>
+
+              <span className="text-[9px] xs:text-[10px] sm:text-[11px] px-1.5 xs:px-2 py-0.5 xs:py-1 rounded-full bg-green-100 text-green-700 font-semibold whitespace-nowrap">
+                Verified
+              </span>
+            </div>
+
+            <p className="mt-1.5 sm:mt-2 text-[9px] xs:text-[10px] sm:text-[11px] md:text-xs text-gray-500 leading-relaxed">
+              Email address cannot be changed once the account is created.
+            </p>
+          </div>
+        </div>
         <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Left Sidebar - Desktop Only */}
           <div className="hidden lg:block space-y-6">
@@ -227,37 +265,6 @@ export default function EditProfilePage() {
 
           {/* Main Form Area */}
           <div className="lg:col-span-2">
-            {/* Account Information */}
-            <div className="mb-6 bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 shadow-lg p-4 sm:p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <Shield size={16} className="text-orange-600" />
-                <h3 className="text-sm font-bold text-gray-900">
-                  Account Information
-                </h3>
-              </div>
-
-              <div className="flex items-center gap-3 mt-3">
-                <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">
-                  <Mail size={16} className="text-gray-600" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-500">Email Address</p>
-                  <p className="text-sm font-semibold text-gray-900 truncate">
-                    {user.email}
-                  </p>
-                </div>
-
-                <span className="text-[10px] px-2 py-1 rounded-full bg-green-100 text-green-700 font-semibold">
-                  Verified
-                </span>
-              </div>
-
-              <p className="mt-2 text-[11px] text-gray-500">
-                Email address cannot be changed once the account is created.
-              </p>
-            </div>
-
             <form onSubmit={handleSubmit}>
               <div className="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/20 shadow-xl sm:shadow-2xl shadow-gray-200/50 overflow-hidden">
                 {/* Personal Information Section */}
@@ -305,7 +312,7 @@ export default function EditProfilePage() {
                     {/* Phone Number */}
                     <div>
                       <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-1.5 sm:mb-2">
-                        WhatsApp Number <span className="text-red-500">*</span>
+                        Phone Number <span className="text-red-500">*</span>
                       </label>
                       <div className="relative group">
                         <Phone
@@ -329,6 +336,46 @@ export default function EditProfilePage() {
                         />
                         We&apos;ll use this for booking confirmations
                       </p>
+                    </div>
+
+                    {/* Phone Number ke BAAD yeh add karo */}
+
+                    {/* Date of Birth & Gender - Side by Side for Space Saving */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                      {/* Date of Birth */}
+                      <div>
+                        <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-1.5 sm:mb-2">
+                          Date of Birth <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="date"
+                          name="date_of_birth"
+                          // value={formData.date_of_birth}
+                          onChange={handleInputChange}
+                          required
+                          max={new Date().toISOString().split("T")[0]}
+                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-gray-50 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:bg-white outline-none transition-all text-gray-900 font-medium"
+                        />
+                      </div>
+
+                      {/* Gender */}
+                      <div>
+                        <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-1.5 sm:mb-2">
+                          Gender <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          name="gender"
+                          // value={formData.gender}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-gray-50 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:bg-white outline-none transition-all text-gray-900 font-medium cursor-pointer"
+                        >
+                          <option value="">Select Gender</option>
+                          <option value="male">👨 Male</option>
+                          <option value="female">👩 Female</option>
+                          <option value="other">🧑 Other</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>

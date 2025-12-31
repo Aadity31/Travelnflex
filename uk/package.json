@@ -26,6 +26,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hot-toast": "^2.6.0",
+    "react-tailwindcss-datepicker": "^2.0.0",
     "types": "^0.1.1"
   },
   "devDependencies": {
