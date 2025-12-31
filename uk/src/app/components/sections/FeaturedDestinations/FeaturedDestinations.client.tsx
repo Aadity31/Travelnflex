@@ -30,41 +30,9 @@ interface FeaturedDestination {
   badgeType?: "popular" | "trending" | "new";
 }
 
-// Mock data
-const featuredDestinations: FeaturedDestination[] = [
-  {
-    id: "rishikesh",
-    name: "Rishikesh",
-    slug: "rishikesh",
-    shortDescription:
-      "The Yoga Capital of the World offering spiritual retreats and thrilling adventures along the holy Ganges River.",
-    image: "/images/destinations/rishikesh-featured.jpg",
-    location: "Uttarakhand, India",
-    rating: 4.8,
-    reviewCount: 1250,
-    popularActivities: ["Yoga Retreats", "River Rafting", "Temple Visits"],
-    bestTimeToVisit: "Oct - Feb",
-    startingPrice: 2999,
-    badgeText: "Most Popular",
-    badgeType: "popular",
-  },
-  {
-    id: "haridwar",
-    name: "Haridwar",
-    slug: "haridwar",
-    shortDescription:
-      "One of India's seven holiest cities where the Ganges descends from the Himalayas to the plains.",
-    image: "/images/destinations/haridwar-featured.jpg",
-    location: "Uttarakhand, India",
-    rating: 4.7,
-    reviewCount: 980,
-    popularActivities: ["Ganga Aarti", "Temple Tours", "Spiritual Walks"],
-    bestTimeToVisit: "Oct - Mar",
-    startingPrice: 2499,
-    badgeText: "Sacred Journey",
-    badgeType: "trending",
-  },
-];
+interface FeaturedDestinationsClientProps {
+  destinations: FeaturedDestination[];
+}
 
 // Badge Component
 interface BadgeProps {
@@ -257,7 +225,9 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
 };
 
 // Main FeaturedDestinations Component
-const FeaturedDestinations: React.FC = () => {
+const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
+  destinations
+}) =>  {
   const [likedDestinations, setLikedDestinations] = useState<Set<string>>(
     new Set()
   );
@@ -297,7 +267,7 @@ const FeaturedDestinations: React.FC = () => {
 
         {/* Destinations Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-10 md:mb-12">
-          {featuredDestinations.map((destination) => (
+          {destinations.map((destination) => (
             <DestinationCard
               key={destination.id}
               destination={destination}
