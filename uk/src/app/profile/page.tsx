@@ -22,6 +22,7 @@ import {
   Sparkles,
   Star,
   TrendingUp,
+  LucideIcon,
 } from "lucide-react";
 
 type UserType = {
@@ -536,7 +537,7 @@ function QuickLink({
   description,
   href,
 }: {
-  icon: any;
+  icon: LucideIcon;
   title: string;
   description: string;
   href: string;
