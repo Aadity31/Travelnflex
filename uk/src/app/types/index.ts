@@ -21,7 +21,7 @@ export interface Activity {
   id: string;
   name: string;
   slug: string;
-  type: 'adventure' | 'spiritual' | 'cultural' | 'food' | 'trekking';
+  type: "adventure" | "spiritual" | "cultural" | "food" | "trekking";
   description: string;
   duration: string;
 
@@ -32,22 +32,21 @@ export interface Activity {
     max: number;
     currency: string;
   };
-  difficulty: 'easy' | 'moderate' | 'difficult';
+  difficulty: "easy" | "moderate" | "difficult";
   location: string;
   images: string[];
-   reviewCount: number; 
+  reviewCount: number;
   rating: number;
   includes: string[];
 
   reviews?: Review[]; //  MAKE OPTIONAL
 }
 
-
 export interface TravelPackage {
   id: string;
   name: string;
   slug: string;
-  type: 'spiritual' | 'adventure' | 'combined' | 'custom';
+  type: "spiritual" | "adventure" | "combined" | "custom";
   duration: {
     days: number;
     nights: number;
@@ -103,11 +102,14 @@ export interface ItineraryDay {
 
 export interface SearchFilters {
   location?: string;
-  activityType?: Activity['type'];
+  activityType?: Activity["type"]; // Keep for backward compatibility
+  activityTypes?: Activity["type"][]; // NEW - Multiple selection
   priceRange?: [number, number];
   duration?: string;
-  difficulty?: Activity['difficulty'];
-  rating?: number;
+  difficulty?: Activity["difficulty"]; // Keep for backward compatibility
+  difficulties?: Activity["difficulty"][]; // NEW - Multiple selection
+  rating?: number; // Keep for backward compatibility
+  ratings?: number[]; // NEW - Multiple selection
   date?: string;
   guests?: number;
 }
