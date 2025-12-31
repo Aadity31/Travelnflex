@@ -195,13 +195,28 @@ export default function ActivityFilters({
     (filters.location ? 1 : 0);
 
   return (
-    <aside className="w-full lg:w-80 bg-white rounded-xl shadow-md h-fit sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hide">
-      <div className="p-5">
+    <aside
+      className="
+    w-full
+    md:w-72
+    lg:w-64
+    xl:w-80
+    2xl:w-96
+    bg-white rounded-xl shadow-md
+    h-fit sticky top-4
+    max-h-[calc(100vh-2rem)]
+    overflow-y-auto scrollbar-hide
+  "
+    >
+      <div className="p-4 lg:p-4 xl:p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-200">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">Filters</h2>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h2 className="text-base lg:text-base xl:text-lg font-bold text-gray-900">
+              Filters
+            </h2>
+
+            <p className="text-xs lg:text-xs xl:text-sm text-gray-500 mt-0.5">
               {filteredCount} activities
             </p>
           </div>
@@ -222,7 +237,7 @@ export default function ActivityFilters({
               {filters.activityTypes?.map((type) => (
                 <span
                   key={type}
-                  className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
+                  className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded-full text-[11px] lg:text-xs font-medium whitespace-nowrap"
                 >
                   {activityTypes.find((t) => t.value === type)?.label}
                   <button
@@ -299,7 +314,7 @@ export default function ActivityFilters({
                   location: e.target.value || undefined,
                 })
               }
-              className="w-full border-2 border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-lg pl-9 pr-3 py-2 bg-white text-gray-900 text-sm transition-all outline-none"
+              className="w-full border-2 border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-lg pl-9 pr-3 py-1.5 lg:py-2 bg-white text-gray-900 text-xs lg:text-sm transition-all outline-none"
             />
             {!filters.location && !isFocused && (
               <div className="absolute left-9 top-2 text-gray-400 text-sm pointer-events-none select-none">
@@ -316,7 +331,7 @@ export default function ActivityFilters({
         <div className="mb-5">
           <button
             onClick={() => toggleSection("activityType")}
-            className="w-full flex items-center justify-between text-sm font-semibold text-gray-900 mb-3"
+            className="w-full flex items-center justify-between text-xs lg:text-sm font-semibold text-gray-900 mb-2 lg:mb-3"
           >
             <span>
               Activity Type
@@ -376,7 +391,7 @@ export default function ActivityFilters({
                         )}
                       </div>
                     </div>
-                    <span className="text-sm text-gray-700 group-hover:text-gray-900">
+                    <span className="text-xs lg:text-sm text-gray-700 group-hover:text-gray-900">
                       {type.label}
                     </span>
                   </label>
