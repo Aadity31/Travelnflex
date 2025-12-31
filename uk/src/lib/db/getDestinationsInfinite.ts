@@ -1,14 +1,17 @@
 import pool from '@/lib/db';
 
-type GetDestinationsInfiniteParams = {
-  limit?: number;
-  cursor?: string; // ISO string
+type Cursor = {
+  createdAt: string;
+  id: string;
 };
 
 export async function getDestinationsInfinite({
   limit = 12,
   cursor,
-}: GetDestinationsInfiniteParams) {
+}: {
+  limit?: number;
+  cursor?: Cursor;
+}) {
   const { rows } = await pool.query(
     `
     SELECT
@@ -28,11 +31,18 @@ export async function getDestinationsInfinite({
       created_at
     FROM destinations
     WHERE is_active = TRUE
-      AND ($1::timestamptz IS NULL OR created_at < $1)
-    ORDER BY created_at DESC
-    LIMIT $2
+      AND (
+        $1::timestamptz IS NULL
+        OR (created_at, id) < ($1, $2)
+      )
+    ORDER BY created_at DESC, id DESC
+    LIMIT $3
     `,
-    [cursor ?? null, limit]
+    [
+      cursor?.createdAt ?? null,
+      cursor?.id ?? null,
+      limit,
+    ]
   );
 
   return rows.map(row => ({
@@ -50,7 +60,6 @@ export async function getDestinationsInfinite({
     badgeText: row.badge_text,
     badgeType: row.badge_type,
 
-    // 🔑 cursor continuity (MOST IMPORTANT)
     createdAt: row.created_at.toISOString(),
   }));
 }
