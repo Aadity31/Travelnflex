@@ -474,9 +474,12 @@ export default function ProfilePage() {
             <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">
               Profile Picture Options
             </h3>
-            <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
-              What would you like to do with your profile picture?
-            </p>
+            <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">
+  You can upload or remove your profile picture.
+</p>
+<p className="text-[10px] sm:text-xs text-gray-500 mb-4 sm:mb-6">
+  Only image files are allowed. Images are stored securely and never shared publicly.
+</p>
 
             <div className="space-y-2 sm:space-y-3">
               <button
