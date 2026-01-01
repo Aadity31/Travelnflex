@@ -180,19 +180,20 @@ export default function ActivitiesClient({
                     key={activity.id}
                     className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row"
                   >
-                    {/* Image Section - RESPONSIVE */}
-                    <div className="relative w-full sm:w-64 md:w-80 lg:w-96 h-48 sm:h-auto flex-shrink-0">
+                    {/* Image Section - Height Reduced from h-48 to h-40 */}
+                    <div className="relative w-full sm:w-64 md:w-80 lg:w-96 h-40 sm:h-auto flex-shrink-0">
                       <Image
                         src={activity.images[0]}
                         alt={activity.name}
                         fill
                         className="object-cover"
+                        sizes="(max-width: 640px) 100vw, 400px"
                       />
 
-                      {/* Type Badge - RESPONSIVE */}
+                      {/* Type Badge */}
                       <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
                         <span
-                          className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-semibold text-white shadow-md ${
+                          className={`px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold text-white shadow-md ${
                             activity.type === "adventure"
                               ? "bg-red-500"
                               : activity.type === "spiritual"
@@ -209,25 +210,25 @@ export default function ActivitiesClient({
                         </span>
                       </div>
 
-                      {/* Image Thumbnails - RESPONSIVE */}
+                      {/* Image Thumbnails */}
                       <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 flex gap-1">
                         {activity.images.slice(0, 4).map((img, idx) => (
                           <div
                             key={idx}
-                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-md overflow-hidden border-2 border-white shadow-sm"
+                            className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-md overflow-hidden border-2 border-white shadow-sm"
                           >
                             <Image
                               src={img}
                               alt={`${activity.name} ${idx + 1}`}
-                              width={48}
-                              height={48}
+                              fill
+                              sizes="50px"
                               className="object-cover"
                             />
                           </div>
                         ))}
                         {activity.images.length > 4 && (
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-md bg-black/60 backdrop-blur-sm border-2 border-white flex items-center justify-center">
-                            <span className="text-white text-xs font-semibold">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-black/60 backdrop-blur-sm border-2 border-white flex items-center justify-center">
+                            <span className="text-white text-[10px] font-semibold">
                               +{activity.images.length - 4}
                             </span>
                           </div>
@@ -235,13 +236,13 @@ export default function ActivitiesClient({
                       </div>
                     </div>
 
-                    {/* Content Section - RESPONSIVE */}
-                    <div className="flex-1 p-3 sm:p-4 md:p-5 flex flex-col">
+                    {/* Content Section - Padding Reduced */}
+                    <div className="flex-1 p-2.5 sm:p-3 md:p-4 flex flex-col">
                       <div className="flex-1">
-                        {/* Title and Location - RESPONSIVE */}
-                        <div className="mb-2">
-                          <div className="flex items-start justify-between gap-2 mb-1">
-                            <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-2">
+                        {/* Title and Location */}
+                        <div className="mb-1.5">
+                          <div className="flex items-start justify-between gap-2 mb-0.5">
+                            <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
                               <Link
                                 href={`/activities/${activity.slug}`}
                                 onClick={() =>
@@ -252,40 +253,40 @@ export default function ActivitiesClient({
                               </Link>
                             </h3>
 
-                            {/* Rating Badge - RESPONSIVE */}
-                            <div className="flex items-center gap-0.5 sm:gap-1 bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg flex-shrink-0">
-                              <span className="text-xs sm:text-sm font-bold">
+                            {/* Rating Badge */}
+                            <div className="flex items-center gap-0.5 bg-blue-600 text-white px-1.5 py-0.5 rounded flex-shrink-0">
+                              <span className="text-[10px] sm:text-xs font-bold">
                                 {activity.rating}
                               </span>
-                              <StarIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                              <StarIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-1 sm:gap-1.5 text-gray-600 text-xs sm:text-sm">
-                            <MapPinIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <div className="flex items-center gap-1 text-gray-600 text-[10px] sm:text-xs">
+                            <MapPinIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                             <span className="line-clamp-1">
                               {activity.location}
                             </span>
                           </div>
                         </div>
 
-                        {/* Description - RESPONSIVE */}
-                        <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2">
+                        {/* Description - Margins Reduced */}
+                        <p className="text-gray-600 text-xs mb-2 line-clamp-2">
                           {activity.description}
                         </p>
 
-                        {/* Features/Includes - RESPONSIVE */}
-                        <div className="mb-2 sm:mb-3">
-                          <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                        {/* Features - Margins Reduced */}
+                        <div className="mb-2">
+                          <div className="flex flex-wrap gap-1.5">
                             {activity.includes
                               .slice(0, 3)
                               .map((item, index) => (
                                 <div
                                   key={index}
-                                  className="flex items-center gap-0.5 sm:gap-1 text-xs text-gray-700"
+                                  className="flex items-center gap-0.5 text-[10px] sm:text-xs text-gray-700"
                                 >
                                   <svg
-                                    className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0"
+                                    className="w-3 h-3 text-green-600 flex-shrink-0"
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                   >
@@ -299,42 +300,44 @@ export default function ActivitiesClient({
                                 </div>
                               ))}
                             {activity.includes.length > 3 && (
-                              <span className="text-xs text-gray-500">
+                              <span className="text-[10px] text-gray-500">
                                 +{activity.includes.length - 3}
                               </span>
                             )}
                           </div>
                         </div>
 
-                        {/* Duration - RESPONSIVE */}
-                        <div className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm text-gray-600">
-                          <ClockIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                        {/* Duration */}
+                        <div className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-600">
+                          <ClockIcon className="w-3 h-3" />
                           <span>{activity.duration}</span>
                         </div>
                       </div>
 
-                      {/* Bottom Section - Price & Button - RESPONSIVE */}
-                      <div className="flex items-end justify-between mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-gray-200">
+                      {/* Bottom Section - Tighter Spacing */}
+                      <div className="flex items-end justify-between mt-2 pt-2 border-t border-gray-200">
                         <div>
-                          <div className="text-xs text-gray-500 line-through">
+                          <div className="text-[10px] text-gray-500 line-through leading-none">
                             ₹{Math.round(activity.price.min * 1.2)}
                           </div>
-                          <div className="flex items-baseline gap-0.5 sm:gap-1">
-                            <span className="text-xl sm:text-2xl font-bold text-gray-900">
+                          <div className="flex items-baseline gap-0.5">
+                            <span className="text-lg sm:text-xl font-bold text-gray-900">
                               ₹{activity.price.min}
                             </span>
                             {activity.price.min !== activity.price.max && (
-                              <span className="text-xs sm:text-sm text-gray-600">
+                              <span className="text-[10px] sm:text-xs text-gray-600">
                                 - ₹{activity.price.max}
                               </span>
                             )}
                           </div>
-                          <div className="text-xs text-gray-500">Per Night</div>
+                          <div className="text-[10px] text-gray-500 leading-none">
+                            Per Night
+                          </div>
                         </div>
 
                         <Link
                           href={`/activities/${activity.slug}`}
-                          className="bg-orange-600 hover:bg-orange-700 text-white py-2 sm:py-2.5 px-4 sm:px-6 rounded-lg font-semibold transition-colors duration-200 text-xs sm:text-sm whitespace-nowrap"
+                          className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap"
                           onClick={() =>
                             showLoading("Loading activity details...")
                           }
