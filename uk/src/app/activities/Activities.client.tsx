@@ -8,20 +8,17 @@ import {
   ClockIcon,
   MapPinIcon,
   FunnelIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/solid";
 import type { Activity, SearchFilters } from "@/app/types";
-import ActivityFilters from "@/app/components/filters/ActivityFilters";
-import MobileActivityFilters from "@/app/components/filters/MobileActivityFilters";
-
-
+import ActivityFilters from "@/app/components/filters/FilterSidebar";
+import MobileActivityFilters from "@/app/components/filters/MobileFilterSidebar";
 
 export default function ActivitiesClient({
   initialActivities,
 }: {
   initialActivities: Activity[];
 }) {
-
-
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement | null>(null);
@@ -124,7 +121,6 @@ export default function ActivitiesClient({
 
   return (
     <>
-      
       <main className="min-h-screen bg-gray-50">
         {/* Hero Section - RESPONSIVE */}
         <section className="relative h-48 sm:h-56 md:h-64 lg:h-72 bg-gradient-to-r from-green-600 to-blue-600 flex items-center justify-center">
@@ -154,6 +150,123 @@ export default function ActivitiesClient({
                 </span>
               )}
             </button>
+          </div>
+
+          {/* --- ACTIVE FILTERS DISPLAY (Mobile Only) --- */}
+          <div className="lg:hidden flex flex-wrap gap-2 mb-6 empty:mb-0">
+            {/* Location Tag */}
+            {filters.location && (
+              <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 border border-gray-200 px-2 py-1 rounded-full text-xs font-medium">
+                📍 {filters.location}
+                <button
+                  onClick={() =>
+                    setFilters({ ...filters, location: undefined })
+                  }
+                  className="p-0.5 hover:bg-gray-200 rounded-full"
+                >
+                  <XMarkIcon className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+
+            {/* Activity Types Tags */}
+            {filters.activityTypes?.map((type) => (
+              <span
+                key={type}
+                className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-100 px-2 py-1 rounded-full text-xs font-medium capitalize"
+              >
+                {type}
+                <button
+                  onClick={() =>
+                    setFilters({
+                      ...filters,
+                      activityTypes: filters.activityTypes?.filter(
+                        (t) => t !== type
+                      ),
+                    })
+                  }
+                  className="p-0.5 hover:bg-orange-100 rounded-full"
+                >
+                  <XMarkIcon className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+
+            {/* Difficulty Tags */}
+            {filters.difficulties?.map((diff) => (
+              <span
+                key={diff}
+                className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-100 px-2 py-1 rounded-full text-xs font-medium capitalize"
+              >
+                {diff}
+                <button
+                  onClick={() =>
+                    setFilters({
+                      ...filters,
+                      difficulties: filters.difficulties?.filter(
+                        (d) => d !== diff
+                      ),
+                    })
+                  }
+                  className="p-0.5 hover:bg-blue-100 rounded-full"
+                >
+                  <XMarkIcon className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+
+            {/* Price Range Tag */}
+            {filters.priceRange && (
+              <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 border border-green-100 px-2 py-1 rounded-full text-xs font-medium">
+                ₹{filters.priceRange[0]} -{" "}
+                {filters.priceRange[1] >= 50000
+                  ? "50k+"
+                  : `₹${filters.priceRange[1]}`}
+                <button
+                  onClick={() =>
+                    setFilters({ ...filters, priceRange: undefined })
+                  }
+                  className="p-0.5 hover:bg-green-100 rounded-full"
+                >
+                  <XMarkIcon className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+
+            {/* Rating Tags */}
+            {filters.ratings?.map((rating) => (
+              <span
+                key={rating}
+                className="inline-flex items-center gap-1 bg-yellow-50 text-yellow-700 border border-yellow-100 px-2 py-1 rounded-full text-xs font-medium"
+              >
+                ★ {rating}+
+                <button
+                  onClick={() =>
+                    setFilters({
+                      ...filters,
+                      ratings: filters.ratings?.filter((r) => r !== rating),
+                    })
+                  }
+                  className="p-0.5 hover:bg-yellow-100 rounded-full"
+                >
+                  <XMarkIcon className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+
+            {/* Clear All Link */}
+            {(filters.location ||
+              filters.priceRange ||
+              (filters.activityTypes?.length ?? 0) > 0 ||
+              (filters.difficulties?.length ?? 0) > 0 ||
+              (filters.ratings?.length ?? 0) > 0) && (
+              <button
+                onClick={() => setFilters({})}
+                className="text-xs text-gray-500 underline ml-1 self-center"
+              >
+                Clear all
+              </button>
+            )}
           </div>
 
           {/* Layout - RESPONSIVE */}
@@ -243,10 +356,7 @@ export default function ActivitiesClient({
                         <div className="mb-1.5">
                           <div className="flex items-start justify-between gap-2 mb-0.5">
                             <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
-                              <Link
-                                href={`/activities/${activity.slug}`}
-                              
-                              >
+                              <Link href={`/activities/${activity.slug}`}>
                                 {activity.name}
                               </Link>
                             </h3>
@@ -336,7 +446,6 @@ export default function ActivitiesClient({
                         <Link
                           href={`/activities/${activity.slug}`}
                           className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap"
-                          
                         >
                           View Details
                         </Link>
