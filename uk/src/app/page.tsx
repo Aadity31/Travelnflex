@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Metadata } from "next";
 import HeroSection from "./components/sections/HeroSection";
 import QuickSearchBar from "./components/search/QuickSearchBar";
