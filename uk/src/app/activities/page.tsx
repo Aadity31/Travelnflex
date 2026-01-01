@@ -6,5 +6,6 @@ export default async function ActivitiesPage() {
     limit: 12,
   });
 
-  return <ActivitiesClient initialActivities={[]} />;
+  return <ActivitiesClient initialActivities={initialActivities} />;
 }
+

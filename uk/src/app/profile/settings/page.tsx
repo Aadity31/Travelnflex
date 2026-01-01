@@ -56,7 +56,7 @@ export default function SettingsPage() {
 
   const handleSaveNotifications = async () => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
       toast.success("Preferences saved successfully! 🎉", {
         duration: 3000,
         icon: "✨",

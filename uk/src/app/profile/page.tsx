@@ -107,7 +107,7 @@ export default function ProfilePage() {
             const imageUrl = result.info.secure_url;
 
             // ⭐ 1. IMAGE UPLOAD - withLoading use karo
-             {
+            {
               try {
                 // Delete old image if exists
                 if (user?.image) {
@@ -163,28 +163,28 @@ export default function ProfilePage() {
         }
       );
     }
- }, [user?.image, update, router]);
+  }, [user?.image, update, router]);
 
 
   /* ---------- FETCH USER ---------- */
-useEffect(() => {
-  if (session === undefined || hasFetched.current) return;
-  if (session === null) {
-    router.push("/login");
-    return;
-  }
-
-  const fetchUser = async () => {
-    const res = await fetch("/api/auth/user");
-    const data = await res.json();
-    if (data?.user) {
-      setUser(data.user);
-      hasFetched.current = true;
+  useEffect(() => {
+    if (session === undefined || hasFetched.current) return;
+    if (session === null) {
+      router.push("/login");
+      return;
     }
-  };
 
-  fetchUser();
-}, [session, router]);
+    const fetchUser = async () => {
+      const res = await fetch("/api/auth/user");
+      const data = await res.json();
+      if (data?.user) {
+        setUser(data.user);
+        hasFetched.current = true;
+      }
+    };
+
+    fetchUser();
+  }, [session, router]);
 
 
   /* ---------- IMAGE HANDLERS ---------- */
@@ -211,10 +211,17 @@ useEffect(() => {
     } catch (err) {
       console.error(err);
       toast.error("Delete failed");
-    } 
+    }
   };
 
-  if (!user) return null;
+  if (!user) {
+  return (
+    <div className="min-h-screen bg-gray-50 pt-16">
+      {/* lightweight skeleton, NOT loader */}
+    </div>
+  );
+}
+
 
   return (
     <div className="min-h-screen bg-gray-50 pt-14 sm:pt-16 lg:pt-18 pb-4 sm:pb-6 px-3 sm:px-4">
@@ -229,8 +236,8 @@ useEffect(() => {
               <div className="px-4 sm:px-6 pb-4 sm:pb-6 -mt-8 sm:-mt-10 lg:-mt-12 text-center">
                 <div className="relative inline-block group mb-3 sm:mb-4">
                   <UserAvatar
-                    name={user.name}
-                    image={user.image}
+                    name={user?.name ?? ""}
+                    image={user?.image ?? null}
                     size={64}
                     textSize="text-base sm:text-lg lg:text-xl"
                     className="sm:w-20 sm:h-20 lg:w-24 lg:h-24 ring-3 sm:ring-4 ring-white bg-white shadow-lg"
@@ -256,7 +263,7 @@ useEffect(() => {
 
                 <button
                   onClick={() => {
-                  
+
                     router.push("/profile/edit");
                   }}
                   className="w-full px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg text-xs sm:text-sm font-medium transition flex items-center justify-center gap-1.5 sm:gap-2"
@@ -295,13 +302,13 @@ useEffect(() => {
                       Joined on{" "}
                       {user.joinedDate
                         ? new Date(user.joinedDate).toLocaleDateString(
-                            "en-IN",
-                            {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                            }
-                          )
+                          "en-IN",
+                          {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          }
+                        )
                         : "—"}
                     </span>
                   </div>
@@ -461,11 +468,11 @@ useEffect(() => {
               Profile Picture Options
             </h3>
             <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">
-  You can upload or remove your profile picture.
-</p>
-<p className="text-[10px] sm:text-xs text-gray-500 mb-4 sm:mb-6">
-  Only image files are allowed. Images are stored securely and never shared publicly.
-</p>
+              You can upload or remove your profile picture.
+            </p>
+            <p className="text-[10px] sm:text-xs text-gray-500 mb-4 sm:mb-6">
+              Only image files are allowed. Images are stored securely and never shared publicly.
+            </p>
 
             <div className="space-y-2 sm:space-y-3">
               <button
@@ -478,12 +485,12 @@ useEffect(() => {
                 <Camera size={14} className="sm:w-4 sm:h-4" />
                 Change Photo
               </button>
-<p className="text-[10px] sm:text-xs text-gray-500 mt-1">
-  Upload a profile picture (JPG, PNG, WebP only, max 5MB).
-</p>
-<p className="text-[10px] sm:text-xs text-gray-400">
-  Images are securely stored on Cloudinary. No executable files allowed.
-</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
+                Upload a profile picture (JPG, PNG, WebP only, max 5MB).
+              </p>
+              <p className="text-[10px] sm:text-xs text-gray-400">
+                Images are securely stored on Cloudinary. No executable files allowed.
+              </p>
               <button
                 onClick={handleDeleteImage}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition text-xs sm:text-sm"
@@ -536,18 +543,9 @@ function QuickLink({
   href: string;
 }) {
   const router = useRouter();
-  
+
 
   const handleClick = () => {
-    // ✅ Show loading based on which page
-    const loadingMessages: { [key: string]: string } = {
-      "/profile/bookings": "Loading bookings...",
-      "/profile/favorites": "Loading favorites...",
-      "/profile/saved": "Loading saved places...",
-      "/profile/settings": "Opening settings...",
-    };
-
-   
     router.push(href);
   };
 
@@ -620,7 +618,7 @@ function RecommendationCard({
   return (
     <div
       onClick={() => {
-       
+
         router.push(href);
       }}
       className="group cursor-pointer"
