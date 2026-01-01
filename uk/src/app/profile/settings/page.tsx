@@ -61,7 +61,7 @@ export default function SettingsPage() {
 
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
       toast.success("Preferences saved successfully! 🎉", {
         duration: 3000,
         icon: "✨",
