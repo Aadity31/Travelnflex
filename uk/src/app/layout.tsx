@@ -10,6 +10,7 @@ import { Providers } from "./providers";
 import NavigationLoader from "@/app/components/NavigationLoader";
 import { Suspense } from "react";
 
+/* ---------------- Fonts ---------------- */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -20,6 +21,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/* ---------------- SEO Metadata ---------------- */
 export const metadata: Metadata = {
   metadataBase: new URL("https://devbhoomi-darshan.apsgroupco.com"),
 
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Devbhoomi Darshan helps you explore Uttarakhand through curated spiritual journeys, adventure tours, retreats, and local experiences.",
+    "Devbhoomi Darshan helps you explore Uttarakhand through curated spiritual journeys, adventure tours, retreats, and authentic local experiences.",
 
   applicationName: "Devbhoomi Darshan",
 
@@ -85,16 +87,16 @@ export const metadata: Metadata = {
     title: "Devbhoomi Darshan",
     description:
       "Sacred journeys made simple. Explore Uttarakhand with curated tours and experiences.",
-    images: ["/og-image.png"],
+    images: ["/icon.png"],
   },
 
   icons: {
-    icon: "/icon.png",
-    apple: "/apple-icon.png",
+    icon: "/icon.png",        // PNG favicon
+    apple: "/icon.png", // 180x180
   },
 };
 
-
+/* ---------------- Root Layout ---------------- */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -110,6 +112,26 @@ export default function RootLayout({
         <Script
           src="https://upload-widget.cloudinary.com/global/all.js"
           strategy="lazyOnload"
+        />
+
+        {/* Structured Data (JSON-LD) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "TravelAgency",
+              name: "Devbhoomi Darshan",
+              url: "https://devbhoomi-darshan.apsgroupco.com",
+              logo: "https://devbhoomi-darshan.apsgroupco.com/icon.png",
+              description:
+                "Devbhoomi Darshan offers spiritual, adventure, and cultural travel experiences across Uttarakhand.",
+              address: {
+                "@type": "PostalAddress",
+                addressCountry: "IN",
+              },
+            }),
+          }}
         />
 
         <Providers>
