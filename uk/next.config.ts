@@ -5,6 +5,12 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "**",
+        pathname: "/**", // Explicit pathname wildcard
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+        pathname: "**/.*/**", // Handles paths with dots
       },
     ],
   },

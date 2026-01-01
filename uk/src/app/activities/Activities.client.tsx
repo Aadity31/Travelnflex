@@ -154,7 +154,7 @@ export default function ActivitiesClient({
           </div>
         </section>
 
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+        <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
           {/* Mobile Filter Button - RESPONSIVE */}
           <div className="lg:hidden mb-4 sm:mb-6">
             <button
@@ -172,7 +172,7 @@ export default function ActivitiesClient({
           </div>
 
           {/* Layout - RESPONSIVE */}
-          <div className="flex flex-col lg:flex-row gap-4 sm:gap-5 md:gap-6">
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-10">
             {/* Desktop Filters */}
             <div className="hidden lg:block">
               <ActivityFilters
@@ -196,7 +196,7 @@ export default function ActivitiesClient({
                     className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row"
                   >
                     {/* Image Section - RESPONSIVE */}
-                    <div className="relative w-full sm:w-64 md:w-80 lg:w-96 h-48 sm:h-52 md:h-56 lg:h-64 flex-shrink-0">
+                    <div className="relative w-full sm:w-64 md:w-80 lg:w-96 h-48 sm:h-auto flex-shrink-0">
                       <Image
                         src={activity.images[0]}
                         alt={activity.name}
