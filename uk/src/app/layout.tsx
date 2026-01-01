@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+
 import Credits from "./components/Credits";
 import NavbarServer from "./components/navbar/Navbar.server";
 import { Toaster } from "react-hot-toast";
@@ -20,10 +21,79 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("http://devbhoomi-darshan.apsgroupco.com"),
-  title: "Devbhoomi Darshan",
-  description: "Sacred journeys made simple",
+  metadataBase: new URL("https://devbhoomi-darshan.apsgroupco.com"),
+
+  title: {
+    default: "Devbhoomi Darshan",
+    template: "%s | Devbhoomi Darshan",
+  },
+
+  description:
+    "Devbhoomi Darshan helps you explore Uttarakhand through curated spiritual journeys, adventure tours, retreats, and local experiences.",
+
+  applicationName: "Devbhoomi Darshan",
+
+  keywords: [
+    "Uttarakhand tourism",
+    "Devbhoomi travel",
+    "Char Dham Yatra",
+    "Rishikesh tours",
+    "spiritual tourism India",
+    "adventure travel Uttarakhand",
+  ],
+
+  authors: [{ name: "APS Groups Soft" }],
+  creator: "APS Groups Soft",
+  publisher: "APS Groups Soft",
+
+  alternates: {
+    canonical: "/",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://devbhoomi-darshan.apsgroupco.com",
+    siteName: "Devbhoomi Darshan",
+    title: "Devbhoomi Darshan – Sacred journeys made simple",
+    description:
+      "Plan spiritual tours, adventure trips, and authentic experiences across Uttarakhand with Devbhoomi Darshan.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Devbhoomi Darshan – Uttarakhand Travel Platform",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Devbhoomi Darshan",
+    description:
+      "Sacred journeys made simple. Explore Uttarakhand with curated tours and experiences.",
+    images: ["/og-image.png"],
+  },
+
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
+
 
 export default function RootLayout({
   children,
@@ -36,7 +106,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* ⭐ Cloudinary Script */}
+        {/* Cloudinary Upload Widget */}
         <Script
           src="https://upload-widget.cloudinary.com/global/all.js"
           strategy="lazyOnload"
@@ -46,12 +116,13 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <NavigationLoader />
           </Suspense>
+
           <NavbarServer />
+
           {children}
 
           <Credits />
 
-          {/* ⭐ RESPONSIVE Toast Notifications */}
           <Toaster
             position="top-right"
             containerClassName="!top-16 sm:!top-20"
@@ -63,26 +134,20 @@ export default function RootLayout({
                 color: "#333",
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
                 borderRadius: "12px",
-                padding: "12px 14px", // Reduced for mobile
-                fontSize: "0.875rem", // 14px
-                maxWidth: "90vw", // Mobile friendly
+                padding: "12px 14px",
+                fontSize: "0.875rem",
+                maxWidth: "90vw",
               },
               success: {
                 iconTheme: {
                   primary: "#f97316",
                   secondary: "#fff",
                 },
-                style: {
-                  padding: "12px 14px",
-                },
               },
               error: {
                 iconTheme: {
                   primary: "#ef4444",
                   secondary: "#fff",
-                },
-                style: {
-                  padding: "12px 14px",
                 },
               },
             }}
