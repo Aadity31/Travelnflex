@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { useLoading } from "@/lib/use-loading";
 import UserAvatar from "@/app/components/UserAvatar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -69,9 +68,7 @@ declare global {
 
 export default function ProfilePage() {
   const { data: session, update } = useSession();
-  const { showLoading, hideLoading } = useLoading();
   const [user, setUser] = useState<UserType | null>(null);
-  const [loading, setLoading] = useState(true);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const router = useRouter();
   const widgetRef = useRef<{
@@ -80,8 +77,6 @@ export default function ProfilePage() {
   } | null>(null);
 
   const hasFetched = useRef(false);
-
-  const { withLoading } = useLoading();
 
   /* ---------- AUTH CHECK ---------- */
   useEffect(() => {
@@ -112,7 +107,7 @@ export default function ProfilePage() {
             const imageUrl = result.info.secure_url;
 
             // ⭐ 1. IMAGE UPLOAD - withLoading use karo
-            await withLoading(async () => {
+             {
               try {
                 // Delete old image if exists
                 if (user?.image) {
@@ -158,7 +153,7 @@ export default function ProfilePage() {
                 console.error("Upload error:", err);
                 toast.error("Error updating profile picture");
               }
-            }, "Uploading profile picture..."); // ⭐ Loading text
+            }
           }
 
           if (error) {
@@ -168,32 +163,29 @@ export default function ProfilePage() {
         }
       );
     }
-  }, [user?.image, update, withLoading]);
+ }, [user?.image, update, router]);
+
 
   /* ---------- FETCH USER ---------- */
-  useEffect(() => {
-    if (hasFetched.current) return; // ⭐ Already fetched
+useEffect(() => {
+  if (session === undefined || hasFetched.current) return;
+  if (session === null) {
+    router.push("/login");
+    return;
+  }
 
-    const fetchUser = async () => {
-      showLoading("Loading profile...");
+  const fetchUser = async () => {
+    const res = await fetch("/api/auth/user");
+    const data = await res.json();
+    if (data?.user) {
+      setUser(data.user);
+      hasFetched.current = true;
+    }
+  };
 
-      try {
-        const res = await fetch("/api/auth/user");
-        const data = await res.json();
+  fetchUser();
+}, [session, router]);
 
-        if (data?.user) {
-          setUser(data.user);
-          hasFetched.current = true; // ⭐ Mark as done
-        } else {
-          router.push("/login");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []); // ⭐ EMPTY ARRAY!
 
   /* ---------- IMAGE HANDLERS ---------- */
   const handleCameraClick = () => {
@@ -203,8 +195,6 @@ export default function ProfilePage() {
   const handleDeleteImage = async () => {
     if (!user?.image) return;
     setShowPhotoModal(false);
-
-    showLoading("Deleting picture...");
 
     try {
       const res = await fetch("/api/profile/delete-image", {
@@ -221,14 +211,10 @@ export default function ProfilePage() {
     } catch (err) {
       console.error(err);
       toast.error("Delete failed");
-    } finally {
-      hideLoading();
-    }
+    } 
   };
 
-  if (loading || !user) {
-    return null; // Ya phir <LoadingOverlay /> automatically show hoga
-  }
+  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-gray-50 pt-14 sm:pt-16 lg:pt-18 pb-4 sm:pb-6 px-3 sm:px-4">
@@ -270,7 +256,7 @@ export default function ProfilePage() {
 
                 <button
                   onClick={() => {
-                    showLoading("Opening editor...");
+                  
                     router.push("/profile/edit");
                   }}
                   className="w-full px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg text-xs sm:text-sm font-medium transition flex items-center justify-center gap-1.5 sm:gap-2"
@@ -550,7 +536,7 @@ function QuickLink({
   href: string;
 }) {
   const router = useRouter();
-  const { showLoading } = useLoading(); // ✅ Add hook
+  
 
   const handleClick = () => {
     // ✅ Show loading based on which page
@@ -561,7 +547,7 @@ function QuickLink({
       "/profile/settings": "Opening settings...",
     };
 
-    showLoading(loadingMessages[href] || "Loading..."); // ✅ Dynamic message
+   
     router.push(href);
   };
 
@@ -630,12 +616,11 @@ function RecommendationCard({
   href?: string;
 }) {
   const router = useRouter();
-  const { showLoading } = useLoading();
 
   return (
     <div
       onClick={() => {
-        showLoading("Loading details...");
+       
         router.push(href);
       }}
       className="group cursor-pointer"

@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useLoading } from "@/lib/use-loading";
 import {
   User,
   Mail,
@@ -31,7 +30,6 @@ export default function EditProfilePage() {
   const [user, setUser] = useState<UserType | null>(null);
   const router = useRouter();
   const { update } = useSession();
-  const { showLoading, hideLoading } = useLoading();
   const hasFetched = useRef(false);
 
   const [formData, setFormData] = useState({
@@ -46,7 +44,6 @@ export default function EditProfilePage() {
     if (hasFetched.current) return;
 
     const fetchUser = async () => {
-      showLoading("Loading profile...");
 
       try {
         const res = await fetch("/api/auth/user");
@@ -68,9 +65,7 @@ export default function EditProfilePage() {
         console.error("Error fetching user:", error);
         toast.error("Failed to load profile");
         router.push("/login");
-      } finally {
-        hideLoading(); // ✅ Hides loader when data is ready
-      }
+      } 
     };
 
     fetchUser();
@@ -92,7 +87,7 @@ export default function EditProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    showLoading("Updating profile...");
+  
 
     try {
       const response = await fetch("/api/profile/update", {
@@ -122,12 +117,11 @@ export default function EditProfilePage() {
         }, 1000);
       } else {
         toast.error(data.error || "Failed to update profile");
-        hideLoading(); // Hide only on error, success redirects
+        
       }
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("Something went wrong");
-      hideLoading();
     }
   };
 
@@ -141,7 +135,6 @@ export default function EditProfilePage() {
           {/* Back Button - Responsive */}
           <button
             onClick={() => {
-              showLoading("Going back..."); // 👈 ADDED LOADING HERE
               router.back();
             }}
             className="group inline-flex items-center justify-center sm:justify-start gap-0 sm:gap-1.5 md:gap-2 text-gray-600 hover:text-orange-600 transition-all mb-2 sm:mb-2.5 md:mb-3 bg-white/80 backdrop-blur-sm w-8 h-8 sm:w-auto sm:h-auto sm:px-3 md:px-4 sm:py-2 rounded-md sm:rounded-lg hover:shadow-md"
@@ -451,7 +444,6 @@ export default function EditProfilePage() {
                     <button
                       type="button"
                       onClick={() => {
-                        showLoading("Cancelling..."); // 👈 ADDED LOADING HERE
                         router.back();
                       }}
                       className="flex-1 px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm border-2 border-gray-300 text-gray-700 rounded-lg sm:rounded-xl font-bold hover:bg-gray-100 hover:border-gray-400 transition-all"

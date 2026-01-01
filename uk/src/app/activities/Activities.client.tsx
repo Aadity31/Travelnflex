@@ -12,15 +12,15 @@ import {
 import type { Activity, SearchFilters } from "@/app/types";
 import ActivityFilters from "@/app/components/filters/ActivityFilters";
 import MobileActivityFilters from "@/app/components/filters/MobileActivityFilters";
-import LoadingOverlay from "@/app/components/LoadingOverlay";
-import { useLoading } from "@/lib/use-loading";
+
+
 
 export default function ActivitiesClient({
   initialActivities,
 }: {
   initialActivities: Activity[];
 }) {
-  const { showLoading } = useLoading();
+
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -124,7 +124,7 @@ export default function ActivitiesClient({
 
   return (
     <>
-      <LoadingOverlay />
+      
       <main className="min-h-screen bg-gray-50">
         {/* Hero Section - RESPONSIVE */}
         <section className="relative h-48 sm:h-56 md:h-64 lg:h-72 bg-gradient-to-r from-green-600 to-blue-600 flex items-center justify-center">
@@ -245,9 +245,7 @@ export default function ActivitiesClient({
                             <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
                               <Link
                                 href={`/activities/${activity.slug}`}
-                                onClick={() =>
-                                  showLoading("Loading activity details...")
-                                }
+                              
                               >
                                 {activity.name}
                               </Link>
@@ -338,9 +336,7 @@ export default function ActivitiesClient({
                         <Link
                           href={`/activities/${activity.slug}`}
                           className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap"
-                          onClick={() =>
-                            showLoading("Loading activity details...")
-                          }
+                          
                         >
                           View Details
                         </Link>

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useLoading } from "@/lib/use-loading";
 import toast from "react-hot-toast";
 import {
   User,
@@ -32,9 +31,8 @@ type SettingsData = {
 export default function SettingsPage() {
   const router = useRouter();
   const { data: session } = useSession();
-  const { showLoading, hideLoading } = useLoading();
   const [activeTab, setActiveTab] = useState("notifications");
-  const [isClient, setIsClient] = useState(false); // ✅ Add this
+
 
   const [settings, setSettings] = useState<SettingsData>({
     emailNotifications: true,
@@ -57,30 +55,10 @@ export default function SettingsPage() {
     confirm: false,
   });
 
-  // ✅ useEffect - hooks section complete
-  useEffect(() => {
-    showLoading("Loading settings...");
-    setIsClient(true);
-
-    const timer = setTimeout(() => {
-      hideLoading();
-    }, 300); // 👈 This delay
-
-    return () => {
-      clearTimeout(timer);
-      hideLoading();
-    };
-  }, []);
-
-  // ✅ NOW return after all hooks
-  if (!isClient) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50" />
-    );
-  }
+  
 
   const handleSaveNotifications = async () => {
-    showLoading("Saving preferences...");
+
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -98,8 +76,6 @@ export default function SettingsPage() {
       });
     } catch (error) {
       toast.error("Failed to save preferences");
-    } finally {
-      hideLoading();
     }
   };
 
@@ -113,7 +89,7 @@ export default function SettingsPage() {
       return;
     }
 
-    showLoading("Changing password...");
+  
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -136,13 +112,11 @@ export default function SettingsPage() {
       });
     } catch (error) {
       toast.error("Failed to change password");
-    } finally {
-      hideLoading();
-    }
+    } 
   };
 
   const handleSavePreferences = async () => {
-    showLoading("Updating preferences...");
+    
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 800));
@@ -161,7 +135,7 @@ export default function SettingsPage() {
     } catch (error) {
       toast.error("Failed to save");
     } finally {
-      hideLoading();
+     
     }
   };
 
@@ -172,7 +146,7 @@ export default function SettingsPage() {
       return;
     }
 
-    showLoading("Deleting account...");
+ 
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -181,7 +155,7 @@ export default function SettingsPage() {
     } catch (error) {
       toast.error("Failed to delete account");
     } finally {
-      hideLoading();
+    
     }
   };
 
@@ -201,7 +175,7 @@ export default function SettingsPage() {
           {/* Back Button */}
           <button
             onClick={() => {
-              showLoading("Going back..."); // 👈 ADD THIS
+           
               router.back();
             }}
             className="group inline-flex items-center justify-center sm:justify-start gap-0 sm:gap-1 md:gap-1.5 lg:gap-2 text-gray-600 hover:text-orange-600 transition-all mb-2 xs:mb-2.5 sm:mb-3 md:mb-3 bg-white/80 backdrop-blur-sm w-7 h-7 xs:w-8 xs:h-8 sm:w-auto sm:h-auto sm:px-2.5 md:px-3 lg:px-4 sm:py-1.5 md:py-2 rounded-md sm:rounded-lg hover:shadow-md"
@@ -408,7 +382,6 @@ export default function SettingsPage() {
                   {/* Go to Full Edit Page Button - Compact */}
                   <button
                     onClick={() => {
-                      showLoading("Opening editor..."); // 👈 ADD THIS
                       router.push("/profile/edit");
                     }}
                     className="mt-3 xs:mt-3.5 sm:mt-4 md:mt-5 w-full px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 sm:py-2.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-[10px] xs:text-[11px] sm:text-xs md:text-sm flex items-center justify-center gap-1.5"

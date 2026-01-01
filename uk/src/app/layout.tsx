@@ -7,8 +7,6 @@ import Credits from "./components/Credits";
 import NavbarServer from "./components/navbar/Navbar.server";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
-import NavigationLoader from "@/app/components/NavigationLoader";
-import { Suspense } from "react";
 
 /* ---------------- Fonts ---------------- */
 const geistSans = Geist({
@@ -91,8 +89,8 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: "/icon.png",        // PNG favicon
-    apple: "/icon.png", // 180x180
+    icon: "/icon.png",
+    apple: "/icon.png",
   },
 };
 
@@ -135,12 +133,10 @@ export default function RootLayout({
         />
 
         <Providers>
-          <Suspense fallback={null}>
-            <NavigationLoader />
-          </Suspense>
-
+          {/* ✅ Navbar ALWAYS mounted */}
           <NavbarServer />
 
+          {/* ✅ Only page / route content swaps (loading.tsx here) */}
           {children}
 
           <Credits />

@@ -9,7 +9,7 @@ import TestimonialsSection from "./components/sections/TestimonialsSection";
 import FeaturedGuides from "./components/sections/FeaturedGuides";
 import CTASection from "./components/sections/CTASection";
 import FooterWithCredits from "./components/Footer";
-import NavigationLoader from "@/app/components/NavigationLoader";
+
 
 export const metadata: Metadata = {
   title: "Sacred Journeys - Spiritual & Adventure Travel in Uttrakhand,",
@@ -57,7 +57,7 @@ export default function HomePage() {
       />
 
       <main className="min-h-screen">
-        <NavigationLoader />
+      
         <HeroSection />
         <QuickSearchBar />
         <FeaturedDestinations />
