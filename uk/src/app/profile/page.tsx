@@ -214,7 +214,14 @@ export default function ProfilePage() {
     }
   };
 
-  if (!user) return null;
+  if (!user) {
+  return (
+    <div className="min-h-screen bg-gray-50 pt-16">
+      {/* lightweight skeleton, NOT loader */}
+    </div>
+  );
+}
+
 
   return (
     <div className="min-h-screen bg-gray-50 pt-14 sm:pt-16 lg:pt-18 pb-4 sm:pb-6 px-3 sm:px-4">

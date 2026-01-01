@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
-
 type UserType = {
   id: string;
   name: string;
@@ -35,16 +34,12 @@ export default function Navbar({
   user: UserType | null;
   notificationComponent?: React.ReactNode;
 }) {
-
-
   const [currentUser] = useState(initialUser);
   const [isOpen, setIsOpen] = useState(false);
   const [hideNav, setHideNav] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
- 
 
   /* ---------- SCROLL ---------- */
   useEffect(() => {
@@ -84,25 +79,21 @@ export default function Navbar({
       href: "/",
       label: "Home",
       icon: Home,
-      message: "Going Home...",
     },
     {
       href: "/destinations",
       label: "Destinations",
       icon: MapPin,
-      message: "Exploring Destinations...",
     },
     {
       href: "/activities",
       label: "Activities",
       icon: Compass,
-      message: "Loading Activities...",
     },
     {
-      href: "#", // Keep as # if it's not ready yet
+      href: "#",
       label: "Retreats",
       icon: Sunset,
-      message: "Loading Retreats...",
     },
   ];
 
@@ -111,36 +102,30 @@ export default function Navbar({
       href: "/profile",
       label: "My Profile",
       icon: User,
-      message: "Loading Profile...",
     },
     {
       href: "/profile/bookings",
       label: "My Bookings",
       icon: Calendar,
-      message: "Loading Bookings...",
     },
     {
       href: "/profile/favorites",
       label: "Favorites",
       icon: Heart,
-      message: "Loading Favorites...",
     },
     {
       href: "/profile/saved",
       label: "Saved Places",
       icon: BookMarked,
-      message: "Loading Saved...",
     },
     {
       href: "/profile/settings",
       label: "Settings",
       icon: Settings,
-      message: "Loading Settings...",
     },
   ];
 
   const handleLogout = async () => {
-    
     await fetch("/api/auth/logout", { method: "POST" });
     await signOut({ redirect: false });
     setMenuOpen(false);
@@ -161,7 +146,10 @@ export default function Navbar({
             {/* LOGO */}
             <Link
               href="/"
-             
+              onClick={() => {
+                setIsOpen(false);
+                setMenuOpen(false);
+              }}
               className="flex items-center gap-2 px-3 py-2"
             >
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 text-white flex items-center justify-center">
@@ -183,9 +171,12 @@ export default function Navbar({
               <div className="hidden md:flex gap-1">
                 {navLinks.map((l) => (
                   <Link
-                    key={l.label} // unique key
+                    key={l.label}
                     href={l.href}
-                    
+                    onClick={() => {
+                      setIsOpen(false);
+                      setMenuOpen(false);
+                    }}
                     className="relative px-4 py-1 text-sm text-white hover:text-orange-400 transition-colors group"
                   >
                     {l.label}
@@ -200,10 +191,7 @@ export default function Navbar({
 
               {/* AUTH - DESKTOP ONLY */}
               {!currentUser ? (
-                <Link
-                  href="/login"
-                  
-                >
+                <Link href="/login">
                   <button className="hidden sm:flex gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white text-sm font-semibold">
                     <LogIn size={18} />
                     Login
@@ -225,7 +213,7 @@ export default function Navbar({
                       </span>
                     </div>
 
-                    {/* ⭐ Profile Avatar - Add key prop */}
+                    {/* ⭐ Profile Avatar */}
                     <UserAvatar
                       name={currentUser.name}
                       image={currentUser.image}
@@ -266,6 +254,10 @@ export default function Navbar({
                           <Link
                             key={item.href}
                             href={item.href}
+                            onClick={() => {
+                              setIsOpen(false);
+                              setMenuOpen(false);
+                            }}
                             className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
                           >
                             <item.icon
@@ -346,7 +338,7 @@ export default function Navbar({
               <Link
                 key={link.href}
                 href={link.href}
-                
+                onClick={() => setIsOpen(false)}
                 className="px-4 py-3 rounded-lg font-medium hover:bg-orange-100 dark:hover:bg-orange-900/30"
               >
                 {link.label}
@@ -360,7 +352,7 @@ export default function Navbar({
                   <Link
                     key={item.href}
                     href={item.href}
-                    
+                    onClick={() => setIsOpen(false)}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
                   >
                     <item.icon size={18} className="text-orange-600" />
