@@ -33,7 +33,6 @@ export default function SettingsPage() {
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState("notifications");
 
-
   const [settings, setSettings] = useState<SettingsData>({
     emailNotifications: true,
     smsNotifications: false,
@@ -55,11 +54,7 @@ export default function SettingsPage() {
     confirm: false,
   });
 
-  
-
   const handleSaveNotifications = async () => {
-
-
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       toast.success("Preferences saved successfully! 🎉", {
@@ -89,8 +84,6 @@ export default function SettingsPage() {
       return;
     }
 
-  
-
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       toast.success("Password changed successfully! 🎉", {
@@ -112,12 +105,10 @@ export default function SettingsPage() {
       });
     } catch (error) {
       toast.error("Failed to change password");
-    } 
+    }
   };
 
   const handleSavePreferences = async () => {
-    
-
     try {
       await new Promise((resolve) => setTimeout(resolve, 800));
       toast.success("Preferences saved! 🎉", {
@@ -135,7 +126,6 @@ export default function SettingsPage() {
     } catch (error) {
       toast.error("Failed to save");
     } finally {
-     
     }
   };
 
@@ -146,8 +136,6 @@ export default function SettingsPage() {
       return;
     }
 
- 
-
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       toast.success("Account deletion requested");
@@ -155,7 +143,6 @@ export default function SettingsPage() {
     } catch (error) {
       toast.error("Failed to delete account");
     } finally {
-    
     }
   };
 
@@ -175,7 +162,6 @@ export default function SettingsPage() {
           {/* Back Button */}
           <button
             onClick={() => {
-           
               router.back();
             }}
             className="group inline-flex items-center justify-center sm:justify-start gap-0 sm:gap-1 md:gap-1.5 lg:gap-2 text-gray-600 hover:text-orange-600 transition-all mb-2 xs:mb-2.5 sm:mb-3 md:mb-3 bg-white/80 backdrop-blur-sm w-7 h-7 xs:w-8 xs:h-8 sm:w-auto sm:h-auto sm:px-2.5 md:px-3 lg:px-4 sm:py-1.5 md:py-2 rounded-md sm:rounded-lg hover:shadow-md"
@@ -207,9 +193,9 @@ export default function SettingsPage() {
 
         <div className="grid lg:grid-cols-3 gap-3 xs:gap-3.5 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8">
           {/* Left Sidebar - Desktop Only */}
-          <div className="hidden lg:block space-y-4 xl:space-y-6">
+          <div className="hidden lg:block space-y-4 xl:space-y-6 sticky top-24 self-start">
             {/* Settings Navigation Card */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl xl:rounded-3xl p-4 xl:p-6 border border-white/20 shadow-xl shadow-gray-200/50 sticky top-20">
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl xl:rounded-3xl p-4 xl:p-6 border border-white/20 shadow-xl shadow-gray-200/50">
               <h3 className="text-xs xl:text-sm font-bold text-gray-900 mb-3 xl:mb-4 flex items-center gap-2">
                 <SettingsIcon
                   size={14}
