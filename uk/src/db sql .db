@@ -207,7 +207,7 @@ ORDER BY
     CASE WHEN agency_code = 'APS' THEN 0 ELSE 1 END,
     rating DESC;
 
-
+//destinations
 
     CREATE TABLE destinations (
     id TEXT PRIMARY KEY,   -- <AGENCY_CODE>_DST_<SEQ>
