@@ -492,7 +492,12 @@ export default function ProfilePage() {
                 <Camera size={14} className="sm:w-4 sm:h-4" />
                 Change Photo
               </button>
-
+<p className="text-[10px] sm:text-xs text-gray-500 mt-1">
+  Upload a profile picture (JPG, PNG, WebP only, max 5MB).
+</p>
+<p className="text-[10px] sm:text-xs text-gray-400">
+  Images are securely stored on Cloudinary. No executable files allowed.
+</p>
               <button
                 onClick={handleDeleteImage}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition text-xs sm:text-sm"
