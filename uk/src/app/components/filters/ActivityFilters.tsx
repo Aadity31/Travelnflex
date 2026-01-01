@@ -195,19 +195,7 @@ export default function ActivityFilters({
     (filters.location ? 1 : 0);
 
   return (
-    <aside
-      className="
-    w-full
-    md:w-72
-    lg:w-64
-    xl:w-80
-    2xl:w-96
-    bg-white rounded-xl shadow-md
-    h-fit sticky top-4
-    max-h-[calc(100vh-2rem)]
-    overflow-y-auto scrollbar-hide
-  "
-    >
+    <aside className="w-full md:w-72 lg:w-64 xl:w-76 2xl:w-96 bg-white rounded-xl shadow-md h-fit sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hide">
       <div className="p-4 lg:p-4 xl:p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-200">

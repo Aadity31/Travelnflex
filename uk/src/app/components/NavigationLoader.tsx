@@ -18,7 +18,7 @@ export default function NavigationLoader() {
     }
     const timer = setTimeout(() => {
       hideLoading();
-    }, 500); // 👈 YAHAN TIME CHANGE KARO
+    }, 10000); // 👈 YAHAN TIME CHANGE KARO
 
     return () => clearTimeout(timer);
   }, [pathname, searchParams, hideLoading, isFirstLoad]);

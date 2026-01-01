@@ -1,94 +1,45 @@
-'use client'
+"use client";
 
-import { useLoading } from '@/lib/use-loading'
+import { useLoading } from "@/lib/use-loading";
+import { useEffect, useState } from "react";
 
 export default function LoadingOverlay() {
   const { isLoading, loadingText } = useLoading()
+
   if (!isLoading) return null
 
   return (
-    <>
-      {/* Overlay */}
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-white/80 via-orange-50/60 to-orange-100/70 backdrop-blur-md">
-        {/* Card */}
-        <div className="relative w-72 h-40 rounded-2xl overflow-hidden shadow-xl bg-white/80 border border-white/60">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-white/70 via-white/60 to-orange-50/70 backdrop-blur-md">
+      {/* Card */}
+      <div className="relative px-8 py-6 rounded-2xl shadow-xl border border-white/60 bg-white/80 flex flex-col items-center">
+        {/* Soft halo background */}
+        <div className="absolute -inset-10 bg-gradient-to-br from-orange-400/10 via-transparent to-red-400/10 blur-2xl -z-10" />
 
-          {/* Sun glow */}
-          <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-40 h-40 bg-orange-300/30 rounded-full blur-2xl" />
+        {/* Circular loader */}
+        <div className="relative w-14 h-14 mb-4">
+          {/* Outer faint ring */}
+          <div className="absolute inset-0 rounded-full border-[3px] border-orange-200/60" />
 
-          {/* Mountain slope */}
-          <div className="absolute bottom-6 left-[-20%] w-[140%] h-[2px] bg-gradient-to-r from-gray-800 to-gray-500 rotate-[-12deg]" />
+          {/* Main gradient spinner */}
+          <div className="absolute inset-0 rounded-full border-[3px] border-t-transparent border-r-orange-500 border-l-orange-300 border-b-transparent animate-spin" />
 
-          {/* Hikers */}
-          <Hiker delay="0s" />
-          <Hiker delay="0.4s" />
-          <Hiker delay="0.8s" />
+          {/* Inner glow dot */}
+          <div className="absolute inset-3 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 opacity-80" />
+        </div>
 
-          {/* Text */}
-          <div className="absolute bottom-2 w-full text-center">
-            <p className="text-sm font-semibold text-gray-800">
-              {loadingText || 'Preparing your journey'}
-            </p>
-            <p className="text-xs text-gray-500">
-              Step by step, upward
-            </p>
-          </div>
+        {/* Text */}
+        <p className="text-sm font-semibold text-gray-800">
+          {loadingText || 'Please wait...'}
+        </p>
+        <p className="mt-1 text-xs text-gray-500">
+          Your spiritual journey is loading
+        </p>
+
+        {/* Animated underline */}
+        <div className="mt-3 h-0.5 w-16 overflow-hidden rounded-full bg-orange-100">
+          <div className="h-full w-1/2 bg-gradient-to-r from-orange-500 to-red-500 animate-[loaderBar_1.4s_ease-in-out_infinite]" />
         </div>
       </div>
-
-      {/* Inline animation (NO external CSS needed) */}
-      <style jsx global>{`
-        @keyframes hike {
-          0% {
-            transform: translate(0, 0);
-            opacity: 0;
-          }
-          10% {
-            opacity: 1;
-          }
-          100% {
-            transform: translate(180px, -40px);
-            opacity: 0;
-          }
-        }
-
-        .animate-hike {
-          animation: hike 2.8s linear infinite;
-        }
-      `}</style>
-    </>
-  )
-}
-
-/* ---------------- Hiker SVG ---------------- */
-
-function Hiker({ delay }: { delay: string }) {
-  return (
-    <div
-      className="absolute bottom-6 left-0 animate-hike"
-      style={{ animationDelay: delay }}
-    >
-      <svg
-        width="26"
-        height="26"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-gray-900"
-      >
-        {/* Head */}
-        <circle cx="12" cy="4" r="2" />
-        {/* Body */}
-        <path d="M12 6l-2 6 3 3 2 7" />
-        {/* Legs */}
-        <path d="M10 12l-4 4" />
-        <path d="M15 15l3 1" />
-        {/* Stick */}
-        <path d="M17 9l3 6" />
-      </svg>
     </div>
-  )
+  );
 }
