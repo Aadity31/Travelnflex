@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react"; // ⭐ Add useRef
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useLoading } from "@/lib/use-loading"; // ⭐ Add this
+import { useLoading } from "@/lib/use-loading";
 import {
   User,
   Mail,
@@ -12,7 +12,6 @@ import {
   CreditCard,
   Save,
   ArrowLeft,
-  Loader2,
   Shield,
   CheckCircle2,
 } from "lucide-react";
@@ -32,8 +31,9 @@ export default function EditProfilePage() {
   const [user, setUser] = useState<UserType | null>(null);
   const router = useRouter();
   const { update } = useSession();
-  const { showLoading, hideLoading } = useLoading(); // ⭐ Add this
-  const hasFetched = useRef(false); // ⭐ Add this
+  const { showLoading, hideLoading } = useLoading();
+  const hasFetched = useRef(false);
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -41,11 +41,12 @@ export default function EditProfilePage() {
     passport_number: "",
   });
 
+  // ✅ Combined Logic: Fetch Data & Handle Loading State
   useEffect(() => {
-    if (hasFetched.current) return; // ⭐ Prevent re-fetch
+    if (hasFetched.current) return;
 
     const fetchUser = async () => {
-      showLoading("Loading profile..."); // ⭐ Show loading
+      showLoading("Loading profile...");
 
       try {
         const res = await fetch("/api/auth/user");
@@ -59,7 +60,7 @@ export default function EditProfilePage() {
             traveller_type: data.user.traveller_type || "indian",
             passport_number: data.user.passport_number || "",
           });
-          hasFetched.current = true; // ⭐ Mark as fetched
+          hasFetched.current = true;
         } else {
           router.push("/login");
         }
@@ -68,25 +69,11 @@ export default function EditProfilePage() {
         toast.error("Failed to load profile");
         router.push("/login");
       } finally {
-        hideLoading(); // ⭐ Hide loading
+        hideLoading(); // ✅ Hides loader when data is ready
       }
     };
 
     fetchUser();
-  }, []); // ⭐ Empty dependency array
-
-  // ✅ Existing useEffect ke BAAD yeh add karo
-  useEffect(() => {
-    showLoading("Loading profile...");
-
-    const timer = setTimeout(() => {
-      hideLoading();
-    }, 500);
-
-    return () => {
-      clearTimeout(timer);
-      hideLoading();
-    };
   }, []);
 
   const handleInputChange = (
@@ -105,8 +92,7 @@ export default function EditProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    showLoading("Updating profile..."); // ⭐ Show loading
+    showLoading("Updating profile...");
 
     try {
       const response = await fetch("/api/profile/update", {
@@ -119,7 +105,6 @@ export default function EditProfilePage() {
 
       if (response.ok) {
         await update();
-
         toast.success("Profile updated successfully! 🎉", {
           duration: 3000,
           icon: "✨",
@@ -132,18 +117,17 @@ export default function EditProfilePage() {
             boxShadow: "0 8px 24px rgba(16, 185, 129, 0.4)",
           },
         });
-
         setTimeout(() => {
           router.push("/profile");
         }, 1000);
       } else {
         toast.error(data.error || "Failed to update profile");
+        hideLoading(); // Hide only on error, success redirects
       }
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("Something went wrong");
-    } finally {
-      hideLoading(); // ⭐ Hide loading
+      hideLoading();
     }
   };
 
@@ -152,11 +136,14 @@ export default function EditProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-8 lg:py-14">
-        {/* Header with Back Button and Account Information */}
+        {/* Header with Back Button */}
         <div className="mb-3 sm:mb-4 md:mb-5 lg:mb-6">
           {/* Back Button - Responsive */}
           <button
-            onClick={() => router.back()}
+            onClick={() => {
+              showLoading("Going back..."); // 👈 ADDED LOADING HERE
+              router.back();
+            }}
             className="group inline-flex items-center justify-center sm:justify-start gap-0 sm:gap-1.5 md:gap-2 text-gray-600 hover:text-orange-600 transition-all mb-2 sm:mb-2.5 md:mb-3 bg-white/80 backdrop-blur-sm w-8 h-8 sm:w-auto sm:h-auto sm:px-3 md:px-4 sm:py-2 rounded-md sm:rounded-lg hover:shadow-md"
           >
             <ArrowLeft
@@ -352,9 +339,7 @@ export default function EditProfilePage() {
                       </p>
                     </div>
 
-                    {/* Phone Number ke BAAD yeh add karo */}
-
-                    {/* Date of Birth & Gender - Side by Side for Space Saving */}
+                    {/* Date of Birth & Gender */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       {/* Date of Birth */}
                       <div>
@@ -364,7 +349,6 @@ export default function EditProfilePage() {
                         <input
                           type="date"
                           name="date_of_birth"
-                          // value={formData.date_of_birth}
                           onChange={handleInputChange}
                           required
                           max={new Date().toISOString().split("T")[0]}
@@ -379,7 +363,6 @@ export default function EditProfilePage() {
                         </label>
                         <select
                           name="gender"
-                          // value={formData.gender}
                           onChange={handleInputChange}
                           required
                           className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-gray-50 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:bg-white outline-none transition-all text-gray-900 font-medium cursor-pointer"
@@ -467,17 +450,18 @@ export default function EditProfilePage() {
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <button
                       type="button"
-                      onClick={() => router.back()}
+                      onClick={() => {
+                        showLoading("Cancelling..."); // 👈 ADDED LOADING HERE
+                        router.back();
+                      }}
                       className="flex-1 px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm border-2 border-gray-300 text-gray-700 rounded-lg sm:rounded-xl font-bold hover:bg-gray-100 hover:border-gray-400 transition-all"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      // disabled={saving} // ⭐ Remove this
                       className="flex-1 sm:flex-[2] px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
                     >
-                      {/* ⭐ Simplify button content - remove saving condition */}
                       <Save size={16} className="sm:w-4.5 sm:h-4.5" />
                       <span>Save Changes</span>
                     </button>

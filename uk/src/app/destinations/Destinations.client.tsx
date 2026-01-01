@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { StarIcon, MapPinIcon, ClockIcon } from "@heroicons/react/24/solid";
+import { useLoading } from "@/lib/use-loading";
 
 /* ---------------- TYPES (LOGIC ONLY) ---------------- */
 
@@ -39,16 +40,24 @@ export default function DestinationsClient({
     id: string;
   } | null>(() => {
     const last = initialDestinations?.at(-1);
-    return last
-      ? { createdAt: last.createdAt, id: last.id }
-      : null;
+    return last ? { createdAt: last.createdAt, id: last.id } : null;
   });
-
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
+
+  const { showLoading, hideLoading } = useLoading();
+
+  useEffect(() => {
+    hideLoading();
+
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+  }, []);
 
   /* ---------------- INFINITE SCROLL LOGIC ---------------- */
 
@@ -64,8 +73,8 @@ export default function DestinationsClient({
         try {
           const url = cursor
             ? `/api/destinations?createdAt=${encodeURIComponent(
-              cursor.createdAt
-            )}&id=${encodeURIComponent(cursor.id)}`
+                cursor.createdAt
+              )}&id=${encodeURIComponent(cursor.id)}`
             : `/api/destinations`;
 
           const res = await fetch(url);
@@ -81,12 +90,7 @@ export default function DestinationsClient({
           const last = next.at(-1);
 
           setDestinations((prev) => [...prev, ...next]);
-          setCursor(
-            last
-              ? { createdAt: last.createdAt, id: last.id }
-              : null
-          );
-
+          setCursor(last ? { createdAt: last.createdAt, id: last.id } : null);
         } catch (err) {
           console.error("Destinations infinite scroll failed:", err);
           setHasMore(false);

@@ -64,7 +64,7 @@ export default function SettingsPage() {
 
     const timer = setTimeout(() => {
       hideLoading();
-    }, 300);
+    }, 300); // 👈 This delay
 
     return () => {
       clearTimeout(timer);
@@ -200,7 +200,10 @@ export default function SettingsPage() {
         <div className="mb-3 xs:mb-3.5 sm:mb-4 md:mb-5 lg:mb-6">
           {/* Back Button */}
           <button
-            onClick={() => router.back()}
+            onClick={() => {
+              showLoading("Going back..."); // 👈 ADD THIS
+              router.back();
+            }}
             className="group inline-flex items-center justify-center sm:justify-start gap-0 sm:gap-1 md:gap-1.5 lg:gap-2 text-gray-600 hover:text-orange-600 transition-all mb-2 xs:mb-2.5 sm:mb-3 md:mb-3 bg-white/80 backdrop-blur-sm w-7 h-7 xs:w-8 xs:h-8 sm:w-auto sm:h-auto sm:px-2.5 md:px-3 lg:px-4 sm:py-1.5 md:py-2 rounded-md sm:rounded-lg hover:shadow-md"
           >
             <ArrowLeft
@@ -404,7 +407,10 @@ export default function SettingsPage() {
 
                   {/* Go to Full Edit Page Button - Compact */}
                   <button
-                    onClick={() => router.push("/profile/edit")}
+                    onClick={() => {
+                      showLoading("Opening editor..."); // 👈 ADD THIS
+                      router.push("/profile/edit");
+                    }}
                     className="mt-3 xs:mt-3.5 sm:mt-4 md:mt-5 w-full px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 sm:py-2.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-[10px] xs:text-[11px] sm:text-xs md:text-sm flex items-center justify-center gap-1.5"
                   >
                     <User

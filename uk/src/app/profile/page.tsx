@@ -150,8 +150,6 @@ export default function ProfilePage() {
                     duration: 3000,
                     icon: "✨",
                   });
-
-                  setTimeout(() => window.location.reload(), 1000);
                 } else {
                   const data = await res.json();
                   toast.error(`Failed: ${data.error}`);
@@ -220,7 +218,6 @@ export default function ProfilePage() {
         setUser((prev) => (prev ? { ...prev, image: null } : null));
         await update();
         toast.success("Picture deleted! 🗑️");
-        setTimeout(() => window.location.reload(), 800);
       }
     } catch (err) {
       console.error(err);
@@ -273,7 +270,10 @@ export default function ProfilePage() {
                 </p>
 
                 <button
-                  onClick={() => router.push("/profile/edit")}
+                  onClick={() => {
+                    showLoading("Opening editor...");
+                    router.push("/profile/edit");
+                  }}
                   className="w-full px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg text-xs sm:text-sm font-medium transition flex items-center justify-center gap-1.5 sm:gap-2"
                 >
                   <Edit2 size={12} className="sm:w-3.5 sm:h-3.5" />
@@ -614,14 +614,25 @@ function RecommendationCard({
   title,
   rating,
   price,
+  href = "/activities",
 }: {
   image: string;
   title: string;
   rating: string;
   price: string;
+  href?: string;
 }) {
+  const router = useRouter();
+  const { showLoading } = useLoading();
+
   return (
-    <div className="group cursor-pointer">
+    <div
+      onClick={() => {
+        showLoading("Loading details...");
+        router.push(href);
+      }}
+      className="group cursor-pointer"
+    >
       <div className="relative h-28 sm:h-32 lg:h-36 rounded-lg overflow-hidden mb-2">
         <Image
           src={image}

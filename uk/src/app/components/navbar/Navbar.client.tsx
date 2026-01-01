@@ -14,6 +14,9 @@ import {
   Heart,
   BookMarked,
   Calendar,
+  Home,
+  Compass,
+  Sunset,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useLoading } from "@/lib/use-loading";
@@ -40,6 +43,15 @@ export default function Navbar({
   const [lastScrollY, setLastScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Helper: Returns a function that Closes Menus & Shows Loader
+  const onNav =
+    (message: string = "Navigating...") =>
+    () => {
+      setIsOpen(false); // Close mobile menu
+      setMenuOpen(false); // Close desktop dropdown
+      showLoading(message);
+    };
 
   /* ---------- SCROLL ---------- */
   useEffect(() => {
@@ -75,13 +87,67 @@ export default function Navbar({
   }, []);
 
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/destinations", label: "Destinations" },
-    { href: "/activities", label: "Activities" },
-    { href: "#", label: "Retreats" },
+    {
+      href: "/",
+      label: "Home",
+      icon: Home,
+      message: "Going Home...",
+    },
+    {
+      href: "/destinations",
+      label: "Destinations",
+      icon: MapPin,
+      message: "Exploring Destinations...",
+    },
+    {
+      href: "/activities",
+      label: "Activities",
+      icon: Compass,
+      message: "Loading Activities...",
+    },
+    {
+      href: "#", // Keep as # if it's not ready yet
+      label: "Retreats",
+      icon: Sunset,
+      message: "Loading Retreats...",
+    },
+  ];
+
+  const profileLinks = [
+    {
+      href: "/profile",
+      label: "My Profile",
+      icon: User,
+      message: "Loading Profile...",
+    },
+    {
+      href: "/profile/bookings",
+      label: "My Bookings",
+      icon: Calendar,
+      message: "Loading Bookings...",
+    },
+    {
+      href: "/profile/favorites",
+      label: "Favorites",
+      icon: Heart,
+      message: "Loading Favorites...",
+    },
+    {
+      href: "/profile/saved",
+      label: "Saved Places",
+      icon: BookMarked,
+      message: "Loading Saved...",
+    },
+    {
+      href: "/profile/settings",
+      label: "Settings",
+      icon: Settings,
+      message: "Loading Settings...",
+    },
   ];
 
   const handleLogout = async () => {
+    showLoading("Logging out...");
     await fetch("/api/auth/logout", { method: "POST" });
     await signOut({ redirect: false });
     setMenuOpen(false);
@@ -100,7 +166,11 @@ export default function Navbar({
         <div className="max-w-[95vw] mx-auto px-4">
           <div className="flex justify-between items-center h-10">
             {/* LOGO */}
-            <Link href="/" className="flex items-center gap-2 px-3 py-2">
+            <Link
+              href="/"
+              onClick={onNav("Going Home...")}
+              className="flex items-center gap-2 px-3 py-2"
+            >
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 text-white flex items-center justify-center">
                 <MapPin size={22} />
               </div>
@@ -120,9 +190,9 @@ export default function Navbar({
               <div className="hidden md:flex gap-1">
                 {navLinks.map((l) => (
                   <Link
-                    key={l.href}
+                    key={l.label} // unique key
                     href={l.href}
-                    onClick={() => showLoading("Navigating...")}
+                    onClick={onNav(l.message)}
                     className="relative px-4 py-1 text-sm text-white hover:text-orange-400 transition-colors group"
                   >
                     {l.label}
@@ -137,7 +207,10 @@ export default function Navbar({
 
               {/* AUTH - DESKTOP ONLY */}
               {!currentUser ? (
-                <Link href="/login">
+                <Link
+                  href="/login"
+                  onClick={() => showLoading("Redirecting to Login...")}
+                >
                   <button className="hidden sm:flex gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white text-sm font-semibold">
                     <LogIn size={18} />
                     Login
@@ -195,67 +268,21 @@ export default function Navbar({
                         </div>
                       </div>
 
-                      {/* Menu Items */}
                       <div className="py-2 dark:bg-slate-900/90">
-                        <Link
-                          href="/profile"
-                          onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
-                        >
-                          <User
-                            size={18}
-                            className="text-orange-600 dark:text-orange-500"
-                          />
-                          <span className="font-medium">My Profile</span>
-                        </Link>
-
-                        <Link
-                          href="/profile/bookings"
-                          onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
-                        >
-                          <Calendar
-                            size={18}
-                            className="text-orange-600 dark:text-orange-500"
-                          />
-                          <span className="font-medium">My Bookings</span>
-                        </Link>
-
-                        <Link
-                          href="/profile/favorites"
-                          onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
-                        >
-                          <Heart
-                            size={18}
-                            className="text-orange-600 dark:text-orange-500"
-                          />
-                          <span className="font-medium">Favorites</span>
-                        </Link>
-
-                        <Link
-                          href="/profile/saved"
-                          onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
-                        >
-                          <BookMarked
-                            size={18}
-                            className="text-orange-600 dark:text-orange-500"
-                          />
-                          <span className="font-medium">Saved Places</span>
-                        </Link>
-
-                        <Link
-                          href="/profile/settings"
-                          onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
-                        >
-                          <Settings
-                            size={18}
-                            className="text-orange-600 dark:text-orange-500"
-                          />
-                          <span className="font-medium">Settings</span>
-                        </Link>
+                        {profileLinks.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={onNav(item.message)}
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
+                          >
+                            <item.icon
+                              size={18}
+                              className="text-orange-600 dark:text-orange-500"
+                            />
+                            <span className="font-medium">{item.label}</span>
+                          </Link>
+                        ))}
                       </div>
 
                       {/* Logout Button */}
@@ -327,7 +354,7 @@ export default function Navbar({
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setIsOpen(false)}
+                onClick={onNav("Navigating...")}
                 className="px-4 py-3 rounded-lg font-medium hover:bg-orange-100 dark:hover:bg-orange-900/30"
               >
                 {link.label}
@@ -337,41 +364,17 @@ export default function Navbar({
             {/* Profile Links in Mobile */}
             {currentUser && (
               <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-                <Link
-                  href="/profile"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
-                >
-                  <User size={18} className="text-orange-600" />
-                  <span className="font-medium">My Profile</span>
-                </Link>
-
-                <Link
-                  href="/profile/bookings"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
-                >
-                  <Calendar size={18} className="text-orange-600" />
-                  <span className="font-medium">My Bookings</span>
-                </Link>
-
-                <Link
-                  href="/profile/favorites"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
-                >
-                  <Heart size={18} className="text-orange-600" />
-                  <span className="font-medium">Favorites</span>
-                </Link>
-
-                <Link
-                  href="/profile/settings"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
-                >
-                  <Settings size={18} className="text-orange-600" />
-                  <span className="font-medium">Settings</span>
-                </Link>
+                {profileLinks.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onNav(item.message)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
+                  >
+                    <item.icon size={18} className="text-orange-600" />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                ))}
               </div>
             )}
 
