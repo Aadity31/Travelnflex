@@ -6,6 +6,7 @@ import Credits from "./components/Credits";
 import NavbarServer from "./components/navbar/Navbar.server";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
+import NavigationLoader from "@/app/components/NavigationLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <NavigationLoader />
         {/* ⭐ Cloudinary Script */}
         <Script
           src="https://upload-widget.cloudinary.com/global/all.js"

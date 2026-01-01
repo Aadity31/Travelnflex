@@ -189,7 +189,6 @@ export default function ProfilePage() {
         }
       } finally {
         setLoading(false);
-        hideLoading();
       }
     };
 

@@ -20,7 +20,7 @@ export default function ActivitiesClient({
 }: {
   initialActivities: Activity[];
 }) {
-  const { showLoading, hideLoading } = useLoading();
+  const { showLoading } = useLoading();
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -35,8 +35,6 @@ export default function ActivitiesClient({
   });
 
   useEffect(() => {
-    hideLoading();
-
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }

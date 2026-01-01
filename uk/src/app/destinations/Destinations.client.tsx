@@ -48,11 +48,9 @@ export default function DestinationsClient({
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
-  const { showLoading, hideLoading } = useLoading();
+  const { showLoading } = useLoading();
 
   useEffect(() => {
-    hideLoading();
-
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
