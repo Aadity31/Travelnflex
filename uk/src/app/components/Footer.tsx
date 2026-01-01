@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Credits from "./Credits";
 
 export default function FooterWithCredits() {
   const socialLinks = [
