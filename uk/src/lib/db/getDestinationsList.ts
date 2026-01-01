@@ -18,6 +18,7 @@ export async function getDestinationsList({
       d.location,
       d.average_rating,
       d.review_count,
+      d.highlights,
       d.popular_activities,
       d.best_time_to_visit,
       d.badge_text,
@@ -52,6 +53,7 @@ export async function getDestinationsList({
     location: row.location,
     rating: Number(row.average_rating),
     reviewCount: row.review_count,
+    highlights: row.highlights ?? [],
     popularActivities: row.popular_activities ?? [],
     bestTimeToVisit: row.best_time_to_visit,
 

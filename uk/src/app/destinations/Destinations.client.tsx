@@ -137,7 +137,7 @@ export default function DestinationsClient({
       {/* Destinations Grid - Compact */}
       <section className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {destinations.map((destination) => (
+          {destinations.map((destination,index) => (
             <article
               key={destination.id}
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
@@ -148,6 +148,7 @@ export default function DestinationsClient({
                   alt={destination.name}
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority={index === 0}  
                   className="object-cover"
                 />
                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1">
