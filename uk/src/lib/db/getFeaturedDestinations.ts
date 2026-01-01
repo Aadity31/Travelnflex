@@ -4,29 +4,42 @@ export async function getFeaturedDestinations(limit = 6) {
   const { rows } = await pool.query(
     `
     SELECT
-      id,
-      name,
-      slug,
-      short_description,
-      cover_image,
-      location,
-      average_rating,
-      review_count,
-      popular_activities,
-      best_time_to_visit,
-      starting_price,
-      badge_text,
-      badge_type
-    FROM destinations
-    WHERE is_active = TRUE
+      d.id,
+      d.name,
+      d.slug,
+      d.short_description,
+      d.cover_image,
+      d.location,
+      d.average_rating,
+      d.review_count,
+      d.popular_activities,
+      d.best_time_to_visit,
+      d.badge_text,
+      d.badge_type,
+
+      p.price_per_person,
+
+      disc.percentage AS discount_percentage,
+      disc.valid_until AS discount_valid_until
+
+    FROM destinations d
+    JOIN destination_prices p
+      ON p.destination_id = d.id
+    LEFT JOIN destination_discounts disc
+      ON disc.destination_id = d.id
+
+    WHERE d.is_active = TRUE
+
     ORDER BY
-      CASE badge_type
+      CASE d.badge_type
         WHEN 'popular' THEN 1
         WHEN 'trending' THEN 2
         WHEN 'new' THEN 3
         ELSE 4
       END,
-      average_rating DESC
+      d.average_rating DESC,
+      d.id DESC
+
     LIMIT $1
     `,
     [limit]
@@ -43,8 +56,18 @@ export async function getFeaturedDestinations(limit = 6) {
     reviewCount: row.review_count,
     popularActivities: row.popular_activities ?? [],
     bestTimeToVisit: row.best_time_to_visit,
-    startingPrice: row.starting_price,
+
+    startingPrice: row.price_per_person,
+
     badgeText: row.badge_text,
-    badgeType: row.badge_type
+    badgeType: row.badge_type,
+
+    // 🔒 FUTURE READY (UI can ignore / comment)
+    discount: row.discount_percentage
+      ? {
+          percentage: row.discount_percentage,
+          validUntil: row.discount_valid_until,
+        }
+      : undefined,
   }));
 }

@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { StarIcon, MapPinIcon, ClockIcon } from "@heroicons/react/24/solid";
-import { useLoading } from "@/lib/use-loading";
+
 
 /* ---------------- TYPES (LOGIC ONLY) ---------------- */
+
 
 export interface DestinationCard {
   id: string;
@@ -26,6 +27,7 @@ export interface DestinationCard {
 
 export default function DestinationsClient({
   initialDestinations,
+
 }: {
   initialDestinations: DestinationCard[];
 }) {
@@ -47,8 +49,13 @@ export default function DestinationsClient({
   const [hasMore, setHasMore] = useState(true);
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    setHasMore(true);
+  }, []);
 
-  const { showLoading } = useLoading();
+
+
+
 
   useEffect(() => {
     if ("scrollRestoration" in window.history) {
@@ -71,14 +78,21 @@ export default function DestinationsClient({
         try {
           const url = cursor
             ? `/api/destinations?createdAt=${encodeURIComponent(
-                cursor.createdAt
-              )}&id=${encodeURIComponent(cursor.id)}`
+              cursor.createdAt
+            )}&id=${encodeURIComponent(cursor.id)}`
             : `/api/destinations`;
 
           const res = await fetch(url);
           if (!res.ok) throw new Error("API failed");
 
           const next: DestinationCard[] = await res.json();
+          // console.log(
+          //   "[CLIENT scroll fetch] received:",
+          //   next.map(d => ({
+          //     id: d.id,
+          //     createdAt: d.createdAt,
+          //   }))
+          // );
 
           if (next.length === 0) {
             setHasMore(false);
@@ -133,6 +147,7 @@ export default function DestinationsClient({
                   src={destination.image}
                   alt={destination.name}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
                 />
                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1">

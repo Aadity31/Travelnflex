@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 export default async function DestinationsPage() {
   // 🔒 ALWAYS ARRAY (TS safe)
   const initialDestinations =
-    (await getDestinationsList({ limit: 4 })) ?? [];
+    (await getDestinationsList({ limit: 6 })) ?? [];
 
-  // 🔑 SEO structured data (NO geo dependency)
+  // 🔑 SEO structured data
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ItemList",

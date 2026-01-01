@@ -10,23 +10,34 @@ export async function getDestinationsList({
   const { rows } = await pool.query(
     `
     SELECT
-      id,
-      name,
-      slug,
-      short_description,
-      cover_image,
-      location,
-      average_rating,
-      review_count,
-      popular_activities,
-      best_time_to_visit,
-      starting_price,
-      badge_text,
-      badge_type,
-      created_at
-    FROM destinations
-    WHERE is_active = TRUE
-    ORDER BY created_at DESC
+      d.id,
+      d.name,
+      d.slug,
+      d.short_description,
+      d.cover_image,
+      d.location,
+      d.average_rating,
+      d.review_count,
+      d.popular_activities,
+      d.best_time_to_visit,
+      d.badge_text,
+      d.badge_type,
+      d.created_at,
+
+      p.price_per_person,
+
+      disc.percentage AS discount_percentage,
+      disc.valid_until AS discount_valid_until
+
+    FROM destinations d
+    JOIN destination_prices p
+      ON p.destination_id = d.id
+    LEFT JOIN destination_discounts disc
+      ON disc.destination_id = d.id
+
+    WHERE d.is_active = TRUE
+
+    ORDER BY d.created_at DESC, d.id DESC
     LIMIT $1
     `,
     [limit]
@@ -43,11 +54,21 @@ export async function getDestinationsList({
     reviewCount: row.review_count,
     popularActivities: row.popular_activities ?? [],
     bestTimeToVisit: row.best_time_to_visit,
-    startingPrice: row.starting_price,
+
+    startingPrice: row.price_per_person, // 🔥 FIX
+
     badgeText: row.badge_text,
     badgeType: row.badge_type,
 
-    // 🔑 cursor ke liye mandatory
+    // 🔒 FUTURE READY (UI ignore/comment safe)
+    discount: row.discount_percentage
+      ? {
+          percentage: row.discount_percentage,
+          validUntil: row.discount_valid_until,
+        }
+      : undefined,
+
+    // 🔑 cursor (mandatory)
     createdAt: row.created_at.toISOString(),
   }));
 }

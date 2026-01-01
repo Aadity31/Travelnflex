@@ -5,22 +5,20 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
 
-    // 🔑 composite cursor params
-    const rawCreatedAt = searchParams.get('createdAt');
-    const rawId = searchParams.get('id');
+    const createdAt = searchParams.get('createdAt');
+    const id = searchParams.get('id');
 
     let cursor:
       | {
           createdAt: string;
           id: string;
         }
-      | undefined = undefined;
+      | undefined;
 
-    // 🔒 validate cursor (PRODUCTION SAFE)
-    if (rawCreatedAt && rawId) {
-      const parsedDate = new Date(rawCreatedAt);
+    if (createdAt && id) {
+      const parsed = new Date(createdAt);
 
-      if (isNaN(parsedDate.getTime())) {
+      if (isNaN(parsed.getTime())) {
         return NextResponse.json(
           { error: 'Invalid cursor createdAt' },
           { status: 400 }
@@ -28,19 +26,26 @@ export async function GET(req: Request) {
       }
 
       cursor = {
-        createdAt: parsedDate.toISOString(), // force UTC ISO
-        id: rawId,
+        createdAt: parsed.toISOString(), // 🔒 force UTC
+        id,
       };
     }
 
     const destinations = await getDestinationsInfinite({
-      limit: 4, // 👈 same as SSR limit
+      limit: 4, // SSR + client SAME
       cursor,
     });
+// console.log(
+//   "[API /destinations] returned:",
+//   destinations.map(d => ({
+//     id: d.id,
+//     createdAt: d.createdAt,
+//   }))
+// );
 
     return NextResponse.json(destinations);
-  } catch (error) {
-    console.error('API /destinations error:', error);
+  } catch (err) {
+    console.error('API /destinations error:', err);
 
     return NextResponse.json(
       { error: 'Internal Server Error' },
