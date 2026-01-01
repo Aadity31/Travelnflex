@@ -209,7 +209,7 @@ ORDER BY
 
 //destinations
 
-    CREATE TABLE destinations (
+   CREATE TABLE destinations (
     id TEXT PRIMARY KEY,   -- <AGENCY_CODE>_DST_<SEQ>
 
     agency_code TEXT NOT NULL
@@ -234,7 +234,6 @@ ORDER BY
     highlights TEXT[] DEFAULT '{}',
     popular_activities TEXT[] DEFAULT '{}',
 
-    starting_price INT,                   -- optional (UI only)
     badge_text TEXT,                      -- optional
     badge_type TEXT CHECK (
         badge_type IN ('popular','trending','new')
@@ -247,4 +246,26 @@ ORDER BY
 
     -- 🔒 SAFETY
     CHECK (id LIKE agency_code || '\_DST\_%')
+);
+
+CREATE TABLE destination_prices (
+    destination_id TEXT PRIMARY KEY
+        REFERENCES destinations(id) ON DELETE CASCADE,
+
+    price_per_person INT NOT NULL CHECK (price_per_person >= 0),
+    currency TEXT DEFAULT 'INR',
+
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+
+CREATE TABLE destination_discounts (
+    destination_id TEXT PRIMARY KEY
+        REFERENCES destinations(id) ON DELETE CASCADE,
+
+    percentage INT CHECK (percentage BETWEEN 1 AND 90),
+    valid_until DATE NOT NULL,
+
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
