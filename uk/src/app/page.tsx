@@ -7,10 +7,10 @@ import TestimonialsSection from "./components/sections/TestimonialsSection";
 import FeaturedGuides from "./components/sections/FeaturedGuides";
 import CTASection from "./components/sections/CTASection";
 import FooterWithCredits from "./components/Footer";
+import HomeLoader from "@/app/components/HomeLoader";
 
 export const metadata: Metadata = {
-  title:
-    "Sacred Journeys - Spiritual & Adventure Travel in Uttrakhand,",
+  title: "Sacred Journeys - Spiritual & Adventure Travel in Uttrakhand,",
   description:
     "Discover uttrakhand uk with expert local guides. Book spiritual journeys, adventure activities, and Ganga Aarti tours. Save up to 30% on customized packages!",
   keywords:
@@ -55,6 +55,7 @@ export default function HomePage() {
       />
 
       <main className="min-h-screen">
+        <HomeLoader />
         <HeroSection />
         <QuickSearchBar />
         <FeaturedDestinations />

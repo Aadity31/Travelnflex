@@ -34,22 +34,9 @@ export default function ActivitiesClient({
     return last ? new Date(last.createdAt).toISOString() : null;
   });
 
-  // PAGE LOAD PE LOADING SHOW KARO
   useEffect(() => {
-    showLoading("Loading activities..."); // START LOADING
+    hideLoading();
 
-    // Simulate data loading or wait for something
-    setTimeout(() => {
-      hideLoading(); // STOP LOADING after some time
-    }, 2000);
-
-    if ("scrollRestoration" in window.history) {
-      window.history.scrollRestoration = "manual";
-    }
-    window.scrollTo(0, 0);
-  }, []);
-
-  useEffect(() => {
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
@@ -257,7 +244,12 @@ export default function ActivitiesClient({
                         <div className="mb-2">
                           <div className="flex items-start justify-between gap-2 mb-1">
                             <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-2">
-                              <Link href={`/activities/${activity.slug}`}>
+                              <Link
+                                href={`/activities/${activity.slug}`}
+                                onClick={() =>
+                                  showLoading("Loading activity details...")
+                                }
+                              >
                                 {activity.name}
                               </Link>
                             </h3>
@@ -345,6 +337,9 @@ export default function ActivitiesClient({
                         <Link
                           href={`/activities/${activity.slug}`}
                           className="bg-orange-600 hover:bg-orange-700 text-white py-2 sm:py-2.5 px-4 sm:px-6 rounded-lg font-semibold transition-colors duration-200 text-xs sm:text-sm whitespace-nowrap"
+                          onClick={() =>
+                            showLoading("Loading activity details...")
+                          }
                         >
                           View Details
                         </Link>

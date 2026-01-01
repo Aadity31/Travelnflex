@@ -16,7 +16,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import NotificationBellServer from "../NotficationBell/NotificationBell.server";
+import { useLoading } from "@/lib/use-loading";
 
 type UserType = {
   id: string;
@@ -32,6 +32,8 @@ export default function Navbar({
   user: UserType | null;
   notificationComponent?: React.ReactNode;
 }) {
+  const { showLoading } = useLoading();
+
   const [currentUser] = useState(initialUser);
   const [isOpen, setIsOpen] = useState(false);
   const [hideNav, setHideNav] = useState(false);
@@ -120,25 +122,12 @@ export default function Navbar({
                   <Link
                     key={l.href}
                     href={l.href}
-                    className="
-        relative px-4 py-1
-        text-sm text-white
-        hover:text-orange-400
-        transition-colors
-        group
-      "
+                    onClick={() => showLoading("Navigating...")}
+                    className="relative px-4 py-1 text-sm text-white hover:text-orange-400 transition-colors group"
                   >
                     {l.label}
 
-                    <div
-                      className="
-          absolute bottom-0 left-4 right-4
-          h-0.5
-          bg-gradient-to-r from-orange-400 to-red-500
-          scale-x-0 group-hover:scale-x-100
-          transition-transform
-        "
-                    />
+                    <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-orange-400 to-red-500 scale-x-0 group-hover:scale-x-100 transition-transform" />
                   </Link>
                 ))}
               </div>
