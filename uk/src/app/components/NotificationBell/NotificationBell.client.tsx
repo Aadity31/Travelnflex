@@ -1,17 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Bell, Trash2, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-
-type Notification = {
-  id: string;
-  title: string;
-  message: string;
-  timestamp: string;
-  read: boolean;
-  type: "booking" | "reminder" | "update" | "promo";
-};
+import { Bell, Trash2 } from "lucide-react";
+import type { Notification } from "@/types/notification";
 
 interface NotificationBellProps {
   initialNotifications: Notification[];
@@ -24,7 +15,6 @@ export default function NotificationBellClient({
   const [notifications, setNotifications] =
     useState<Notification[]>(initialNotifications);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 

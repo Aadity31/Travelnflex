@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import FilterSidebar from "@/app/components/filters/FilterSidebar";
 import MobileFilterSidebar from "@/app/components/filters/MobileFilterSidebar";
-import { SearchFilters } from "@/app/types";
+import { SearchFilters } from "@/types";
 import {
   StarIcon,
   MapPinIcon,
@@ -346,7 +346,9 @@ export default function DestinationsClient({
                       <div className="mb-1.5">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
                           <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
-                            <Link href={`/destinations/${destination.slug}`}>
+                            <Link
+                              href={`/details/destinations/${destination.slug}`}
+                            >
                               {destination.name}
                             </Link>
                           </h3>
@@ -408,7 +410,7 @@ export default function DestinationsClient({
                       </div>
 
                       <Link
-                        href={`/destinations/${destination.slug}`}
+                        href={`/details/destinations/${destination.slug}`}
                         className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap"
                       >
                         Explore
