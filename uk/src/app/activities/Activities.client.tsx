@@ -289,169 +289,172 @@ export default function ActivitiesClient({
               {/* Cards - RESPONSIVE */}
               <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6">
                 {filteredActivities.map((activity) => (
-                  <article
+                  <Link
                     key={activity.id}
-                    className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row"
+                    href={`/details/activity/${activity.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
                   >
-                    {/* Image Section - Height Reduced from h-48 to h-40 */}
-                    <div className="relative w-full sm:w-64 md:w-80 lg:w-96 h-40 sm:h-auto flex-shrink-0">
-                      <Image
-                        src={activity.images[0]}
-                        alt={activity.name}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 100vw, 400px"
-                      />
+                    <article
+                      key={activity.id}
+                      className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row"
+                    >
+                      {/* Image Section - Height Reduced from h-48 to h-40 */}
+                      <div className="relative w-full sm:w-64 md:w-80 lg:w-96 h-40 sm:h-auto flex-shrink-0">
+                        <Image
+                          src={activity.images[0]}
+                          alt={activity.name}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 100vw, 400px"
+                        />
 
-                      {/* Type Badge */}
-                      <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
-                        <span
-                          className={`px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold text-white shadow-md ${
-                            activity.type === "adventure"
-                              ? "bg-red-500"
-                              : activity.type === "spiritual"
-                              ? "bg-purple-500"
-                              : activity.type === "cultural"
-                              ? "bg-blue-500"
-                              : "bg-green-500"
-                          }`}
-                        >
-                          {activity.type
-                            ? activity.type.charAt(0).toUpperCase() +
-                              activity.type.slice(1)
-                            : ""}
-                        </span>
-                      </div>
-
-                      {/* Image Thumbnails */}
-                      <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 flex gap-1">
-                        {activity.images.slice(0, 4).map((img, idx) => (
-                          <div
-                            key={idx}
-                            className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-md overflow-hidden border-2 border-white shadow-sm"
+                        {/* Type Badge */}
+                        <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold text-white shadow-md ${
+                              activity.type === "adventure"
+                                ? "bg-red-500"
+                                : activity.type === "spiritual"
+                                ? "bg-purple-500"
+                                : activity.type === "cultural"
+                                ? "bg-blue-500"
+                                : "bg-green-500"
+                            }`}
                           >
-                            <Image
-                              src={img}
-                              alt={`${activity.name} ${idx + 1}`}
-                              fill
-                              sizes="50px"
-                              className="object-cover"
-                            />
-                          </div>
-                        ))}
-                        {activity.images.length > 4 && (
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-black/60 backdrop-blur-sm border-2 border-white flex items-center justify-center">
-                            <span className="text-white text-[10px] font-semibold">
-                              +{activity.images.length - 4}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                            {activity.type
+                              ? activity.type.charAt(0).toUpperCase() +
+                                activity.type.slice(1)
+                              : ""}
+                          </span>
+                        </div>
 
-                    {/* Content Section - Padding Reduced */}
-                    <div className="flex-1 p-2.5 sm:p-3 md:p-4 flex flex-col">
-                      <div className="flex-1">
-                        {/* Title and Location */}
-                        <div className="mb-1.5">
-                          <div className="flex items-start justify-between gap-2 mb-0.5">
-                            <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
-                              <Link href={`/activities/${activity.slug}`}>
-                                {activity.name}
-                              </Link>
-                            </h3>
-
-                            {/* Rating Badge */}
-                            <div className="flex items-center gap-0.5 bg-blue-600 text-white px-1.5 py-0.5 rounded flex-shrink-0">
-                              <span className="text-[10px] sm:text-xs font-bold">
-                                {activity.rating}
+                        {/* Image Thumbnails */}
+                        <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 flex gap-1">
+                          {activity.images.slice(0, 4).map((img, idx) => (
+                            <div
+                              key={idx}
+                              className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-md overflow-hidden border-2 border-white shadow-sm"
+                            >
+                              <Image
+                                src={img}
+                                alt={`${activity.name} ${idx + 1}`}
+                                fill
+                                sizes="50px"
+                                className="object-cover"
+                              />
+                            </div>
+                          ))}
+                          {activity.images.length > 4 && (
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-black/60 backdrop-blur-sm border-2 border-white flex items-center justify-center">
+                              <span className="text-white text-[10px] font-semibold">
+                                +{activity.images.length - 4}
                               </span>
-                              <StarIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Content Section - Padding Reduced */}
+                      <div className="flex-1 p-2.5 sm:p-3 md:p-4 flex flex-col">
+                        <div className="flex-1">
+                          {/* Title and Location */}
+                          <div className="mb-1.5">
+                            <div className="flex items-start justify-between gap-2 mb-0.5">
+                              <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
+                                {activity.name}
+                              </h3>
+
+                              {/* Rating Badge */}
+                              <div className="flex items-center gap-0.5 bg-blue-600 text-white px-1.5 py-0.5 rounded flex-shrink-0">
+                                <span className="text-[10px] sm:text-xs font-bold">
+                                  {activity.rating}
+                                </span>
+                                <StarIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-1 text-gray-600 text-[10px] sm:text-xs">
+                              <MapPinIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                              <span className="line-clamp-1">
+                                {activity.location}
+                              </span>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-1 text-gray-600 text-[10px] sm:text-xs">
-                            <MapPinIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                            <span className="line-clamp-1">
-                              {activity.location}
-                            </span>
-                          </div>
-                        </div>
+                          {/* Description - Margins Reduced */}
+                          <p className="text-gray-600 text-xs mb-2 line-clamp-2">
+                            {activity.description}
+                          </p>
 
-                        {/* Description - Margins Reduced */}
-                        <p className="text-gray-600 text-xs mb-2 line-clamp-2">
-                          {activity.description}
-                        </p>
-
-                        {/* Features - Margins Reduced */}
-                        <div className="mb-2">
-                          <div className="flex flex-wrap gap-1.5">
-                            {activity.includes
-                              .slice(0, 3)
-                              .map((item, index) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center gap-0.5 text-[10px] sm:text-xs text-gray-700"
-                                >
-                                  <svg
-                                    className="w-3 h-3 text-green-600 flex-shrink-0"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
+                          {/* Features - Margins Reduced */}
+                          <div className="mb-2">
+                            <div className="flex flex-wrap gap-1.5">
+                              {activity.includes
+                                .slice(0, 3)
+                                .map((item, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center gap-0.5 text-[10px] sm:text-xs text-gray-700"
                                   >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                  <span className="line-clamp-1">{item}</span>
-                                </div>
-                              ))}
-                            {activity.includes.length > 3 && (
-                              <span className="text-[10px] text-gray-500">
-                                +{activity.includes.length - 3}
-                              </span>
-                            )}
+                                    <svg
+                                      className="w-3 h-3 text-green-600 flex-shrink-0"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                    <span className="line-clamp-1">{item}</span>
+                                  </div>
+                                ))}
+                              {activity.includes.length > 3 && (
+                                <span className="text-[10px] text-gray-500">
+                                  +{activity.includes.length - 3}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Duration */}
+                          <div className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-600">
+                            <ClockIcon className="w-3 h-3" />
+                            <span>{activity.duration}</span>
                           </div>
                         </div>
 
-                        {/* Duration */}
-                        <div className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-600">
-                          <ClockIcon className="w-3 h-3" />
-                          <span>{activity.duration}</span>
+                        {/* Bottom Section - Tighter Spacing */}
+                        <div className="flex items-end justify-between mt-2 pt-2 border-t border-gray-200">
+                          <div>
+                            <div className="text-[10px] text-gray-500 line-through leading-none">
+                              ₹{Math.round(activity.price.min * 1.2)}
+                            </div>
+                            <div className="flex items-baseline gap-0.5">
+                              <span className="text-lg sm:text-xl font-bold text-gray-900">
+                                ₹{activity.price.min}
+                              </span>
+                              {activity.price.min !== activity.price.max && (
+                                <span className="text-[10px] sm:text-xs text-gray-600">
+                                  - ₹{activity.price.max}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-gray-500 leading-none">
+                              Per Night
+                            </div>
+                          </div>
+
+                          <div className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap">
+                            View Details
+                          </div>
                         </div>
                       </div>
-
-                      {/* Bottom Section - Tighter Spacing */}
-                      <div className="flex items-end justify-between mt-2 pt-2 border-t border-gray-200">
-                        <div>
-                          <div className="text-[10px] text-gray-500 line-through leading-none">
-                            ₹{Math.round(activity.price.min * 1.2)}
-                          </div>
-                          <div className="flex items-baseline gap-0.5">
-                            <span className="text-lg sm:text-xl font-bold text-gray-900">
-                              ₹{activity.price.min}
-                            </span>
-                            {activity.price.min !== activity.price.max && (
-                              <span className="text-[10px] sm:text-xs text-gray-600">
-                                - ₹{activity.price.max}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[10px] text-gray-500 leading-none">
-                            Per Night
-                          </div>
-                        </div>
-
-                        <Link
-                          href={`/activities/${activity.slug}`}
-                          className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap"
-                        >
-                          View Details
-                        </Link>
-                      </div>
-                    </div>
-                  </article>
+                    </article>
+                  </Link>
                 ))}
               </div>
 

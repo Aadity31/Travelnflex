@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Bell, Trash2, X } from "lucide-react";
+import { Bell, Trash2 } from "lucide-react";
 import type { Notification } from "@/types/notification";
 
 interface NotificationBellProps {
