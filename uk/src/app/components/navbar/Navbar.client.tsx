@@ -19,8 +19,8 @@ import {
   Sunset,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import NotificationBellClient from "@/app/components/NotficationBell/NotificationBell.client";
-import type { Notification } from "@/app/types/notification";
+import NotificationBellClient from "@/app/components/NotificationBell/NotificationBell.client";
+import type { Notification } from "@/types/notification";
 
 type UserType = {
   id: string;

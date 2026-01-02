@@ -19,7 +19,6 @@ export default function CustomDatePicker({
   maxDate = new Date(),
   minDate = null,
   disabled = false,
-  required = false,
 }: CustomDatePickerProps) {
   return (
     <Datepicker

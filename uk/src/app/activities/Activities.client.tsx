@@ -10,7 +10,7 @@ import {
   FunnelIcon,
   XMarkIcon,
 } from "@heroicons/react/24/solid";
-import type { Activity, SearchFilters } from "@/app/types";
+import type { Activity, SearchFilters } from "@/types";
 import ActivityFilters from "@/app/components/filters/FilterSidebar";
 import MobileActivityFilters from "@/app/components/filters/MobileFilterSidebar";
 

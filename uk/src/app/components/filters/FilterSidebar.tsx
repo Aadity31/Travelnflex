@@ -6,7 +6,7 @@ import {
   CheckIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/solid";
-import type { SearchFilters, Activity } from "@/app/types";
+import type { SearchFilters, Activity } from "@/types";
 
 // --- CONSTANTS ---
 const activityTypes = [

@@ -3,7 +3,7 @@
 import { Fragment, useState, useEffect } from "react";
 import { XMarkIcon, CheckIcon } from "@heroicons/react/24/solid";
 import { Transition, TransitionChild } from "@headlessui/react";
-import type { SearchFilters, Activity } from "@/app/types";
+import type { SearchFilters, Activity } from "@/types";
 
 // --- CONSTANTS ---
 const activityTypes = [
@@ -201,7 +201,6 @@ export default function MobileFilterSidebar({
                 <XMarkIcon className="w-6 h-6" />
               </button>
             </div>
-            
 
             {/* Scrollable Content */}
             <div className="p-5 space-y-6 overflow-y-auto flex-1">

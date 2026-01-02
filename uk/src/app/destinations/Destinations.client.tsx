@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import FilterSidebar from "@/app/components/filters/FilterSidebar";
 import MobileFilterSidebar from "@/app/components/filters/MobileFilterSidebar";
-import { SearchFilters } from "@/app/types";
+import { SearchFilters } from "@/types";
 import {
   StarIcon,
   MapPinIcon,
