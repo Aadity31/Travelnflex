@@ -19,6 +19,8 @@ import {
   Sunset,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import NotificationBellClient from "@/app/components/NotficationBell/NotificationBell.client";
+import type { Notification } from "@/app/types/notification";
 
 type UserType = {
   id: string;
@@ -29,10 +31,10 @@ type UserType = {
 
 export default function Navbar({
   user: initialUser,
-  notificationComponent,
+  initialNotifications,
 }: {
   user: UserType | null;
-  notificationComponent?: React.ReactNode;
+  initialNotifications: Notification[];
 }) {
   const [currentUser] = useState(initialUser);
   const [isOpen, setIsOpen] = useState(false);
@@ -186,8 +188,14 @@ export default function Navbar({
                 ))}
               </div>
 
-              {/* ⭐ Notification Bell */}
-              {notificationComponent}
+              {/* ⭐ Notification Bell — LOGIN KE BAAD HI */}
+              {currentUser && (
+                <div className="hidden md:flex">
+                  <NotificationBellClient
+                    initialNotifications={initialNotifications}
+                  />
+                </div>
+              )}
 
               {/* AUTH - DESKTOP ONLY */}
               {!currentUser ? (
