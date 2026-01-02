@@ -113,3 +113,111 @@ export interface SearchFilters {
   date?: string;
   guests?: number;
 }
+
+
+/* ============ EXISTING TYPES (Keep these) ============ */
+
+export type ActivityType = "adventure" | "spiritual" | "cultural" | "food" | "trekking";
+export type DifficultyLevel = "easy" | "moderate" | "difficult";
+
+export interface Activity {
+  id: string;
+  name: string;
+  slug: string;
+  type: ActivityType;
+  description: string;
+  shortDescription: string;
+  duration: string;
+  location: string;
+  difficulty: DifficultyLevel;
+  rating: number;
+  reviewCount: number;
+  maxGroupSize: number;
+  images: string[];
+  highlights: string[];
+  includes: string[];
+  isPopular: boolean;
+  isTrending: boolean;
+  price: {
+    min: number;
+    max: number;
+    currency: string;
+  };
+  discount?: {
+    percentage: number;
+    validUntil: string;
+  };
+  createdAt: string;
+  agency?: Agency;
+}
+
+export interface SearchFilters {
+  location?: string;
+  activityTypes?: ActivityType[];
+  difficulties?: DifficultyLevel[];
+  priceRange?: [number, number];
+  ratings?: number[];
+}
+
+/* ============ NEW TYPES FOR BOOKING PAGE ============ */
+
+export interface Agency {
+  name: string;
+  logo?: string;
+  description?: string;
+}
+
+export interface Review {
+  id: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
+export interface UnifiedData {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  location: string;
+  rating: number;
+  reviewCount: number;
+  duration?: string;
+  images: string[];
+  highlights?: string[];
+  includes?: string[];
+  type?: ActivityType;
+  difficulty?: DifficultyLevel;
+  priceMin: number;
+  priceMax: number;
+  currency?: string;
+  agency?: Agency;
+  createdAt?: string;
+  // Destination specific
+  popularActivities?: string[];
+  bestTimeToVisit?: string;
+  badgeText?: string;
+  badgeType?: string;
+}
+
+
+/* ============ BOOKING TYPES ============ */
+
+export type PackageType = "solo" | "family" | "private" | "group";
+
+export interface BookingState {
+  packageType: PackageType;
+  seats: number;
+  rooms: number;
+  checkIn: string;
+  checkOut: string;
+}
+
+export interface PricingBreakdown {
+  pricePerPerson: number;
+  roomCost: number;
+  subtotal: number;
+  discount: number;
+  total: number;
+}

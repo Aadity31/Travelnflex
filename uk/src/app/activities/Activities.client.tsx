@@ -290,12 +290,10 @@ export default function ActivitiesClient({
               <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6">
                 {filteredActivities.map((activity) => (
                   <Link
-                    key={activity.id}
-                    href={`/details/activity/${activity.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block"
-                  >
+  href={`/booking/activity/${activity.slug}`}
+  className="block"
+>
+
                     <article
                       key={activity.id}
                       className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row"

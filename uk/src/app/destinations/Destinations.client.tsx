@@ -410,11 +410,11 @@ export default function DestinationsClient({
                       </div>
 
                       <Link
-                        href={`/details/destinations/${destination.slug}`}
-                        className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap"
-                      >
-                        Explore
-                      </Link>
+  href={`/booking/destination/${destination.slug}`}
+  className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap"
+>
+  Explore
+</Link>
                     </div>
                   </div>
                 </article>
