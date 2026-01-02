@@ -136,7 +136,7 @@ export default function Navbar({
     <>
       {/* ================= NAVBAR ================= */}
       <nav
-        className={`fixed w-full top-0 z-50 transition-transform duration-300
+        className={`fixed w-full top-0 z-[7000] transition-transform duration-300
         ${hideNav ? "-translate-y-full" : "translate-y-0"}
         backdrop-blur-xl bg-white/10 dark:bg-slate-950/20
         shadow-lg border-b border-white/10 py-2.5`}
