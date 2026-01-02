@@ -9,9 +9,9 @@ import BookingClient from "./BookingClient";
 export default async function BookingPage({
   params,
 }: {
-  params: { type: string; slug: string };
+  params: Promise<{ type: string; slug: string }>;  // ✅ Promise type
 }) {
-  const { type, slug } = params;
+  const { type, slug } = await params;  // ✅ await params
 
   let data;
   let reviews;
@@ -23,11 +23,11 @@ export default async function BookingPage({
     data = await getDestinationBySlug(slug);
     reviews = await getReviews({ slug, type: 'destination' });
   } else {
-    notFound(); // Invalid type
+    notFound();
   }
 
   if (!data) {
-    notFound(); // Data not found
+    notFound();
   }
 
   return <BookingClient data={data} reviews={reviews} type={type} />;

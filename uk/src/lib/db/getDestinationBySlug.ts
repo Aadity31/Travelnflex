@@ -27,16 +27,12 @@ export async function getDestinationBySlug(slug: string) {
       p.currency,
 
       disc.percentage AS discount_percentage,
-      disc.valid_until AS discount_valid_until,
-
-      ag.name AS agency_name,
-      ag.logo AS agency_logo,
-      ag.description AS agency_description
+      disc.valid_until AS discount_valid_until
 
     FROM destinations d
     JOIN destination_prices p ON p.destination_id = d.id
     LEFT JOIN destination_discounts disc ON disc.destination_id = d.id
-    LEFT JOIN agencies ag ON ag.id = d.agency_id
+    -- ✅ REMOVED: LEFT JOIN agencies
 
     WHERE d.slug = $1 AND d.is_active = TRUE
     LIMIT 1
@@ -70,7 +66,7 @@ export async function getDestinationBySlug(slug: string) {
     badgeType: row.badge_type,
     
     priceMin: row.price_per_person,
-    priceMax: row.price_per_person, // Destinations usually have single price
+    priceMax: row.price_per_person,
     currency: row.currency,
     
     discount: row.discount_percentage
@@ -80,13 +76,12 @@ export async function getDestinationBySlug(slug: string) {
         }
       : undefined,
     
-    agency: row.agency_name
-      ? {
-          name: row.agency_name,
-          logo: row.agency_logo,
-          description: row.agency_description,
-        }
-      : undefined,
+    // ✅ DUMMY AGENCY DATA
+    agency: {
+      name: "Sacred Journeys India",
+      logo: "/agency-logo.png",
+      description: "Professional tour agency with years of experience in organizing adventure and spiritual tours across India."
+    },
     
     createdAt: row.created_at,
   };

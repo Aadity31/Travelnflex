@@ -31,16 +31,12 @@ export async function getActivityBySlug(slug: string) {
       p.currency,
 
       d.percentage AS discount_percentage,
-      d.valid_until AS discount_valid_until,
-
-      ag.name AS agency_name,
-      ag.logo AS agency_logo,
-      ag.description AS agency_description
+      d.valid_until AS discount_valid_until
 
     FROM activities a
     JOIN activity_prices p ON p.activity_id = a.id
     LEFT JOIN activity_discounts d ON d.activity_id = a.id
-    LEFT JOIN agencies ag ON ag.id = a.agency_id
+    -- ✅ REMOVED: LEFT JOIN agencies
 
     WHERE a.slug = $1 AND a.is_active = TRUE
     LIMIT 1
@@ -87,13 +83,12 @@ export async function getActivityBySlug(slug: string) {
         }
       : undefined,
     
-    agency: row.agency_name
-      ? {
-          name: row.agency_name,
-          logo: row.agency_logo,
-          description: row.agency_description,
-        }
-      : undefined,
+    // ✅ DUMMY AGENCY DATA
+    agency: {
+      name: "Adventure Tours India",
+      logo: "/agency-logo.png",
+      description: "Professional adventure tour agency with 10+ years of experience in organizing thrilling activities across India."
+    },
     
     createdAt: row.created_at,
   };

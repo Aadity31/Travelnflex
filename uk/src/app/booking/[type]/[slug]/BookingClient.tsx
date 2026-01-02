@@ -44,7 +44,8 @@ interface UnifiedData {
   id: string;
   name: string;
   slug: string;
-  description: string;
+  description?: string;
+  shortDescription?: string;
   location: string;
   rating: number;
   reviewCount: number;
@@ -52,10 +53,13 @@ interface UnifiedData {
   images: string[];
   highlights?: string[];
   includes?: string[];
+  popularActivities?: string[];
+  bestTimeToVisit?: string;
   type?: string;
   difficulty?: string;
   priceMin: number;
   priceMax: number;
+  currency?: string;
   agency?: Agency;
 }
 
@@ -149,6 +153,21 @@ export default function BookingClient({
     return dist.reverse();
   }, [reviews]);
 
+  /* ============ SAFE DATA ACCESS ============ */
+  
+  const displayData = {
+    description: data.description || data.shortDescription || "Experience the best of India with our carefully curated tours.",
+    images: data.images && data.images.length > 0 ? data.images : ["/placeholder-image.jpg"],
+    highlights: type === "activity" 
+      ? (data.includes || data.highlights || [])
+      : (data.highlights || data.popularActivities || []),
+    agency: data.agency || {
+      name: type === "activity" ? "Adventure Tours India" : "Sacred Journeys India",
+      logo: "/agency-logo.png",
+      description: "Professional tour operator with years of experience."
+    }
+  };
+
   /* ============ RENDER ============ */
 
   return (
@@ -162,7 +181,7 @@ export default function BookingClient({
               {/* Large Cover Image */}
               <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px]">
                 <Image
-                  src={data.images[selectedImage]}
+                  src={displayData.images[selectedImage]}
                   alt={data.name}
                   fill
                   className="object-cover"
@@ -173,7 +192,7 @@ export default function BookingClient({
 
               {/* Thumbnail Grid */}
               <div className="p-4 grid grid-cols-5 gap-2">
-                {data.images.slice(0, 5).map((img, idx) => (
+                {displayData.images.slice(0, 5).map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
@@ -213,6 +232,12 @@ export default function BookingClient({
                         {data.duration}
                       </div>
                     )}
+                    {data.bestTimeToVisit && (
+                      <div className="flex items-center gap-1">
+                        <ClockIcon className="w-4 h-4" />
+                        Best: {data.bestTimeToVisit}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -223,21 +248,23 @@ export default function BookingClient({
               </div>
 
               {/* Type & Difficulty Badges */}
-              {type === "activity" && data.type && (
+              {type === "activity" && (
                 <div className="mb-4 flex flex-wrap gap-2">
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-sm font-semibold text-white ${
-                      data.type === "adventure"
-                        ? "bg-red-500"
-                        : data.type === "spiritual"
-                        ? "bg-purple-500"
-                        : data.type === "cultural"
-                        ? "bg-blue-500"
-                        : "bg-green-500"
-                    }`}
-                  >
-                    {data.type.charAt(0).toUpperCase() + data.type.slice(1)}
-                  </span>
+                  {data.type && (
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full text-sm font-semibold text-white ${
+                        data.type === "adventure"
+                          ? "bg-red-500"
+                          : data.type === "spiritual"
+                          ? "bg-purple-500"
+                          : data.type === "cultural"
+                          ? "bg-blue-500"
+                          : "bg-green-500"
+                      }`}
+                    >
+                      {data.type.charAt(0).toUpperCase() + data.type.slice(1)}
+                    </span>
+                  )}
                   {data.difficulty && (
                     <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-gray-200 text-gray-700 capitalize">
                       {data.difficulty}
@@ -247,25 +274,22 @@ export default function BookingClient({
               )}
 
               <p className="text-gray-700 leading-relaxed mb-6">
-                {data.description}
+                {displayData.description}
               </p>
 
               {/* Highlights/Includes Section */}
-              {((data.highlights && data.highlights.length > 0) ||
-                (data.includes && data.includes.length > 0)) && (
+              {displayData.highlights.length > 0 && (
                 <div className="border-t pt-6">
                   <h3 className="text-lg font-bold text-gray-900 mb-4">
                     {type === "activity" ? "What's Included" : "Highlights"}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {(type === "activity" ? data.includes : data.highlights)?.map(
-                      (item, index) => (
-                        <div key={index} className="flex items-start gap-2">
-                          <CheckCircleIcon className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span className="text-gray-700 text-sm">{item}</span>
-                        </div>
-                      )
-                    )}
+                    {displayData.highlights.map((item, index) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <CheckCircleIcon className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700 text-sm">{item}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -274,30 +298,23 @@ export default function BookingClient({
             {/* ============ AGENCY DETAILS ============ */}
             <section className="bg-white rounded-xl shadow-md p-4 sm:p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">
-                About the {type === "activity" ? "Agency" : "Destination"}
+                About the Tour Operator
               </h2>
               <div className="flex items-start gap-4">
-                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-200">
-                  <Image
-                    src={
-                      data.agency?.logo ||
-                      "/default-agency.png"
-                    }
-                    alt={data.agency?.name || "Agency"}
-                    fill
-                    className="object-cover"
-                  />
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gradient-to-br from-orange-500 to-red-500">
+                  <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">
+                    {displayData.agency.name.charAt(0)}
+                  </div>
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-gray-900 mb-1">
-                    {data.agency?.name || "Sacred Journeys India"}
+                    {displayData.agency.name}
                   </h3>
                   <p className="text-sm text-gray-600 mb-2">
-                    Verified tour operator • 500+ tours completed
+                    ✓ Verified tour operator • 500+ tours completed
                   </p>
                   <p className="text-gray-700 text-sm">
-                    {data.agency?.description ||
-                      "Professional tour agency with years of experience in organizing adventure and spiritual tours across India."}
+                    {displayData.agency.description}
                   </p>
                 </div>
               </div>
@@ -360,54 +377,61 @@ export default function BookingClient({
 
               {/* Individual Reviews */}
               <div className="space-y-6">
-                {reviews.slice(0, 5).map((review) => (
-                  <div
-                    key={review.id}
-                    className="border-b pb-6 last:border-b-0 last:pb-0"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-full bg-orange-600 flex items-center justify-center text-white font-bold flex-shrink-0">
-                        {review.userName.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h4 className="font-semibold text-gray-900">
-                            {review.userName}
-                          </h4>
-                          <span className="text-sm text-gray-500">
-                            {new Date(review.date).toLocaleDateString("en-IN", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
+                {reviews.length > 0 ? (
+                  reviews.slice(0, 5).map((review) => (
+                    <div
+                      key={review.id}
+                      className="border-b pb-6 last:border-b-0 last:pb-0"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-full bg-orange-600 flex items-center justify-center text-white font-bold flex-shrink-0">
+                          {review.userName.charAt(0).toUpperCase()}
                         </div>
-                        <div className="flex items-center gap-1 mb-2">
-                          {[...Array(5)].map((_, i) => (
-                            <StarIcon
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < review.rating
-                                  ? "text-yellow-400"
-                                  : "text-gray-300"
-                              }`}
-                            />
-                          ))}
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="font-semibold text-gray-900">
+                              {review.userName}
+                            </h4>
+                            <span className="text-sm text-gray-500">
+                              {new Date(review.date).toLocaleDateString("en-IN", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1 mb-2">
+                            {[...Array(5)].map((_, i) => (
+                              <StarIcon
+                                key={i}
+                                className={`w-4 h-4 ${
+                                  i < review.rating
+                                    ? "text-yellow-400"
+                                    : "text-gray-300"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <p className="text-gray-700 text-sm leading-relaxed">
+                            {review.comment}
+                          </p>
                         </div>
-                        <p className="text-gray-700 text-sm leading-relaxed">
-                          {review.comment}
-                        </p>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 mb-4">
+                      No reviews yet. Be the first to review!
+                    </p>
+                    <div className="flex items-center justify-center gap-1 text-gray-400">
+                      {[...Array(5)].map((_, i) => (
+                        <StarIcon key={i} className="w-8 h-8" />
+                      ))}
+                    </div>
                   </div>
-                ))}
+                )}
               </div>
-
-              {reviews.length === 0 && (
-                <p className="text-gray-500 text-center py-8">
-                  No reviews yet. Be the first to review!
-                </p>
-              )}
             </section>
           </div>
 

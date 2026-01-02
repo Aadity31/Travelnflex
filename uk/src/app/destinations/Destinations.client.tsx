@@ -345,13 +345,14 @@ export default function DestinationsClient({
                       {/* Title and Rating */}
                       <div className="mb-1.5">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
-                          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
-                            <Link
-                              href={`/details/destinations/${destination.slug}`}
+                                                    <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
+                             <Link
+                              href={`/booking/destination/${destination.slug}`}
                             >
                               {destination.name}
                             </Link>
                           </h3>
+
 
                           {/* Rating Badge */}
                           <div className="flex items-center gap-0.5 bg-blue-600 text-white px-1.5 py-0.5 rounded flex-shrink-0">

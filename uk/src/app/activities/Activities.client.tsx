@@ -260,13 +260,13 @@ export default function ActivitiesClient({
               (filters.activityTypes?.length ?? 0) > 0 ||
               (filters.difficulties?.length ?? 0) > 0 ||
               (filters.ratings?.length ?? 0) > 0) && (
-              <button
-                onClick={() => setFilters({})}
-                className="text-xs text-gray-500 underline ml-1 self-center"
-              >
-                Clear all
-              </button>
-            )}
+                <button
+                  onClick={() => setFilters({})}
+                  className="text-xs text-gray-500 underline ml-1 self-center"
+                >
+                  Clear all
+                </button>
+              )}
           </div>
 
           {/* Layout - RESPONSIVE */}
@@ -290,9 +290,9 @@ export default function ActivitiesClient({
               <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6">
                 {filteredActivities.map((activity) => (
                   <Link
-  href={`/booking/activity/${activity.slug}`}
-  className="block"
->
+                    href={`/booking/activity/${activity.slug}`}
+                    className="block"
+                  >
 
                     <article
                       key={activity.id}
@@ -311,19 +311,18 @@ export default function ActivitiesClient({
                         {/* Type Badge */}
                         <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
                           <span
-                            className={`px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold text-white shadow-md ${
-                              activity.type === "adventure"
+                            className={`px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold text-white shadow-md ${activity.type === "adventure"
                                 ? "bg-red-500"
                                 : activity.type === "spiritual"
-                                ? "bg-purple-500"
-                                : activity.type === "cultural"
-                                ? "bg-blue-500"
-                                : "bg-green-500"
-                            }`}
+                                  ? "bg-purple-500"
+                                  : activity.type === "cultural"
+                                    ? "bg-blue-500"
+                                    : "bg-green-500"
+                              }`}
                           >
                             {activity.type
                               ? activity.type.charAt(0).toUpperCase() +
-                                activity.type.slice(1)
+                              activity.type.slice(1)
                               : ""}
                           </span>
                         </div>
