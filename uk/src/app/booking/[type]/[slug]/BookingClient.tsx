@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import Image from "next/image";
 import {
   StarIcon,
@@ -15,6 +15,8 @@ import {
   SparklesIcon,
   ShieldCheckIcon,
   BoltIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/24/solid";
 
 /* ============ TYPES ============ */
@@ -23,10 +25,11 @@ type PackageType = "solo" | "family" | "private" | "group";
 
 interface BookingState {
   packageType: PackageType;
-  seats: number;
+  adults: number;
+  children: number;
   rooms: number;
-  checkIn: string;
-  checkOut: string;
+  selectedDate: string | null;
+  availableSlots: number;
 }
 
 interface Review {
@@ -72,13 +75,60 @@ interface BookingClientProps {
   type: "activity" | "destination";
 }
 
-/* ============ PACKAGE CONFIG (Outside component to avoid dependency issues) ============ */
+/* ============ PACKAGE CONFIG (NO EMOJIS) ============ */
 const PACKAGE_CONFIG = {
-  solo: { minSeats: 1, maxSeats: 1, label: "Solo Traveler", discount: 0, icon: "👤" },
-  family: { minSeats: 2, maxSeats: 8, label: "Family Package", discount: 0.1, icon: "👨‍👩‍👧‍👦" },
-  private: { minSeats: 8, maxSeats: 20, label: "Private Group", discount: 0.15, icon: "👥" },
-  group: { minSeats: 8, maxSeats: 50, label: "Join Group", discount: 0.2, icon: "🎉" },
+  solo: {
+    label: "Solo Traveler",
+    description: "Join existing group",
+    minAdults: 1,
+    maxAdults: 1,
+    allowChildren: false,
+    discount: 0,
+  },
+  family: {
+    label: "Family Package",
+    description: "2-8 people with children",
+    minAdults: 1,
+    maxAdults: 8,
+    allowChildren: true,
+    discount: 0.1,
+  },
+  private: {
+    label: "Private Group",
+    description: "8-20 adults only",
+    minAdults: 8,
+    maxAdults: 20,
+    allowChildren: false,
+    discount: 0.15,
+  },
+  group: {
+    label: "Join Group",
+    description: "Your group + others",
+    minAdults: 1,
+    maxAdults: 50,
+    allowChildren: true,
+    discount: 0.2,
+  },
 } as const;
+
+/* ============ DUMMY AVAILABLE DATES ============ */
+const getAvailableDates = () => {
+  const dates: Record<string, number> = {};
+  const today = new Date();
+
+  for (let i = 1; i <= 60; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    const dateStr = date.toISOString().split("T")[0];
+
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      dates[dateStr] = Math.floor(Math.random() * 50) + 10;
+    }
+  }
+
+  return dates;
+};
 
 /* ============ COMPONENT ============ */
 
@@ -88,39 +138,136 @@ export default function BookingClient({
   type,
 }: BookingClientProps) {
   const [selectedImage, setSelectedImage] = useState(0);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [booking, setBooking] = useState<BookingState>({
     packageType: "solo",
-    seats: 1,
+    adults: 1,
+    children: 0,
     rooms: 1,
-    checkIn: "",
-    checkOut: "",
+    selectedDate: null,
+    availableSlots: 0,
   });
 
-  /* ============ PRICE CALCULATION ============ */
+  const availableDates = useMemo(() => getAvailableDates(), []);
 
+  /* ============ CORRECTED ROOM LOGIC ============ */
+  const getRoomLimits = useCallback(
+    (adults: number, children: number, packageType: PackageType) => {
+      // SOLO: Always 1 room
+      if (packageType === "solo") {
+        return { min: 1, max: 1 };
+      }
+
+      // GROUP: Flexible rooms
+      if (packageType === "group") {
+        const totalPeople = adults + children;
+        return {
+          min: 1,
+          max: Math.ceil(totalPeople / 2),
+        };
+      }
+
+      // FAMILY: Specific logic
+      if (packageType === "family") {
+        const totalPeople = adults + children;
+
+        // 2 people
+        if (totalPeople === 2) {
+          return { min: 1, max: 2 };
+        }
+
+        // 3 people
+        if (totalPeople === 3) {
+          return { min: 1, max: 3 };
+        }
+
+        // 4 people
+        if (totalPeople === 4) {
+          if (children > 0) {
+            return { min: 1, max: 4 }; // Can share if kids
+          }
+          return { min: 2, max: 4 }; // 4 adults need min 2 rooms
+        }
+
+        // 5 people
+        if (totalPeople === 5) {
+          return { min: 3, max: 5 };
+        }
+
+        // 6 people
+        if (totalPeople === 6) {
+          return { min: 3, max: 6 };
+        }
+
+        // 7 people
+        if (totalPeople === 7) {
+          return { min: 4, max: 7 };
+        }
+
+        // 8 people
+        if (totalPeople === 8) {
+          return { min: 4, max: 8 };
+        }
+
+        return { min: 1, max: totalPeople };
+      }
+
+      // PRIVATE: 2 adults per room minimum
+      if (packageType === "private") {
+        const minRooms = Math.ceil(adults / 2); // Minimum 2 per room
+        const maxRooms = adults; // Maximum 1 per room
+        return { min: minRooms, max: maxRooms };
+      }
+
+      return { min: 1, max: 1 };
+    },
+    []
+  );
+
+  const roomLimits = useMemo(
+    () =>
+      getRoomLimits(booking.adults, booking.children, booking.packageType),
+    [booking.adults, booking.children, booking.packageType, getRoomLimits]
+  );
+
+  // Auto-adjust rooms when limits change
+  useEffect(() => {
+    setBooking((prev) => ({
+      ...prev,
+      rooms: Math.max(roomLimits.min, Math.min(prev.rooms, roomLimits.max)),
+    }));
+  }, [roomLimits.min, roomLimits.max]);
+
+  /* ============ PRICE CALCULATION ============ */
   const pricing = useMemo(() => {
     const basePrice = data.priceMin;
     const discountRate = PACKAGE_CONFIG[booking.packageType].discount;
     const pricePerPerson = basePrice * (1 - discountRate);
+
+    const totalPeople = booking.adults + booking.children * 0.5;
+    const peopleTotal = Math.round(pricePerPerson * totalPeople);
     const roomCost = booking.rooms * 500;
-    const subtotal = pricePerPerson * booking.seats + roomCost;
-    const discount = (basePrice - pricePerPerson) * booking.seats;
+    const subtotal = peopleTotal + roomCost;
+    const discount = (basePrice - pricePerPerson) * booking.adults;
     const total = subtotal;
 
     return {
       pricePerPerson: Math.round(pricePerPerson),
+      peopleTotal,
       roomCost,
       subtotal: Math.round(subtotal),
       discount: Math.round(discount),
       total: Math.round(total),
     };
-  }, [booking.packageType, booking.seats, booking.rooms, data.priceMin]);
-
-  // Max rooms calculation
-  const maxRooms = Math.ceil(booking.seats / 2);
+  }, [
+    booking.packageType,
+    booking.adults,
+    booking.children,
+    booking.rooms,
+    data.priceMin,
+  ]);
 
   /* ============ REVIEWS CALCULATION ============ */
-
   const averageRating = useMemo(() => {
     if (reviews.length === 0) return data.rating.toFixed(1);
     const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
@@ -138,18 +285,63 @@ export default function BookingClient({
   }, [reviews]);
 
   /* ============ HANDLERS ============ */
-
   const handlePackageChange = useCallback((pkg: PackageType) => {
-    setBooking((prev) => ({
-      ...prev,
+    const config = PACKAGE_CONFIG[pkg];
+    setBooking({
       packageType: pkg,
-      seats: PACKAGE_CONFIG[pkg].minSeats,
+      adults: config.minAdults,
+      children: 0,
       rooms: 1,
-    }));
+      selectedDate: null,
+      availableSlots: 0,
+    });
   }, []);
 
-  /* ============ SAFE DATA ACCESS ============ */
+  const handleDateSelect = useCallback(
+    (dateStr: string) => {
+      const slots = availableDates[dateStr] || 0;
+      setBooking((prev) => ({
+        ...prev,
+        selectedDate: dateStr,
+        availableSlots: slots,
+      }));
+    },
+    [availableDates]
+  );
 
+  /* ============ CALENDAR LOGIC ============ */
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    return { daysInMonth, startingDayOfWeek };
+  };
+
+  const { daysInMonth, startingDayOfWeek } = getDaysInMonth(currentMonth);
+
+  const isDateAvailable = (day: number) => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const date = new Date(year, month, day);
+    const dateStr = date.toISOString().split("T")[0];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return date >= today && availableDates[dateStr] > 0;
+  };
+
+  const getDateString = (day: number) => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const date = new Date(year, month, day);
+    return date.toISOString().split("T")[0];
+  };
+
+  /* ============ SAFE DATA ACCESS ============ */
   const displayData = {
     description:
       data.description ||
@@ -171,11 +363,370 @@ export default function BookingClient({
     },
   };
 
+  /* ============ BOOKING CARD COMPONENT ============ */
+  const BookingCard = () => (
+    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+      {/* Price Header */}
+      <div className="bg-gradient-to-br from-orange-500 to-red-500 p-6 text-white">
+        <div className="flex items-baseline gap-2 mb-2">
+          <span className="text-4xl font-bold">₹{pricing.pricePerPerson}</span>
+          <span className="text-white/80">per person</span>
+        </div>
+        {pricing.discount > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="line-through text-white/60">₹{data.priceMin}</span>
+            <span className="bg-white/20 px-2 py-0.5 rounded text-sm font-semibold">
+              Save ₹{pricing.discount}
+            </span>
+          </div>
+        )}
+      </div>
+
+      <div className="p-6 space-y-6">
+        {/* ============ PACKAGE SELECTION (NO EMOJI) ============ */}
+        <div>
+          <label className="block text-sm font-bold text-gray-900 mb-3">
+            Choose Package Type
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {(Object.keys(PACKAGE_CONFIG) as PackageType[]).map((pkg) => (
+              <button
+                key={pkg}
+                onClick={() => handlePackageChange(pkg)}
+                className={`p-3 rounded-xl border-2 transition-all text-left ${
+                  booking.packageType === pkg
+                    ? "border-orange-500 bg-orange-50 shadow-md"
+                    : "border-gray-200 hover:border-orange-300"
+                }`}
+              >
+                <div className="font-semibold text-sm text-gray-900 mb-1">
+                  {PACKAGE_CONFIG[pkg].label}
+                </div>
+                <div className="text-xs text-gray-600">
+                  {PACKAGE_CONFIG[pkg].description}
+                </div>
+                {PACKAGE_CONFIG[pkg].discount > 0 && (
+                  <div className="mt-1 text-xs font-bold text-green-600">
+                    {PACKAGE_CONFIG[pkg].discount * 100}% OFF
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ============ TRAVELERS SELECTION ============ */}
+        <div>
+          <label className="block text-sm font-bold text-gray-900 mb-3">
+            <UserGroupIcon className="w-4 h-4 inline mr-1" />
+            Number of Travelers
+          </label>
+
+          {/* Adults */}
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-700 font-medium">Adults</span>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() =>
+                    setBooking((prev) => ({
+                      ...prev,
+                      adults: Math.max(
+                        PACKAGE_CONFIG[prev.packageType].minAdults,
+                        prev.adults - 1
+                      ),
+                    }))
+                  }
+                  disabled={
+                    booking.adults <=
+                    PACKAGE_CONFIG[booking.packageType].minAdults
+                  }
+                  className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 disabled:hover:text-gray-700 font-bold transition-all"
+                >
+                  -
+                </button>
+                <span className="text-xl font-bold text-gray-900 w-8 text-center">
+                  {booking.adults}
+                </span>
+                <button
+                  onClick={() =>
+                    setBooking((prev) => ({
+                      ...prev,
+                      adults: Math.min(
+                        PACKAGE_CONFIG[prev.packageType].maxAdults -
+                          prev.children,
+                        prev.adults + 1
+                      ),
+                    }))
+                  }
+                  disabled={
+                    booking.adults + booking.children >=
+                    PACKAGE_CONFIG[booking.packageType].maxAdults
+                  }
+                  className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 disabled:hover:text-gray-700 font-bold transition-all"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Children */}
+          {PACKAGE_CONFIG[booking.packageType].allowChildren && (
+            <div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-sm text-gray-700 font-medium">
+                    Children
+                  </span>
+                  <span className="text-xs text-gray-500 ml-2">
+                    (0-12 yrs, 50% price)
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() =>
+                      setBooking((prev) => ({
+                        ...prev,
+                        children: Math.max(0, prev.children - 1),
+                      }))
+                    }
+                    disabled={booking.children <= 0}
+                    className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 disabled:hover:text-gray-700 font-bold transition-all"
+                  >
+                    -
+                  </button>
+                  <span className="text-xl font-bold text-gray-900 w-8 text-center">
+                    {booking.children}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setBooking((prev) => ({
+                        ...prev,
+                        children: Math.min(
+                          PACKAGE_CONFIG[prev.packageType].maxAdults -
+                            prev.adults,
+                          prev.children + 1
+                        ),
+                      }))
+                    }
+                    disabled={
+                      booking.adults + booking.children >=
+                      PACKAGE_CONFIG[booking.packageType].maxAdults
+                    }
+                    className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 disabled:hover:text-gray-700 font-bold transition-all"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ============ ROOM SELECTION (EDITABLE) ============ */}
+        <div>
+          <label className="block text-sm font-bold text-gray-900 mb-3">
+            <HomeIcon className="w-4 h-4 inline mr-1" />
+            Rooms Required
+          </label>
+          <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
+            <button
+              onClick={() =>
+                setBooking((prev) => ({
+                  ...prev,
+                  rooms: Math.max(roomLimits.min, prev.rooms - 1),
+                }))
+              }
+              disabled={booking.rooms <= roomLimits.min}
+              className="w-10 h-10 rounded-lg bg-white hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 font-bold transition-all shadow-sm"
+            >
+              -
+            </button>
+            <div className="flex-1 text-center">
+              <div className="text-2xl font-bold text-gray-900">
+                {booking.rooms}
+              </div>
+              <div className="text-xs text-gray-600">
+                Min: {roomLimits.min} • Max: {roomLimits.max}
+              </div>
+            </div>
+            <button
+              onClick={() =>
+                setBooking((prev) => ({
+                  ...prev,
+                  rooms: Math.min(roomLimits.max, prev.rooms + 1),
+                }))
+              }
+              disabled={booking.rooms >= roomLimits.max}
+              className="w-10 h-10 rounded-lg bg-white hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 font-bold transition-all shadow-sm"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        {/* ============ CALENDAR ============ */}
+        <div>
+          <label className="block text-sm font-bold text-gray-900 mb-3">
+            <CalendarIcon className="w-4 h-4 inline mr-1" />
+            Select Available Date
+          </label>
+
+          {/* Month Navigation */}
+          <div className="flex items-center justify-between mb-3">
+            <button
+              onClick={() => {
+                const newMonth = new Date(currentMonth);
+                newMonth.setMonth(currentMonth.getMonth() - 1);
+                if (newMonth >= new Date()) {
+                  setCurrentMonth(newMonth);
+                }
+              }}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
+            </button>
+            <span className="font-semibold text-gray-900">
+              {currentMonth.toLocaleDateString("en-IN", {
+                month: "long",
+                year: "numeric",
+              })}
+            </span>
+            <button
+              onClick={() => {
+                const newMonth = new Date(currentMonth);
+                newMonth.setMonth(currentMonth.getMonth() + 1);
+                setCurrentMonth(newMonth);
+              }}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ChevronRightIcon className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+
+          {/* Calendar Grid */}
+          <div className="bg-gray-50 rounded-xl p-3">
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
+                <div
+                  key={day}
+                  className="text-center text-xs font-semibold text-gray-600 py-1"
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-7 gap-1">
+              {Array.from({ length: startingDayOfWeek }).map((_, i) => (
+                <div key={`empty-${i}`} className="aspect-square" />
+              ))}
+
+              {Array.from({ length: daysInMonth }).map((_, i) => {
+                const day = i + 1;
+                const dateStr = getDateString(day);
+                const isAvailable = isDateAvailable(day);
+                const isSelected = booking.selectedDate === dateStr;
+
+                return (
+                  <button
+                    key={day}
+                    onClick={() => isAvailable && handleDateSelect(dateStr)}
+                    disabled={!isAvailable}
+                    className={`aspect-square rounded-lg text-sm font-medium transition-all ${
+                      isSelected
+                        ? "bg-orange-500 text-white shadow-md scale-110"
+                        : isAvailable
+                        ? "bg-white hover:bg-orange-100 text-gray-900 hover:scale-105"
+                        : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    }`}
+                  >
+                    {day}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {booking.selectedDate && (
+            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-green-800 font-medium">
+                  {new Date(booking.selectedDate).toLocaleDateString("en-IN", {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </span>
+                <span className="text-green-600 font-bold">
+                  {booking.availableSlots} slots left
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ============ PRICE BREAKDOWN ============ */}
+        <div className="p-4 bg-gradient-to-br from-gray-50 to-orange-50 rounded-xl space-y-2 border border-gray-200">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">
+              {booking.adults} Adult{booking.adults > 1 ? "s" : ""}
+              {booking.children > 0 &&
+                ` + ${booking.children} Child${booking.children > 1 ? "ren" : ""}`}
+            </span>
+            <span className="font-semibold text-gray-900">
+              ₹{pricing.peopleTotal}
+            </span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">
+              {booking.rooms} Room{booking.rooms > 1 ? "s" : ""}
+            </span>
+            <span className="font-semibold text-gray-900">
+              ₹{pricing.roomCost}
+            </span>
+          </div>
+          {pricing.discount > 0 && (
+            <div className="flex justify-between text-sm text-green-600 bg-green-50 px-2 py-1 rounded-lg">
+              <span className="font-medium">Package Savings</span>
+              <span className="font-bold">-₹{pricing.discount}</span>
+            </div>
+          )}
+          <div className="pt-2 border-t-2 border-gray-300 flex justify-between items-center">
+            <span className="font-bold text-gray-900">Total</span>
+            <span className="font-bold text-2xl text-orange-600">
+              ₹{pricing.total.toLocaleString("en-IN")}
+            </span>
+          </div>
+        </div>
+
+        {/* ============ BOOK NOW BUTTON ============ */}
+        <button
+          disabled={!booking.selectedDate}
+          className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+        >
+          {!booking.selectedDate
+            ? "Select Date to Continue"
+            : "Book Now - Pay Later"}
+        </button>
+
+        <div className="flex items-start gap-2 text-xs text-gray-500">
+          <ShieldCheckIcon className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+          <p>
+            <strong className="text-gray-700">Free Cancellation</strong> •
+            Reserve now, pay later. Cancel up to 24 hours before.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
   /* ============ RENDER ============ */
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Hero Breadcrumb */}
+      {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 py-3">
           <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -185,30 +736,30 @@ export default function BookingClient({
               {type}s
             </span>
             <span>/</span>
-            <span className="text-gray-900 font-medium line-clamp-1">
+            <span className="text-gray-900 font-medium truncate">
               {data.name}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+      <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* ============ LEFT COLUMN - MAIN CONTENT ============ */}
+          {/* ============ LEFT COLUMN ============ */}
           <div className="lg:col-span-8 space-y-6">
-            {/* ============ IMAGE GALLERY ============ */}
+            {/* ============ IMAGE GALLERY (FIXED, FULL IMAGE, RECTANGULAR THUMBNAILS) ============ */}
             <section className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-              {/* Large Cover Image */}
-              <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] bg-gray-100">
+              {/* Cover Image - FULL IMAGE VISIBLE */}
+              <div className="relative w-full aspect-[16/10] bg-gray-100">
                 <Image
                   src={displayData.images[selectedImage]}
                   alt={data.name}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   priority
                   sizes="(max-width: 1024px) 100vw, 66vw"
                 />
-                {/* Overlay badges */}
+                {/* Badges */}
                 <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                   {type === "activity" && data.type && (
                     <span
@@ -232,13 +783,13 @@ export default function BookingClient({
                 </div>
               </div>
 
-              {/* Thumbnail Grid */}
+              {/* Thumbnails - RECTANGULAR (3:2 aspect ratio) */}
               <div className="p-4 grid grid-cols-5 gap-2">
                 {displayData.images.slice(0, 5).map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
-                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                    className={`relative aspect-[3/2] rounded-lg overflow-hidden border-2 transition-all ${
                       selectedImage === idx
                         ? "border-orange-500 scale-105 shadow-md"
                         : "border-gray-200 hover:border-orange-300"
@@ -256,9 +807,9 @@ export default function BookingClient({
               </div>
             </section>
 
-            {/* ============ TITLE & QUICK INFO ============ */}
+            {/* Title & Info */}
             <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
                 {data.name}
               </h1>
 
@@ -299,7 +850,7 @@ export default function BookingClient({
               </div>
             </section>
 
-            {/* ============ DESCRIPTION ============ */}
+            {/* Description */}
             <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
               <h2 className="text-xl font-bold text-gray-900 mb-4">
                 About This Experience
@@ -309,7 +860,7 @@ export default function BookingClient({
               </p>
             </section>
 
-            {/* ============ HIGHLIGHTS ============ */}
+            {/* Highlights */}
             {displayData.highlights.length > 0 && (
               <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
@@ -326,7 +877,7 @@ export default function BookingClient({
               </section>
             )}
 
-            {/* ============ AGENCY DETAILS ============ */}
+            {/* Agency */}
             <section className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl shadow-sm p-4 sm:p-6 border border-orange-100">
               <h2 className="text-xl font-bold text-gray-900 mb-4">
                 Hosted By
@@ -352,7 +903,12 @@ export default function BookingClient({
               </div>
             </section>
 
-            {/* ============ REVIEWS SECTION ============ */}
+            {/* ============ MOBILE BOOKING CARD ============ */}
+            <div className="lg:hidden">
+              <BookingCard />
+            </div>
+
+            {/* Reviews */}
             <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
               <h2 className="text-xl font-bold text-gray-900 mb-6">
                 Customer Reviews
@@ -474,262 +1030,10 @@ export default function BookingClient({
             </section>
           </div>
 
-          {/* ============ RIGHT COLUMN - BOOKING CARD (STICKY) ============ */}
-          <div className="lg:col-span-4">
+          {/* ============ DESKTOP BOOKING CARD (STICKY) ============ */}
+          <div className="hidden lg:block lg:col-span-4">
             <div className="sticky top-6">
-              {/* Price Header */}
-              <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-t-2xl p-6 text-white">
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-4xl font-bold">
-                    ₹{pricing.pricePerPerson}
-                  </span>
-                  <span className="text-white/80">per person</span>
-                </div>
-                {pricing.discount > 0 && (
-                  <div className="flex items-center gap-2">
-                    <span className="line-through text-white/60">
-                      ₹{data.priceMin}
-                    </span>
-                    <span className="bg-white/20 px-2 py-0.5 rounded text-sm font-semibold">
-                      Save ₹{pricing.discount}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className="bg-white rounded-b-2xl shadow-xl border border-gray-100 p-6">
-                {/* ============ PACKAGE SELECTION ============ */}
-                <div className="mb-6">
-                  <label className="block text-sm font-bold text-gray-900 mb-3">
-                    Choose Your Package
-                  </label>
-                  <div className="space-y-2">
-                    {(Object.keys(PACKAGE_CONFIG) as PackageType[]).map(
-                      (pkg) => (
-                        <button
-                          key={pkg}
-                          onClick={() => handlePackageChange(pkg)}
-                          className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
-                            booking.packageType === pkg
-                              ? "border-orange-500 bg-orange-50 shadow-md"
-                              : "border-gray-200 hover:border-orange-300 hover:bg-gray-50"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <span className="text-2xl">
-                                {PACKAGE_CONFIG[pkg].icon}
-                              </span>
-                              <div>
-                                <div className="font-semibold text-gray-900">
-                                  {PACKAGE_CONFIG[pkg].label}
-                                </div>
-                                <div className="text-xs text-gray-600">
-                                  {PACKAGE_CONFIG[pkg].minSeats ===
-                                  PACKAGE_CONFIG[pkg].maxSeats
-                                    ? `${PACKAGE_CONFIG[pkg].minSeats} person`
-                                    : `${PACKAGE_CONFIG[pkg].minSeats}-${PACKAGE_CONFIG[pkg].maxSeats} people`}
-                                </div>
-                              </div>
-                            </div>
-                            {PACKAGE_CONFIG[pkg].discount > 0 && (
-                              <div className="bg-green-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow-sm">
-                                {PACKAGE_CONFIG[pkg].discount * 100}% OFF
-                              </div>
-                            )}
-                          </div>
-                        </button>
-                      )
-                    )}
-                  </div>
-                </div>
-
-                {/* ============ SEAT SELECTION ============ */}
-                <div className="mb-6">
-                  <label className="block text-sm font-bold text-gray-900 mb-3">
-                    <UserGroupIcon className="w-4 h-4 inline mr-1" />
-                    Number of Travelers
-                  </label>
-                  <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl">
-                    <button
-                      onClick={() =>
-                        setBooking({
-                          ...booking,
-                          seats: Math.max(
-                            PACKAGE_CONFIG[booking.packageType].minSeats,
-                            booking.seats - 1
-                          ),
-                        })
-                      }
-                      disabled={
-                        booking.seats <=
-                        PACKAGE_CONFIG[booking.packageType].minSeats
-                      }
-                      className="w-12 h-12 rounded-xl bg-white hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 font-bold text-gray-700 transition-all shadow-sm border border-gray-200"
-                    >
-                      -
-                    </button>
-                    <div className="flex-1 text-center">
-                      <div className="text-3xl font-bold text-gray-900">
-                        {booking.seats}
-                      </div>
-                      <div className="text-xs text-gray-600 font-medium">
-                        {booking.packageType === "group"
-                          ? "Shared seats"
-                          : "Private seats"}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() =>
-                        setBooking({
-                          ...booking,
-                          seats: Math.min(
-                            PACKAGE_CONFIG[booking.packageType].maxSeats,
-                            booking.seats + 1
-                          ),
-                        })
-                      }
-                      disabled={
-                        booking.seats >=
-                        PACKAGE_CONFIG[booking.packageType].maxSeats
-                      }
-                      className="w-12 h-12 rounded-xl bg-white hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 font-bold text-gray-700 transition-all shadow-sm border border-gray-200"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                {/* ============ ROOM SELECTION ============ */}
-                <div className="mb-6">
-                  <label className="block text-sm font-bold text-gray-900 mb-3">
-                    <HomeIcon className="w-4 h-4 inline mr-1" />
-                    Rooms Required
-                  </label>
-                  <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl">
-                    <button
-                      onClick={() =>
-                        setBooking({
-                          ...booking,
-                          rooms: Math.max(1, booking.rooms - 1),
-                        })
-                      }
-                      disabled={booking.rooms <= 1}
-                      className="w-12 h-12 rounded-xl bg-white hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 font-bold text-gray-700 transition-all shadow-sm border border-gray-200"
-                    >
-                      -
-                    </button>
-                    <div className="flex-1 text-center">
-                      <div className="text-3xl font-bold text-gray-900">
-                        {booking.rooms}
-                      </div>
-                      <div className="text-xs text-gray-600 font-medium">
-                        Max: {maxRooms} rooms
-                      </div>
-                    </div>
-                    <button
-                      onClick={() =>
-                        setBooking({
-                          ...booking,
-                          rooms: Math.min(maxRooms, booking.rooms + 1),
-                        })
-                      }
-                      disabled={booking.rooms >= maxRooms}
-                      className="w-12 h-12 rounded-xl bg-white hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 font-bold text-gray-700 transition-all shadow-sm border border-gray-200"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                {/* ============ DATE SELECTION ============ */}
-                <div className="mb-6 space-y-4">
-                  <div>
-                    <label className="block text-sm font-bold text-gray-900 mb-2">
-                      <CalendarIcon className="w-4 h-4 inline mr-1" />
-                      Check-in Date
-                    </label>
-                    <input
-                      type="date"
-                      value={booking.checkIn}
-                      onChange={(e) =>
-                        setBooking({ ...booking, checkIn: e.target.value })
-                      }
-                      min={new Date().toISOString().split("T")[0]}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-gray-900 mb-2">
-                      <CalendarIcon className="w-4 h-4 inline mr-1" />
-                      Check-out Date
-                    </label>
-                    <input
-                      type="date"
-                      value={booking.checkOut}
-                      onChange={(e) =>
-                        setBooking({ ...booking, checkOut: e.target.value })
-                      }
-                      min={
-                        booking.checkIn ||
-                        new Date().toISOString().split("T")[0]
-                      }
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
-                    />
-                  </div>
-                </div>
-
-                {/* ============ PRICE BREAKDOWN ============ */}
-                <div className="mb-6 p-4 bg-gradient-to-br from-gray-50 to-orange-50 rounded-xl space-y-3 border border-gray-200">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">
-                      ₹{pricing.pricePerPerson} × {booking.seats} travelers
-                    </span>
-                    <span className="font-semibold text-gray-900">
-                      ₹{pricing.pricePerPerson * booking.seats}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">
-                      Accommodation ({booking.rooms} rooms)
-                    </span>
-                    <span className="font-semibold text-gray-900">
-                      ₹{pricing.roomCost}
-                    </span>
-                  </div>
-                  {pricing.discount > 0 && (
-                    <div className="flex justify-between text-sm text-green-600 bg-green-50 px-2 py-1 rounded-lg">
-                      <span className="font-medium">Package Savings</span>
-                      <span className="font-bold">-₹{pricing.discount}</span>
-                    </div>
-                  )}
-                  <div className="pt-3 border-t-2 border-gray-300 flex justify-between items-center">
-                    <span className="font-bold text-gray-900">Total Amount</span>
-                    <span className="font-bold text-3xl text-orange-600">
-                      ₹{pricing.total.toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                </div>
-
-                {/* ============ BOOK NOW BUTTON ============ */}
-                <button
-                  disabled={!booking.checkIn || !booking.checkOut}
-                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl text-base transform hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  {!booking.checkIn || !booking.checkOut
-                    ? "Select Dates to Continue"
-                    : "Book Now - Pay Later"}
-                </button>
-
-                <div className="mt-4 flex items-start gap-2 text-xs text-gray-500">
-                  <ShieldCheckIcon className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                  <p>
-                    <strong className="text-gray-700">Free Cancellation</strong>{" "}
-                    • Reserve now, pay later. Cancel up to 24 hours before for a
-                    full refund.
-                  </p>
-                </div>
-              </div>
+              <BookingCard />
             </div>
           </div>
         </div>
