@@ -74,10 +74,34 @@ interface BookingClientProps {
 
 /* ============ PACKAGE CONFIG (Outside component to avoid dependency issues) ============ */
 const PACKAGE_CONFIG = {
-  solo: { minSeats: 1, maxSeats: 1, label: "Solo Traveler", discount: 0, icon: "👤" },
-  family: { minSeats: 2, maxSeats: 8, label: "Family Package", discount: 0.1, icon: "👨‍👩‍👧‍👦" },
-  private: { minSeats: 8, maxSeats: 20, label: "Private Group", discount: 0.15, icon: "👥" },
-  group: { minSeats: 8, maxSeats: 50, label: "Join Group", discount: 0.2, icon: "🎉" },
+  solo: {
+    minSeats: 1,
+    maxSeats: 1,
+    label: "Solo Traveler",
+    discount: 0,
+    icon: "👤",
+  },
+  family: {
+    minSeats: 2,
+    maxSeats: 8,
+    label: "Family Package",
+    discount: 0.1,
+    icon: "👨‍👩‍👧‍👦",
+  },
+  private: {
+    minSeats: 8,
+    maxSeats: 20,
+    label: "Private Group",
+    discount: 0.15,
+    icon: "👥",
+  },
+  group: {
+    minSeats: 8,
+    maxSeats: 50,
+    label: "Join Group",
+    discount: 0.2,
+    icon: "🎉",
+  },
 } as const;
 
 /* ============ COMPONENT ============ */
@@ -313,7 +337,7 @@ export default function BookingClient({
             {displayData.highlights.length > 0 && (
               <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  {type === "activity" ? "What&apos;s Included" : "Highlights"}
+                  {type === "activity" ? "What's Included" : "Highlights"}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {displayData.highlights.map((item, index) => (
@@ -704,7 +728,9 @@ export default function BookingClient({
                     </div>
                   )}
                   <div className="pt-3 border-t-2 border-gray-300 flex justify-between items-center">
-                    <span className="font-bold text-gray-900">Total Amount</span>
+                    <span className="font-bold text-gray-900">
+                      Total Amount
+                    </span>
                     <span className="font-bold text-3xl text-orange-600">
                       ₹{pricing.total.toLocaleString("en-IN")}
                     </span>
