@@ -346,11 +346,7 @@ export default function DestinationsClient({
                       <div className="mb-1.5">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
                                                     <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
-                             <Link
-                              href={`/booking/destination/${destination.slug}`}
-                            >
-                              {destination.name}
-                            </Link>
+                          {destination.name}
                           </h3>
 
 

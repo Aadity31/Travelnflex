@@ -289,10 +289,12 @@ export default function ActivitiesClient({
               {/* Cards - RESPONSIVE */}
               <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6">
                 {filteredActivities.map((activity) => (
-                  <Link
-                    href={`/booking/activity/${activity.slug}`}
-                    className="block"
-                  >
+                 <Link
+  key={activity.id}
+  href={`/booking/activity/${activity.slug}`}
+  className="block"
+>
+
 
                     <article
                       key={activity.id}
