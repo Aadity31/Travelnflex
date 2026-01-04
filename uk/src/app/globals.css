@@ -4,8 +4,9 @@
    THEME VARIABLES
 ======================= */
 :root {
-  --background: #3d3c3c;
+  --background: #ffffff;
   --foreground: #000000;
+  color-scheme: light;
 }
 
 @theme inline {
@@ -15,12 +16,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #3d3c3c;
-    --foreground: #030303;
-  }
-}
 
 body {
   background: var(--background);

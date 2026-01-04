@@ -234,9 +234,14 @@ export default function Navbar({
 
                   {/* Dropdown Menu */}
                   {menuOpen && (
-                    <div className="absolute right-0 mt-3 w-72 rounded-2xl backdrop-blur-md bg-white/80 dark:bg-slate-900/90 shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                      {/* ⭐ User Info Header */}
-                      <div className="px-4 py-4 bg-gradient-to-br from-orange-500/10 to-red-600/10 border-b border-gray-200/50 dark:border-gray-900/50">
+                    <div
+                      className="absolute right-0 mt-3 w-72 rounded-xl
+    bg-stone-200/80 backdrop-blur-[32px]
+    shadow-xl border border-stone-300/60
+    overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                    >
+                      {/* USER INFO */}
+                      <div className="px-4 py-4 border-b border-stone-300/60">
                         <div className="flex items-center gap-3">
                           <UserAvatar
                             name={currentUser.name}
@@ -247,17 +252,18 @@ export default function Navbar({
                             key={currentUser.image ?? "no-image"}
                           />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                            <p className="text-sm font-semibold text-stone-900 truncate">
                               {currentUser.name}
                             </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                            <p className="text-xs text-stone-600 truncate">
                               {currentUser.email}
                             </p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="py-2 dark:bg-slate-900/90">
+                      {/* LINKS */}
+                      <div className="py-2">
                         {profileLinks.map((item) => (
                           <Link
                             key={item.href}
@@ -266,22 +272,25 @@ export default function Navbar({
                               setIsOpen(false);
                               setMenuOpen(false);
                             }}
-                            className="flex items-center gap-3 px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition-colors"
+                            className="flex items-center gap-3 px-4 py-3 text-sm
+          text-stone-800
+          hover:bg-orange-500/5
+          transition-all duration-150"
                           >
-                            <item.icon
-                              size={18}
-                              className="text-orange-600 dark:text-orange-500"
-                            />
+                            <item.icon size={18} className="text-orange-600" />
                             <span className="font-medium">{item.label}</span>
                           </Link>
                         ))}
                       </div>
 
-                      {/* Logout Button */}
-                      <div className="border-t border-gray-200/50 dark:bg-slate-900/90 dark:border-gray-700/50 p-2">
+                      {/* LOGOUT */}
+                      <div className="border-t border-stone-300/60 p-2">
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-500/10 dark:hover:bg-red-500/20 rounded-lg transition-colors"
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium
+        text-red-600
+        hover:bg-red-500/5
+        rounded-lg transition-all duration-150"
                         >
                           <LogOut size={18} />
                           <span>Logout</span>
@@ -347,7 +356,7 @@ export default function Navbar({
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="px-4 py-3 rounded-lg font-medium hover:bg-orange-100 dark:hover:bg-orange-900/30"
+                className="px-4 py-3 rounded-lg font-medium text-white  hover:bg-orange-900 "
               >
                 {link.label}
               </Link>
@@ -361,7 +370,7 @@ export default function Navbar({
                     key={item.href}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-white  hover:bg-orange-900"
                   >
                     <item.icon size={18} className="text-orange-600" />
                     <span className="font-medium">{item.label}</span>
