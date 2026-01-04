@@ -225,8 +225,7 @@ export default function BookingClient({
   );
 
   const roomLimits = useMemo(
-    () =>
-      getRoomLimits(booking.adults, booking.children, booking.packageType),
+    () => getRoomLimits(booking.adults, booking.children, booking.packageType),
     [booking.adults, booking.children, booking.packageType, getRoomLimits]
   );
 
@@ -365,23 +364,25 @@ export default function BookingClient({
 
   /* ============ BOOKING CARD COMPONENT ============ */
   const BookingCard = () => (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
       {/* Price Header */}
-      <div className="bg-gradient-to-br from-orange-500 to-red-500 p-6 text-white">
-        <div className="flex items-baseline gap-2 mb-2">
-          <span className="text-4xl font-bold">₹{pricing.pricePerPerson}</span>
-          <span className="text-white/80">per person</span>
+      <div className="border-b border-gray-100 p-5">
+        <div className="flex items-end gap-2 mb-1">
+          <span className="text-3xl font-semibold text-gray-900">
+            ₹{pricing.pricePerPerson}
+          </span>
+          <span className="text-xs text-gray-500 mb-1">per person</span>
         </div>
+
         {pricing.discount > 0 && (
-          <div className="flex items-center gap-2">
-            <span className="line-through text-white/60">₹{data.priceMin}</span>
-            <span className="bg-white/20 px-2 py-0.5 rounded text-sm font-semibold">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="line-through text-gray-400">₹{data.priceMin}</span>
+            <span className="inline-flex px-2 py-0.5 rounded-full bg-green-50 text-green-700 font-medium">
               Save ₹{pricing.discount}
             </span>
           </div>
         )}
       </div>
-
       <div className="p-6 space-y-6">
         {/* ============ PACKAGE SELECTION (NO EMOJI) ============ */}
         <div>
@@ -389,29 +390,32 @@ export default function BookingClient({
             Choose Package Type
           </label>
           <div className="grid grid-cols-2 gap-2">
-            {(Object.keys(PACKAGE_CONFIG) as PackageType[]).map((pkg) => (
-              <button
-                key={pkg}
-                onClick={() => handlePackageChange(pkg)}
-                className={`p-3 rounded-xl border-2 transition-all text-left ${
-                  booking.packageType === pkg
-                    ? "border-orange-500 bg-orange-50 shadow-md"
-                    : "border-gray-200 hover:border-orange-300"
-                }`}
-              >
-                <div className="font-semibold text-sm text-gray-900 mb-1">
-                  {PACKAGE_CONFIG[pkg].label}
-                </div>
-                <div className="text-xs text-gray-600">
-                  {PACKAGE_CONFIG[pkg].description}
-                </div>
-                {PACKAGE_CONFIG[pkg].discount > 0 && (
-                  <div className="mt-1 text-xs font-bold text-green-600">
-                    {PACKAGE_CONFIG[pkg].discount * 100}% OFF
+            {(Object.keys(PACKAGE_CONFIG) as PackageType[]).map((pkg) => {
+              const isActive = booking.packageType === pkg;
+              return (
+                <button
+                  key={pkg}
+                  onClick={() => handlePackageChange(pkg)}
+                  className={`rounded-xl border text-left p-3 transition-colors ${
+                    isActive
+                      ? "border-orange-500 bg-orange-50"
+                      : "border-gray-200 hover:border-orange-300"
+                  }`}
+                >
+                  <div className="text-sm font-medium text-gray-900">
+                    {PACKAGE_CONFIG[pkg].label}
                   </div>
-                )}
-              </button>
-            ))}
+                  <div className="text-xs text-gray-600 mt-0.5">
+                    {PACKAGE_CONFIG[pkg].description}
+                  </div>
+                  {PACKAGE_CONFIG[pkg].discount > 0 && (
+                    <div className="mt-1 text-xs font-semibold text-green-600">
+                      {PACKAGE_CONFIG[pkg].discount * 100}% OFF
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -441,7 +445,8 @@ export default function BookingClient({
                     booking.adults <=
                     PACKAGE_CONFIG[booking.packageType].minAdults
                   }
-                  className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 disabled:hover:text-gray-700 font-bold transition-all"
+                  className={counterButtonClasses}
+                  aria-label="Decrease adults"
                 >
                   -
                 </button>
@@ -463,7 +468,8 @@ export default function BookingClient({
                     booking.adults + booking.children >=
                     PACKAGE_CONFIG[booking.packageType].maxAdults
                   }
-                  className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 disabled:hover:text-gray-700 font-bold transition-all"
+                  className={counterButtonClasses}
+                  aria-label="Increase adults"
                 >
                   +
                 </button>
@@ -492,7 +498,8 @@ export default function BookingClient({
                       }))
                     }
                     disabled={booking.children <= 0}
-                    className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 disabled:hover:text-gray-700 font-bold transition-all"
+                    className={counterButtonClasses}
+                    aria-label="Decrease children"
                   >
                     -
                   </button>
@@ -514,7 +521,8 @@ export default function BookingClient({
                       booking.adults + booking.children >=
                       PACKAGE_CONFIG[booking.packageType].maxAdults
                     }
-                    className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 disabled:hover:text-gray-700 font-bold transition-all"
+                    className={counterButtonClasses}
+                    aria-label="Increase children"
                   >
                     +
                   </button>
@@ -539,7 +547,8 @@ export default function BookingClient({
                 }))
               }
               disabled={booking.rooms <= roomLimits.min}
-              className="w-10 h-10 rounded-lg bg-white hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 font-bold transition-all shadow-sm"
+              className={counterButtonClasses}
+              aria-label="Decrease rooms"
             >
               -
             </button>
@@ -559,7 +568,8 @@ export default function BookingClient({
                 }))
               }
               disabled={booking.rooms >= roomLimits.max}
-              className="w-10 h-10 rounded-lg bg-white hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 font-bold transition-all shadow-sm"
+              className={counterButtonClasses}
+              aria-label="Increase rooms"
             >
               +
             </button>
@@ -567,14 +577,14 @@ export default function BookingClient({
         </div>
 
         {/* ============ CALENDAR ============ */}
-        <div>
+        <div className="bg-white rounded-xl border border-gray-100 p-3">
           <label className="block text-sm font-bold text-gray-900 mb-3">
             <CalendarIcon className="w-4 h-4 inline mr-1" />
             Select Available Date
           </label>
 
           {/* Month Navigation */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2">
             <button
               onClick={() => {
                 const newMonth = new Date(currentMonth);
@@ -583,7 +593,8 @@ export default function BookingClient({
                   setCurrentMonth(newMonth);
                 }
               }}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className={counterButtonClasses}
+              aria-label="Previous month"
             >
               <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
             </button>
@@ -599,7 +610,8 @@ export default function BookingClient({
                 newMonth.setMonth(currentMonth.getMonth() + 1);
                 setCurrentMonth(newMonth);
               }}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className={counterButtonClasses}
+              aria-label="Next month"
             >
               <ChevronRightIcon className="w-5 h-5 text-gray-600" />
             </button>
@@ -619,30 +631,34 @@ export default function BookingClient({
             </div>
 
             <div className="grid grid-cols-7 gap-1">
-              {Array.from({ length: startingDayOfWeek }).map((_, i) => (
-                <div key={`empty-${i}`} className="aspect-square" />
-              ))}
+              {Array.from({ length: 42 }).map((_, index) => {
+                const dayNumber = index - startingDayOfWeek + 1;
+                const isCurrentMonth =
+                  dayNumber > 0 && dayNumber <= daysInMonth;
 
-              {Array.from({ length: daysInMonth }).map((_, i) => {
-                const day = i + 1;
-                const dateStr = getDateString(day);
-                const isAvailable = isDateAvailable(day);
+                if (!isCurrentMonth) {
+                  // Empty cells to keep 6 rows always
+                  return <div key={index} className="aspect-square" />;
+                }
+
+                const dateStr = getDateString(dayNumber);
+                const isAvailable = isDateAvailable(dayNumber);
                 const isSelected = booking.selectedDate === dateStr;
 
                 return (
                   <button
-                    key={day}
+                    key={index}
                     onClick={() => isAvailable && handleDateSelect(dateStr)}
                     disabled={!isAvailable}
-                    className={`aspect-square rounded-lg text-sm font-medium transition-all ${
+                    className={`aspect-square rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                       isSelected
-                        ? "bg-orange-500 text-white shadow-md scale-110"
+                        ? "bg-orange-500 text-white"
                         : isAvailable
-                        ? "bg-white hover:bg-orange-100 text-gray-900 hover:scale-105"
+                        ? "bg-white hover:bg-orange-50 text-gray-900"
                         : "bg-gray-100 text-gray-400 cursor-not-allowed"
                     }`}
                   >
-                    {day}
+                    {dayNumber}
                   </button>
                 );
               })}
@@ -673,7 +689,9 @@ export default function BookingClient({
             <span className="text-gray-600">
               {booking.adults} Adult{booking.adults > 1 ? "s" : ""}
               {booking.children > 0 &&
-                ` + ${booking.children} Child${booking.children > 1 ? "ren" : ""}`}
+                ` + ${booking.children} Child${
+                  booking.children > 1 ? "ren" : ""
+                }`}
             </span>
             <span className="font-semibold text-gray-900">
               ₹{pricing.peopleTotal}
@@ -704,11 +722,14 @@ export default function BookingClient({
         {/* ============ BOOK NOW BUTTON ============ */}
         <button
           disabled={!booking.selectedDate}
-          className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full bg-orange-500 hover:bg-orange-600
+             disabled:bg-gray-300 disabled:cursor-not-allowed
+             text-white font-semibold py-3 rounded-xl
+             transition-colors"
         >
           {!booking.selectedDate
-            ? "Select Date to Continue"
-            : "Book Now - Pay Later"}
+            ? "Select a date to continue"
+            : "Book now -  Pay later"}
         </button>
 
         <div className="flex items-start gap-2 text-xs text-gray-500">
@@ -721,14 +742,22 @@ export default function BookingClient({
       </div>
     </div>
   );
+  const counterButtonClasses =
+    "inline-flex items-center justify-center rounded-full " +
+    "border border-gray-200 bg-white text-gray-700 " +
+    "w-8 h-8 sm:w-9 sm:h-9 " +
+    "hover:border-orange-500 hover:text-orange-600 hover:bg-orange-50 " +
+    "disabled:opacity-40 disabled:cursor-not-allowed " +
+    "disabled:hover:border-gray-200 disabled:hover:text-gray-700 disabled:hover:bg-white " +
+    "text-sm font-semibold transition-colors";
 
   /* ============ RENDER ============ */
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <main className="min-h-screen bg-[#F5F3EF] mt-6">
       {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 py-3">
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-3">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <span className="hover:text-orange-600 cursor-pointer">Home</span>
             <span>/</span>
@@ -743,19 +772,20 @@ export default function BookingClient({
         </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* ============ LEFT COLUMN ============ */}
-          <div className="lg:col-span-8 space-y-6">
+      {/* Main content */}
+      <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          {/* Left column */}
+          <div className="lg:col-span-8 space-y-6 lg:space-y-7">
             {/* ============ IMAGE GALLERY (FIXED, FULL IMAGE, RECTANGULAR THUMBNAILS) ============ */}
-            <section className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+            <section className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
               {/* Cover Image - FULL IMAGE VISIBLE */}
               <div className="relative w-full aspect-[16/10] bg-gray-100">
                 <Image
                   src={displayData.images[selectedImage]}
                   alt={data.name}
                   fill
-                  className="object-contain"
+                  className="object-cover"
                   priority
                   sizes="(max-width: 1024px) 100vw, 66vw"
                 />
@@ -782,17 +812,16 @@ export default function BookingClient({
                   </span>
                 </div>
               </div>
-
               {/* Thumbnails - RECTANGULAR (3:2 aspect ratio) */}
-              <div className="p-4 grid grid-cols-5 gap-2">
+              <div className="p-3 grid grid-cols-3 sm:grid-cols-5 gap-2">
                 {displayData.images.slice(0, 5).map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
-                    className={`relative aspect-[3/2] rounded-lg overflow-hidden border-2 transition-all ${
+                    className={`relative aspect-[3/2] rounded-lg overflow-hidden transition-all ${
                       selectedImage === idx
-                        ? "border-orange-500 scale-105 shadow-md"
-                        : "border-gray-200 hover:border-orange-300"
+                        ? "ring-2 ring-orange-500"
+                        : "ring-1 ring-gray-200 hover:ring-orange-300"
                     }`}
                   >
                     <Image
@@ -849,13 +878,17 @@ export default function BookingClient({
                 </div>
               </div>
             </section>
+            {/* ============ mobile BOOKING CARD ============ */}
+            <div className="mt-4 sm:mt-5 lg:hidden">
+              <BookingCard />
+            </div>
 
             {/* Description */}
-            <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                About This Experience
+            <section className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-3">
+                About this experience
               </h2>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {displayData.description}
               </p>
             </section>
@@ -866,7 +899,7 @@ export default function BookingClient({
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
                   {type === "activity" ? "What&apos;s Included" : "Highlights"}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {displayData.highlights.map((item, index) => (
                     <div key={index} className="flex items-start gap-3">
                       <CheckCircleIcon className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
@@ -920,7 +953,7 @@ export default function BookingClient({
                   <div className="text-5xl font-bold text-gray-900 mb-2">
                     {averageRating}
                   </div>
-                  <div className="flex items-center justify-center md:justify-start gap-1 mb-2">
+                  <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-6 md:mb-8">
                     {[...Array(5)].map((_, i) => (
                       <StarIcon
                         key={i}
