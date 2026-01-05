@@ -1,7 +1,7 @@
 import { getActivityBySlug } from "@/lib/db/getActivityBySlug";
 import { getDestinationBySlug } from "@/lib/db/getDestinationBySlug";
 import { notFound } from "next/navigation";
-import BookingConfirmForm from "./BookingConfirmForm.tsx";
+import BookingConfirmForm from "./BookingConfirmClient";
 
 interface PageProps {
   params: {

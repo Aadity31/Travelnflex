@@ -53,6 +53,10 @@ export function BookingCard({
   onDateSelect,
   onBookNow,
 }: BookingCardProps) {
+  console.log("BookingCard rendered");
+  console.log("onBookNow type:", typeof onBookNow);
+  console.log("booking.selectedDate:", booking.selectedDate);
+  console.log("Button will be disabled?", !booking.selectedDate);
   const {
     currentMonth,
     daysInMonth,
@@ -564,7 +568,12 @@ export function BookingCard({
         <div className="max-w-2xl space-y-3">
           <button
             disabled={!booking.selectedDate}
-            onClick={onBookNow}
+            onClick={() => {
+              console.log("BUTTON CLICKED!");
+              console.log("onBookNow about to be called");
+              onBookNow();
+              console.log("onBookNow called successfully");
+            }}
             className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-bold py-3.5 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
           >
             {!booking.selectedDate ? (
