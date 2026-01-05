@@ -255,16 +255,12 @@ export default function BookingClient({
   /* ============  BOOK NOW SECTION ============ */
 
   const handleBookNow = () => {
-    console.log("=== handleBookNow CALLED ===");
-    console.log("Type:", type);
-    console.log("Slug:", data.slug);
-    console.log("Booking:", booking);
-
+    // Validate that date is selected
     if (!booking.selectedDate) {
-      alert("Please select a date");
       return;
     }
 
+    // Create URL with booking data as query parameters
     const params = new URLSearchParams({
       selectedDate: booking.selectedDate,
       adults: booking.adults.toString(),
@@ -278,10 +274,8 @@ export default function BookingClient({
       total: pricing.total.toString(),
     });
 
-    const url = `/booking/${type}/${data.slug}/confirm?${params.toString()}`;
-    console.log("Navigating to:", url);
-
-    router.push(url);
+    // Navigate to confirmation page
+    router.push(`/booking/${type}/${data.slug}/confirm?${params.toString()}`);
   };
 
   /* ============ RENDER ============ */
@@ -493,7 +487,7 @@ export default function BookingClient({
                 onRoomsChange={handleRoomsChange}
                 onDateSelect={handleDateSelect}
                 onBookNow={() => {
-                  handleBookNow;
+                  // TODO: your submit / navigation
                 }}
               />
             </div>
