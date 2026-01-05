@@ -11,6 +11,8 @@ import {
   SparklesIcon,
   ShieldCheckIcon,
   BoltIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/24/solid";
 
 import {
@@ -35,6 +37,7 @@ import {
 
 import { BookingGallery } from "@/app/components/ui/BookingGallery";
 import { BookingCard } from "@/app/components/ui/BookingCard";
+import { useRouter } from "next/navigation";
 
 interface Agency {
   name: string;
@@ -87,6 +90,8 @@ export default function BookingClient({
     selectedDate: null,
     availableSlots: 0,
   });
+
+  const router = useRouter();
 
   const availableDates = useMemo(() => getAvailableDates(), []);
 
@@ -241,6 +246,38 @@ export default function BookingClient({
     },
   };
 
+  /* ============ REVIEWS SECTION ============ */
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const reviewsPerPage = 5;
+  const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+
+  /* ============  BOOK NOW SECTION ============ */
+
+  const handleBookNow = () => {
+    // Validate that date is selected
+    if (!booking.selectedDate) {
+      return;
+    }
+
+    // Create URL with booking data as query parameters
+    const params = new URLSearchParams({
+      selectedDate: booking.selectedDate,
+      adults: booking.adults.toString(),
+      children: booking.children.toString(),
+      rooms: booking.rooms.toString(),
+      packageType: booking.packageType,
+      availableSlots: booking.availableSlots.toString(),
+      peopleTotal: pricing.peopleTotal.toString(),
+      roomCost: pricing.roomCost.toString(),
+      discount: pricing.discount.toString(),
+      total: pricing.total.toString(),
+    });
+
+    // Navigate to confirmation page
+    router.push(`/booking/${type}/${data.slug}/confirm?${params.toString()}`);
+  };
+
   /* ============ RENDER ============ */
 
   return (
@@ -260,72 +297,85 @@ export default function BookingClient({
             />
 
             {/* Title & Info */}
-            <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+            <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2.5">
                 {data.name}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-4">
+              <div className="flex flex-wrap items-center gap-2 text-sm mb-3">
                 <div className="flex items-center gap-1.5">
                   <MapPinIcon className="w-4 h-4 text-orange-500" />
-                  <span className="font-medium">{data.location}</span>
+                  <span className="font-medium text-gray-900">
+                    {data.location}
+                  </span>
                 </div>
 
                 {data.duration && (
-                  <div className="flex items-center gap-1.5">
-                    <ClockIcon className="w-4 h-4 text-blue-500" />
-                    <span>{data.duration}</span>
-                  </div>
+                  <>
+                    <span className="text-gray-300">•</span>
+                    <div className="flex items-center gap-1.5">
+                      <ClockIcon className="w-4 h-4 text-blue-500" />
+                      <span className="text-gray-700">{data.duration}</span>
+                    </div>
+                  </>
                 )}
 
                 {data.bestTimeToVisit && (
-                  <div className="flex items-center gap-1.5">
-                    <SparklesIcon className="w-4 h-4 text-purple-500" />
-                    <span>Best: {data.bestTimeToVisit}</span>
-                  </div>
+                  <>
+                    <span className="text-gray-300">•</span>
+                    <div className="flex items-center gap-1.5">
+                      <SparklesIcon className="w-4 h-4 text-purple-500" />
+                      <span className="text-gray-700">
+                        Best: {data.bestTimeToVisit}
+                      </span>
+                    </div>
+                  </>
                 )}
 
                 {data.difficulty && (
-                  <span className="bg-gray-100 px-3 py-1 rounded-full text-xs font-semibold capitalize">
-                    {data.difficulty}
-                  </span>
+                  <>
+                    <span className="text-gray-300">•</span>
+                    <span className="bg-orange-500 text-white px-2.5 py-1 rounded-md text-xs font-semibold capitalize">
+                      {data.difficulty}
+                    </span>
+                  </>
                 )}
               </div>
 
               {/* Trust Badges */}
-              <div className="flex flex-wrap gap-3">
-                <div className="flex items-center gap-1.5 text-sm text-green-700 bg-green-50 px-3 py-1.5 rounded-lg">
-                  <ShieldCheckIcon className="w-4 h-4" />
-                  <span className="font-medium">Verified Operator</span>
+              <div className="flex flex-wrap gap-2">
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-50 px-2.5 py-1.5 rounded-md">
+                  <ShieldCheckIcon className="w-3.5 h-3.5" />
+                  <span>Verified Operator</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-sm text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg">
-                  <BoltIcon className="w-4 h-4" />
-                  <span className="font-medium">Instant Confirmation</span>
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-1.5 rounded-md">
+                  <BoltIcon className="w-3.5 h-3.5" />
+                  <span>Instant Confirmation</span>
                 </div>
               </div>
             </section>
 
             {/* Description */}
-            <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
+            <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+              <h2 className="text-lg font-bold text-gray-900 mb-2">
                 About This Experience
               </h2>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-gray-700 leading-relaxed text-sm">
                 {displayData.description}
               </p>
             </section>
 
             {/* Highlights */}
             {displayData.highlights.length > 0 && (
-              <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
+              <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                <h2 className="text-lg font-bold text-gray-900 mb-3">
                   {type === "activity" ? "What's Included" : "Highlights"}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {displayData.highlights.map((item, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-700">{item}</span>
+                    <div key={index} className="flex items-start gap-2">
+                      <CheckCircleIcon className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700 text-sm">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -333,25 +383,25 @@ export default function BookingClient({
             )}
 
             {/* Agency */}
-            <section className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl shadow-sm p-4 sm:p-6 border border-orange-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
+            <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+              <h2 className="text-lg font-bold text-gray-900 mb-3">
                 Hosted By
               </h2>
-              <div className="flex items-start gap-4">
-                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-orange-500 to-red-500 shadow-lg">
-                  <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">
+              <div className="flex items-start gap-3">
+                <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gradient-to-br from-orange-500 to-red-500 shadow-sm">
+                  <div className="w-full h-full flex items-center justify-center text-white text-xl font-bold">
                     {displayData.agency.name.charAt(0)}
                   </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900 mb-1">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-bold text-gray-900 mb-1">
                     {displayData.agency.name}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-2 flex items-center gap-2">
-                    <ShieldCheckIcon className="w-4 h-4 text-green-600" />
-                    Verified tour operator • 500+ tours completed
+                  <p className="text-xs text-gray-600 mb-2 flex items-center gap-1.5">
+                    <ShieldCheckIcon className="w-3.5 h-3.5 text-green-600" />
+                    Verified • 500+ tours completed
                   </p>
-                  <p className="text-gray-700 text-sm">
+                  <p className="text-gray-700 text-sm line-clamp-2">
                     {displayData.agency.description}
                   </p>
                 </div>
@@ -361,11 +411,53 @@ export default function BookingClient({
             {/* Recommended Activities */}
             {dummyRecommendedItems.length > 0 && (
               <section className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 mt-6">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
-                  Recommended Activities
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                    Recommended Activities
+                  </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {dummyRecommendedItems.length > 3 && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          const container =
+                            document.getElementById("recommended-scroll");
+                          container?.scrollBy({
+                            left: -320,
+                            behavior: "smooth",
+                          });
+                        }}
+                        className="p-2 rounded-full border border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all"
+                        aria-label="Previous"
+                      >
+                        <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          const container =
+                            document.getElementById("recommended-scroll");
+                          container?.scrollBy({
+                            left: 320,
+                            behavior: "smooth",
+                          });
+                        }}
+                        className="p-2 rounded-full border border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all"
+                        aria-label="Next"
+                      >
+                        <ChevronRightIcon className="w-5 h-5 text-gray-600" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div
+                  id="recommended-scroll"
+                  className={`${
+                    dummyRecommendedItems.length > 3
+                      ? "flex gap-4 overflow-x-auto scrollbar-hide pb-2"
+                      : "grid grid-cols-1 md:grid-cols-3 gap-4"
+                  }`}
+                >
                   {dummyRecommendedItems.map((item) => (
                     <RecommendedCard key={item.id} item={item} />
                   ))}
@@ -401,22 +493,23 @@ export default function BookingClient({
             </div>
 
             {/* Reviews */}
-            <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">
+            <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">
                 Customer Reviews
               </h2>
 
               {/* Rating Overview */}
-              <div className="flex flex-col md:flex-row gap-6 mb-8 pb-8 border-b border-gray-200">
-                <div className="text-center md:text-left bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6">
-                  <div className="text-5xl font-bold text-gray-900 mb-2">
+              <div className="flex items-start gap-6 mb-6 pb-5 border-b border-gray-200">
+                {/* Average Rating */}
+                <div className="flex flex-col items-center">
+                  <div className="text-4xl font-bold text-gray-900 mb-1">
                     {averageRating}
                   </div>
-                  <div className="flex items-center justify-center md:justify-start gap-1 mb-2">
+                  <div className="flex items-center gap-0.5 mb-1">
                     {[...Array(5)].map((_, i) => (
                       <StarIcon
                         key={i}
-                        className={`w-5 h-5 ${
+                        className={`w-4 h-4 ${
                           i < Math.round(parseFloat(averageRating))
                             ? "text-yellow-400"
                             : "text-gray-300"
@@ -424,30 +517,33 @@ export default function BookingClient({
                       />
                     ))}
                   </div>
-                  <p className="text-sm text-gray-600 font-medium">
+                  <p className="text-xs text-gray-600">
                     {reviews.length || data.reviewCount} reviews
                   </p>
                 </div>
 
                 {/* Rating Bars */}
-                <div className="flex-1 space-y-3">
+                <div className="flex-1 space-y-2">
                   {[5, 4, 3, 2, 1].map((rating, idx) => {
                     const count = ratingDistribution[idx];
                     const totalReviews = reviews.length || 1;
                     const percentage = (count / totalReviews) * 100;
                     return (
-                      <div key={rating} className="flex items-center gap-3">
-                        <span className="text-sm text-gray-600 w-14 font-medium">
-                          {rating} star
-                        </span>
-                        <div className="flex-1 bg-gray-200 rounded-full h-3">
+                      <div key={rating} className="flex items-center gap-2">
+                        <div className="flex items-center gap-0.5 w-16">
+                          <span className="text-xs text-gray-700 font-medium">
+                            {rating}
+                          </span>
+                          <StarIcon className="w-3 h-3 text-gray-400" />
+                        </div>
+                        <div className="flex-1 bg-gray-200 rounded-full h-2">
                           <div
-                            className="bg-gradient-to-r from-yellow-400 to-orange-400 h-3 rounded-full transition-all"
+                            className="bg-yellow-400 h-2 rounded-full transition-all"
                             style={{ width: `${percentage}%` }}
                           />
                         </div>
-                        <span className="text-sm text-gray-600 w-12 text-right font-medium">
-                          {Math.round(percentage)}%
+                        <span className="text-xs text-gray-600 w-10 text-right">
+                          {count}
                         </span>
                       </div>
                     );
@@ -456,64 +552,116 @@ export default function BookingClient({
               </div>
 
               {/* Individual Reviews */}
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {reviews.length > 0 ? (
-                  reviews.slice(0, 5).map((review) => (
-                    <div
-                      key={review.id}
-                      className="border-b border-gray-100 pb-6 last:border-b-0 last:pb-0"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold flex-shrink-0 shadow-md">
-                          {review.userName.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <h4 className="font-semibold text-gray-900">
-                              {review.userName}
-                            </h4>
-                            <span className="text-sm text-gray-500">•</span>
-                            <span className="text-sm text-gray-500">
-                              {new Date(review.date).toLocaleDateString(
-                                "en-IN",
-                                {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                }
-                              )}
-                            </span>
+                  <>
+                    {reviews
+                      .slice(
+                        currentPage * reviewsPerPage,
+                        (currentPage + 1) * reviewsPerPage
+                      )
+                      .map((review) => (
+                        <div
+                          key={review.id}
+                          className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold flex-shrink-0 text-sm">
+                              {review.userName.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-semibold text-gray-900 text-sm">
+                                  {review.userName}
+                                </h4>
+                                <span className="text-gray-300">•</span>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(review.date).toLocaleDateString(
+                                    "en-IN",
+                                    {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                    }
+                                  )}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-0.5 mb-2">
+                                {[...Array(5)].map((_, i) => (
+                                  <StarIcon
+                                    key={i}
+                                    className={`w-3.5 h-3.5 ${
+                                      i < review.rating
+                                        ? "text-yellow-400"
+                                        : "text-gray-300"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                              <p className="text-gray-700 text-sm leading-relaxed">
+                                {review.comment}
+                              </p>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1 mb-3">
-                            {[...Array(5)].map((_, i) => (
-                              <StarIcon
-                                key={i}
-                                className={`w-4 h-4 ${
-                                  i < review.rating
-                                    ? "text-yellow-400"
-                                    : "text-gray-300"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <p className="text-gray-700 leading-relaxed">
-                            {review.comment}
-                          </p>
                         </div>
+                      ))}
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-center gap-2 pt-4 border-t border-gray-200">
+                        <button
+                          onClick={() =>
+                            setCurrentPage((prev) => Math.max(0, prev - 1))
+                          }
+                          disabled={currentPage === 0}
+                          className="p-2 rounded-md border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                          aria-label="Previous page"
+                        >
+                          <ChevronLeftIcon className="w-4 h-4 text-gray-600" />
+                        </button>
+
+                        <div className="flex items-center gap-1">
+                          {[...Array(totalPages)].map((_, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setCurrentPage(idx)}
+                              className={`w-8 h-8 rounded-md text-sm font-medium transition-colors ${
+                                currentPage === idx
+                                  ? "bg-orange-500 text-white"
+                                  : "text-gray-700 hover:bg-gray-100"
+                              }`}
+                            >
+                              {idx + 1}
+                            </button>
+                          ))}
+                        </div>
+
+                        <button
+                          onClick={() =>
+                            setCurrentPage((prev) =>
+                              Math.min(totalPages - 1, prev + 1)
+                            )
+                          }
+                          disabled={currentPage === totalPages - 1}
+                          className="p-2 rounded-md border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                          aria-label="Next page"
+                        >
+                          <ChevronRightIcon className="w-4 h-4 text-gray-600" />
+                        </button>
                       </div>
-                    </div>
-                  ))
+                    )}
+                  </>
                 ) : (
-                  <div className="text-center py-12 bg-gray-50 rounded-xl">
-                    <div className="flex items-center justify-center gap-1 mb-4">
+                  <div className="text-center py-8 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-center gap-0.5 mb-2">
                       {[...Array(5)].map((_, i) => (
-                        <StarIcon key={i} className="w-10 h-10 text-gray-300" />
+                        <StarIcon key={i} className="w-6 h-6 text-gray-300" />
                       ))}
                     </div>
-                    <p className="text-gray-500 font-medium mb-2">
+                    <p className="text-gray-600 font-medium text-sm mb-1">
                       No reviews yet
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-xs text-gray-500">
                       Be the first to share your experience!
                     </p>
                   </div>
@@ -524,7 +672,7 @@ export default function BookingClient({
 
           {/* ============ DESKTOP BOOKING CARD (STICKY) ============ */}
           <div className="hidden lg:block lg:col-span-4">
-            <div className="sticky top-6">
+            <div className="top-6">
               <BookingCard
                 booking={booking}
                 roomLimits={roomLimits}
@@ -546,6 +694,7 @@ export default function BookingClient({
                 onDateSelect={handleDateSelect}
                 onBookNow={() => {
                   // TODO: your submit / navigation
+                  handleBookNow;
                 }}
               />
             </div>

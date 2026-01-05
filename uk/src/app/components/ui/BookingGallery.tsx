@@ -27,6 +27,7 @@ export function BookingGallery({
   reviewCount,
 }: BookingGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0);
+  const [hoveredImage, setHoveredImage] = useState<number | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const hasImages = images && images.length > 0;
@@ -42,6 +43,9 @@ export function BookingGallery({
   const showNext = () => {
     setSelectedImage((prev) => (prev === safeImages.length - 1 ? 0 : prev + 1));
   };
+
+  // Show hovered image if hovering, otherwise show selected image
+  const displayedImage = hoveredImage !== null ? hoveredImage : selectedImage;
 
   return (
     <>
@@ -71,7 +75,7 @@ export function BookingGallery({
 
           {/* Main image */}
           <Image
-            src={safeImages[selectedImage]}
+            src={safeImages[displayedImage]}
             alt={name}
             fill
             className="object-cover"
@@ -79,13 +83,14 @@ export function BookingGallery({
           />
         </div>
 
-        {/* Thumbnails: hover & click to change main image */}
+        {/* Thumbnails: hover to preview, click to select */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
           {safeImages.map((img, idx) => (
             <button
               key={idx}
               type="button"
-              onMouseEnter={() => setSelectedImage(idx)}
+              onMouseEnter={() => setHoveredImage(idx)}
+              onMouseLeave={() => setHoveredImage(null)}
               onClick={() => setSelectedImage(idx)}
               className={`w-24 h-16 shrink-0 rounded-md overflow-hidden border-2 transition-all ${
                 selectedImage === idx

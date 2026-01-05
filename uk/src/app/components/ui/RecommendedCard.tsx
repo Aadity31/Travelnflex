@@ -23,8 +23,8 @@ interface RecommendedCardProps {
 
 export function RecommendedCard({ item }: RecommendedCardProps) {
   return (
-    <article className="rounded-2xl border border-gray-100 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      {/* Image */}
+    <article className="rounded-2xl border border-gray-100 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow flex-shrink-0 min-w-[300px]">
+      {/* Rest of your original card code stays exactly the same */}
       <div className="relative h-36 sm:h-40 bg-gray-100">
         <Image
           src={item.image}
@@ -132,5 +132,18 @@ export const dummyRecommendedItems: RecommendedItem[] = [
     image: "/images/dummy-massage.jpg",
     priceLabel: "Starting from",
     price: "₹2,000",
+  },
+  {
+    id: "4",
+    title: "Yoga & Meditation Retreat",
+    location: "Rishikesh",
+    duration: "4 hours",
+    tag: "Wellness",
+    badgeRight: "Trending",
+    rating: 4.9,
+    ratingCount: 450,
+    image: "/images/dummy-yoga.jpg",
+    priceLabel: "Starting from",
+    price: "₹1,200",
   },
 ];
