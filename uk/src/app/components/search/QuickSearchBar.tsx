@@ -1,33 +1,40 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import {
-  MagnifyingGlassIcon,
-  MapPinIcon,
-  CalendarDaysIcon,
-  UserGroupIcon,
-} from "@heroicons/react/24/outline";
+import { useState, useRef, useEffect } from "react";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+
+const DUMMY_SUGGESTIONS = [
+  "Rishikesh",
+  "Haridwar",
+  "River Rafting",
+  "Adventure Activities",
+  "Spiritual Tours",
+  "Trekking",
+  "Yoga Retreat",
+];
 
 export default function QuickSearchBar() {
-  const router = useRouter();
-  const [searchData, setSearchData] = useState({
-    destination: "",
-    activity: "",
-    date: "",
-    guests: 1,
-  });
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const searchParams = new URLSearchParams({
-      destination: searchData.destination,
-      activity: searchData.activity,
-      date: searchData.date,
-      guests: searchData.guests.toString(),
-    });
-    router.push(`/search?${searchParams.toString()}`);
-  };
+  const filtered = DUMMY_SUGGESTIONS.filter((item) =>
+    item.toLowerCase().includes(query.toLowerCase())
+  ).slice(0, 6);
+
+  // close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   return (
     <section className="relative bg-gradient-to-b from-transparent via-gray-50/50 to-gray-50 pt-12 sm:pt-14 md:pt-16 pb-6 sm:pb-8 -mt-16 sm:-mt-18 md:-mt-20">
@@ -40,134 +47,82 @@ export default function QuickSearchBar() {
               "radial-gradient(circle, #f97316 1px, transparent 1px)",
             backgroundSize: "30px 30px",
           }}
-        ></div>
+        />
       </div>
 
-      {/* Search Card */}
-      <div className="relative z-20 max-w-6xl mx-auto px-3 sm:px-4 md:px-6">
-        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-4 sm:p-5 md:p-6 border border-gray-100">
-          <div className="text-center mb-4 sm:mb-5">
-            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-1">
-              Find Your Perfect Journey
+      <div className="flex justify-center px-4">
+        <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl px-10 py-8">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-medium text-gray-900">
+              Plan your journey
             </h2>
-            <p className="text-gray-600 text-xs sm:text-sm">
-              Search for destinations, activities, and guides
+            <p className="mt-2 text-sm text-gray-500">
+              Search destinations, activities, and local experiences
             </p>
           </div>
 
-          <form
-            onSubmit={handleSearch}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
-          >
-            {/* Destination Search */}
-            <div className="relative">
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                <MapPinIcon className="w-3.5 h-3.5 inline mr-1" />
-                Destination
-              </label>
-              <select
-                value={searchData.destination}
-                onChange={(e) =>
-                  setSearchData((prev) => ({
-                    ...prev,
-                    destination: e.target.value,
-                  }))
-                }
-                className="w-full px-3 py-2.5 sm:py-2.5 border-2 border-gray-200 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 cursor-pointer appearance-none"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                  backgroundPosition: "right 0.5rem center",
-                  backgroundRepeat: "no-repeat",
-                  backgroundSize: "1.5em 1.5em",
-                  paddingRight: "2.5rem",
-                }}
-              >
-                <option value="">All Destinations</option>
-                <option value="rishikesh">Rishikesh</option>
-                <option value="haridwar">Haridwar</option>
-                <option value="both">Both Cities</option>
-              </select>
-            </div>
+          {/* SEARCH BAR */}
+          <div className="relative max-w-4xl mx-auto">
+            <div
+              className="relative flex items-center bg-white rounded-3xl
+                border border-gray-300 shadow-xl"
+            >
+              <MagnifyingGlassIcon className="absolute left-5 w-6 h-6 text-gray-400" />
 
-            {/* Activity Type */}
-            <div className="relative">
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                <MagnifyingGlassIcon className="w-3.5 h-3.5 inline mr-1" />
-                Activity Type
-              </label>
-              <select
-                value={searchData.activity}
-                onChange={(e) =>
-                  setSearchData((prev) => ({
-                    ...prev,
-                    activity: e.target.value,
-                  }))
-                }
-                className="w-full px-3 py-2.5 sm:py-2.5 border-2 border-gray-200 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 cursor-pointer appearance-none"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                  backgroundPosition: "right 0.5rem center",
-                  backgroundRepeat: "no-repeat",
-                  backgroundSize: "1.5em 1.5em",
-                  paddingRight: "2.5rem",
-                }}
-              >
-                <option value="">All Activities</option>
-                <option value="spiritual">Spiritual</option>
-                <option value="adventure">Adventure</option>
-                <option value="cultural">Cultural</option>
-                <option value="trekking">Trekking</option>
-              </select>
-            </div>
-
-            {/* Date */}
-            <div className="relative">
-              <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                <CalendarDaysIcon className="w-3.5 h-3.5 inline mr-1" />
-                Travel Date
-              </label>
               <input
-                type="date"
-                value={searchData.date}
-                onChange={(e) =>
-                  setSearchData((prev) => ({ ...prev, date: e.target.value }))
-                }
-                min={new Date().toISOString().split("T")[0]}
-                className="w-full px-3 py-2.5 sm:py-2.5 border-2 border-gray-200 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300"
+                type="text"
+                value={query}
+                onFocus={() => setOpen(true)}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setOpen(true);
+                }}
+                placeholder="Search places, activities, tours..."
+                className="w-full h-12 pl-14 pr-16 rounded-3xl
+             text-base text-gray-900 focus:outline-none"
               />
-            </div>
 
-            {/* Guests & Search Button */}
-            <div className="space-y-3 sm:space-y-3">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                  <UserGroupIcon className="w-3.5 h-3.5 inline mr-1" />
-                  Guests
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={searchData.guests}
-                  onChange={(e) =>
-                    setSearchData((prev) => ({
-                      ...prev,
-                      guests: parseInt(e.target.value),
-                    }))
-                  }
-                  className="w-full px-3 py-2.5 sm:py-2.5 border-2 border-gray-200 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300"
-                />
-              </div>
               <button
-                type="submit"
-                className="group w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white py-2.5 sm:py-2.5 px-4 sm:px-5 rounded-lg text-sm font-semibold transition-all duration-300 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 flex items-center justify-center gap-2"
+                className="absolute right-3 h-8 w-8 rounded-full
+               bg-orange-600 text-white
+               flex items-center justify-center
+               hover:bg-orange-700 transition"
               >
-                <MagnifyingGlassIcon className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
-                <span className="hidden sm:inline">Search Now</span>
-                <span className="sm:hidden">Search</span>
+                <MagnifyingGlassIcon className="w-5 h-5" />
               </button>
             </div>
-          </form>
+
+            {/* Suggestions */}
+            {open && query && (
+              <div
+                className="absolute z-50 mt-1 w-full bg-white
+                 rounded-2xl border border-gray-200
+                 shadow-xl overflow-hidden"
+              >
+                {filtered.length > 0 ? (
+                  filtered.map((item) => (
+                    <div
+                      key={item}
+                      onClick={() => {
+                        setQuery(item);
+                        setOpen(false);
+                      }}
+                      className="flex items-center gap-3 px-5 py-3
+                       text-sm text-gray-800 cursor-pointer
+                       hover:bg-orange-50 transition"
+                    >
+                      <MagnifyingGlassIcon className="w-4 h-4 text-orange-500" />
+                      {item}
+                    </div>
+                  ))
+                ) : (
+                  <div className="px-5 py-3 text-sm text-gray-500">
+                    No results found
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
