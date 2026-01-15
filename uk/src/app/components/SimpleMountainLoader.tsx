@@ -31,7 +31,8 @@ export default function SimpleMountainLoader() {
       <div className="flex flex-col items-center gap-3">
 
         {/* Video container */}
-        <div className="relative w-[220px] h-[140px] overflow-hidden bg-white rounded-xl shadow-lg flex items-center justify-center">
+<div className="relative w-[220px] h-[140px] overflow-hidden bg-white rounded-xl flex items-center justify-center">
+
           {showVideo ? (
             <video
               src="/Man_Moving_Animation_Ready.mp4"
