@@ -28,6 +28,7 @@ type UserType = {
 
 export default function EditProfilePage() {
   const [user, setUser] = useState<UserType | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // ✅ Added loading state
   const router = useRouter();
   const { update } = useSession();
   const hasFetched = useRef(false);
@@ -44,8 +45,8 @@ export default function EditProfilePage() {
     if (hasFetched.current) return;
 
     const fetchUser = async () => {
-
       try {
+        setIsLoading(true); // ✅ Start loading
         const res = await fetch("/api/auth/user");
         const data = await res.json();
 
@@ -57,7 +58,6 @@ export default function EditProfilePage() {
             traveller_type: data.user.traveller_type || "indian",
             passport_number: data.user.passport_number || "",
           });
-          hasFetched.current = true;
         } else {
           router.push("/login");
         }
@@ -65,11 +65,14 @@ export default function EditProfilePage() {
         console.error("Error fetching user:", error);
         toast.error("Failed to load profile");
         router.push("/login");
-      } 
+      } finally {
+        setIsLoading(false); // ✅ Always stop loading
+        hasFetched.current = true;
+      }
     };
 
     fetchUser();
-  }, []);
+  }, [router]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -87,7 +90,6 @@ export default function EditProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
 
     try {
       const response = await fetch("/api/profile/update", {
@@ -117,7 +119,6 @@ export default function EditProfilePage() {
         }, 1000);
       } else {
         toast.error(data.error || "Failed to update profile");
-        
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -125,7 +126,48 @@ export default function EditProfilePage() {
     }
   };
 
-  if (!user) return null;
+  // ✅ Skeleton Loader Component
+  const SkeletonLoader = () => (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-8 lg:py-14">
+        {/* Header Skeleton */}
+        <div className="mb-6 space-y-4">
+          <div className="h-8 w-24 bg-gray-200 rounded-lg animate-pulse mb-4" />
+          <div className="space-y-3">
+            <div className="h-10 w-64 bg-gray-200 rounded-xl animate-pulse" />
+            <div className="h-4 w-48 bg-gray-200 rounded animate-pulse" />
+          </div>
+          <div className="h-24 w-full bg-gray-200 rounded-2xl animate-pulse" />
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          {/* Left Sidebar Skeleton - Desktop */}
+          <div className="hidden lg:block space-y-6">
+            <div className="h-48 bg-gray-200 rounded-3xl animate-pulse" />
+            <div className="h-64 bg-gray-200 rounded-3xl animate-pulse" />
+          </div>
+
+          {/* Main Form Skeleton */}
+          <div className="lg:col-span-2">
+            <div className="bg-gray-200/80 backdrop-blur-xl rounded-3xl border border-gray-200 shadow-2xl animate-pulse h-[600px] sm:h-[700px]" />
+            
+            {/* Mobile Quick Tips Skeleton */}
+            <div className="lg:hidden mt-6 h-48 bg-gray-200 rounded-3xl animate-pulse" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ✅ Show skeleton while loading
+  if (isLoading) {
+    return <SkeletonLoader />;
+  }
+
+  // ✅ Show nothing if no user (after loading)
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
@@ -202,6 +244,7 @@ export default function EditProfilePage() {
             </p>
           </div>
         </div>
+
         <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Left Sidebar - Desktop Only */}
           <div className="hidden lg:block space-y-6">
@@ -328,13 +371,13 @@ export default function EditProfilePage() {
                           size={10}
                           className="sm:w-3 sm:h-3 text-green-600"
                         />
-                        We&apos;ll use this for booking confirmations
+                        We'll use this for booking confirmations
                       </p>
                     </div>
 
-                    {/* Date of Birth & Gender */}
+                    {/* DOB & Gender - COMMENTED OUT */}
+                    {/* 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      {/* Date of Birth */}
                       <div>
                         <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-1.5 sm:mb-2">
                           Date of Birth <span className="text-red-500">*</span>
@@ -349,7 +392,6 @@ export default function EditProfilePage() {
                         />
                       </div>
 
-                      {/* Gender */}
                       <div>
                         <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-1.5 sm:mb-2">
                           Gender <span className="text-red-500">*</span>
@@ -367,6 +409,7 @@ export default function EditProfilePage() {
                         </select>
                       </div>
                     </div>
+                    */}
                   </div>
                 </div>
 
