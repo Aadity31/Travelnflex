@@ -428,7 +428,7 @@ export default function ProfilePage() {
                     Spiritual Explorer
                   </h3>
                   <p className="text-[10px] sm:text-xs text-gray-600 leading-relaxed">
-                    You've completed 12 sacred journeys. Keep exploring!
+                    You&apos;ve completed 12 sacred journeys. Keep exploring!
                   </p>
                 </div>
               </div>
