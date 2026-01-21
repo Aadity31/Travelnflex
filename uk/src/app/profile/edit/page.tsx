@@ -371,7 +371,7 @@ export default function EditProfilePage() {
                           size={10}
                           className="sm:w-3 sm:h-3 text-green-600"
                         />
-                        We'll use this for booking confirmations
+                        We&apos;ll use this for booking confirmations
                       </p>
                     </div>
 
