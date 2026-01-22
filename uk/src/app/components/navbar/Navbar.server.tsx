@@ -17,10 +17,10 @@ export default async function NavbarServer() {
       FROM users
       WHERE email = $1
       LIMIT 1
-      LIMIT 1
       `,
       [session.user.email]
     );
+
 
     user = res.rows[0] ?? null;
   }
