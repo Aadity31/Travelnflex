@@ -189,7 +189,12 @@ export default function Navbar({
               </div>
 
               {/* ⭐ Notification Bell — LOGIN KE BAAD HI */}
-              {children}
+              {currentUser && (
+                <div className="hidden md:flex">
+                  <NotificationBellClient />
+                </div>
+              )}
+
 
               {/* AUTH - DESKTOP ONLY */}
               {!currentUser ? (
