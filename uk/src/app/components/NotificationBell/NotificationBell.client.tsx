@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Bell, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 /* -----------------------------
    DB Type
@@ -45,10 +46,10 @@ function mapFromDB(n: DBNotification): UINotification {
 }
 
 export default function NotificationBellClient() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<UINotification[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   /* -----------------------------
@@ -98,25 +99,91 @@ export default function NotificationBellClient() {
   }, [isOpen]);
 
   /* -----------------------------
-     UI Actions
+     API Calls
   ------------------------------ */
-  const markAsRead = (id: string) => {
+  const apiMarkRead = async (id: string) => {
+    await fetch("/api/notifications/mark-read", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+  };
+
+  const apiMarkAllRead = async () => {
+    await fetch("/api/notifications/mark-all-read", {
+      method: "POST",
+    });
+  };
+
+  const apiDelete = async (id: string) => {
+    await fetch("/api/notifications/delete", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+  };
+
+  /* -----------------------------
+     UI + DB Actions
+  ------------------------------ */
+  const markAsRead = async (id: string) => {
+    // UI first (fast)
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
+
+    // DB sync
+    await apiMarkRead(id);
   };
 
-  const markAllAsRead = () => {
+  const markAllAsRead = async () => {
     setNotifications((prev) =>
       prev.map((n) => ({ ...n, read: true }))
     );
+
+    await apiMarkAllRead();
   };
 
-  const deleteNotification = (id: string) => {
+  const deleteNotification = async (id: string) => {
     setNotifications((prev) =>
       prev.filter((n) => n.id !== id)
     );
+
+    await apiDelete(id);
   };
+
+  const handleNotificationClick = async (n: UINotification) => {
+    try {
+      // 1. Mark read in DB (if unread)
+      if (!n.read) {
+        await fetch("/api/notifications/mark-read", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: n.id }),
+        });
+      }
+
+      // 2. Update UI
+      setNotifications((prev) =>
+        prev.map((x) =>
+          x.id === n.id ? { ...x, read: true } : x
+        )
+      );
+
+      // 3. Close dropdown
+      setIsOpen(false);
+
+      // 4. Navigate
+      if (n.link) {
+        router.push(n.link);
+      }
+    } catch (err) {
+      console.error("Notification click failed:", err);
+    }
+  };
+
 
   /* -----------------------------
      Badge Styles
@@ -197,18 +264,8 @@ export default function NotificationBellClient() {
                 {notifications.map((n) => (
                   <div
                     key={n.id}
-                    className={`p-2 sm:p-2.5 xl:p-3 hover:bg-orange-500/10 dark:hover:bg-orange-500/20 transition cursor-pointer ${
-                      !n.read
-                        ? "bg-orange-50/40 dark:bg-orange-500/10"
-                        : ""
-                    }`}
-                    onClick={() => {
-                      markAsRead(n.id);
-
-                      if (n.link) {
-                        window.location.href = n.link;
-                      }
-                    }}
+                    onClick={() => handleNotificationClick(n)}
+                    className="..."
                   >
                     <div className="flex items-start gap-2">
 
