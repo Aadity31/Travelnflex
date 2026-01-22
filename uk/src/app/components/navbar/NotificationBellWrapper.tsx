@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import NotificationBellClient from "./NotificationBell.client";
+import NotificationBellClient from "../NotificationBell/NotificationBell.client";
 
 /* -----------------------------
    DB Notification Type
