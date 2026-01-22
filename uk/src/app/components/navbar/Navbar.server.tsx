@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import NotificationBellServer from "../NotificationBell/NotificationBell.server";
 import NavbarClient from "./Navbar.client";
 import { getServerSession } from "next-auth";
