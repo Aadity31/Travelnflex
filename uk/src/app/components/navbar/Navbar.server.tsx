@@ -1,9 +1,9 @@
 export const dynamic = "force-dynamic";
+
 import NavbarClient from "./Navbar.client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import pool from "@/lib/db";
-import NotificationBellWrapper from "./NotificationBellWrapper";
 
 export default async function NavbarServer() {
   const session = await getServerSession(authOptions);
@@ -17,6 +17,7 @@ export default async function NavbarServer() {
       FROM users
       WHERE email = $1
       LIMIT 1
+      LIMIT 1
       `,
       [session.user.email]
     );
@@ -24,16 +25,5 @@ export default async function NavbarServer() {
     user = res.rows[0] ?? null;
   }
 
-  return (
-    <div className="flex items-center gap-3">
-      <NavbarClient user={user}>
-        {user && (
-          <div className="hidden md:flex">
-            <NotificationBellWrapper />
-          </div>
-        )}
-      </NavbarClient>
-
-    </div>
-  );
+  return <NavbarClient user={user} />;
 }
