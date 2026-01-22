@@ -3,9 +3,22 @@
 import { useEffect, useState } from "react";
 import NotificationBellClient from "../NotificationBell/NotificationBell.client";
 
+/* -----------------------------
+   DB Type
+------------------------------ */
+interface DBNotification {
+  id: number;
+  title: string;
+  message: string;
+  type: "booking" | "reminder" | "update" | "promo";
+  is_read: boolean;
+  created_at: string;
+  link: string | null;
+}
+
 export default function NotificationBellWrapper() {
-  const [data, setData] = useState<any[]>([]);
-  const [status, setStatus] = useState("init");
+  const [data, setData] = useState<DBNotification[]>([]);
+  const [status, setStatus] = useState<"init" | "done" | "error">("init");
 
   useEffect(() => {
     async function load() {
@@ -14,11 +27,12 @@ export default function NotificationBellWrapper() {
       try {
         const res = await fetch("/api/notifications", {
           credentials: "include",
+          cache: "no-store",
         });
 
         console.log("STATUS:", res.status);
 
-        const json = await res.json();
+        const json: DBNotification[] = await res.json();
 
         console.log("DATA:", json);
 
@@ -35,6 +49,7 @@ export default function NotificationBellWrapper() {
 
   return (
     <>
+      {/* Debug */}
       <div className="hidden">
         DEBUG: {status} / {data.length}
       </div>
