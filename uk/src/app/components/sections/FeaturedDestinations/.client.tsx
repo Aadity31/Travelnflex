@@ -7,11 +7,11 @@ import {
   StarIcon,
   MapPinIcon,
   EyeIcon,
-  HeartIcon,
   ArrowRightIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
+
+import WishlistButton from "@/app/components/wishlist/WishlistButton";
 
 // Types
 interface FeaturedDestination {
@@ -66,14 +66,10 @@ const Badge: React.FC<BadgeProps> = ({ text, type }) => {
 // Destination Card Component
 interface DestinationCardProps {
   destination: FeaturedDestination;
-  isLiked: boolean;
-  onLikeToggle: (destinationId: string) => void;
 }
 
 const DestinationCard: React.FC<DestinationCardProps> = ({
   destination,
-  isLiked,
-  onLikeToggle,
 }) => {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
@@ -110,33 +106,28 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
         {/* Loading overlay */}
         {imageLoading && !imageError && (
           <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
-            <div className="text-gray-400 text-xs sm:text-sm">Loading...</div>
+            <div className="text-gray-400 text-xs sm:text-sm">
+              Loading...
+            </div>
           </div>
         )}
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
 
-        {/* Top badges and controls */}
+        {/* Top badges and wishlist */}
         <div className="absolute top-3 sm:top-4 left-3 sm:left-4 right-3 sm:right-4 flex justify-between items-start">
           {destination.badgeText && destination.badgeType && (
-            <Badge text={destination.badgeText} type={destination.badgeType} />
+            <Badge
+              text={destination.badgeText}
+              type={destination.badgeType}
+            />
           )}
 
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              onLikeToggle(destination.id);
-            }}
-            className="bg-white/90 backdrop-blur-sm rounded-full p-1.5 sm:p-2 hover:bg-white transition-colors duration-200"
-            aria-label={isLiked ? "Remove from favorites" : "Add to favorites"}
-          >
-            {isLiked ? (
-              <HeartSolidIcon className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
-            ) : (
-              <HeartIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 hover:text-red-500" />
-            )}
-          </button>
+          <WishlistButton
+            itemId={destination.id}
+            size="sm"
+          />
         </div>
 
         {/* Rating badge */}
@@ -199,7 +190,9 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
           <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
             <ClockIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span>Best time: {destination.bestTimeToVisit}</span>
+            <span>
+              Best time: {destination.bestTimeToVisit}
+            </span>
           </div>
           <div className="text-left sm:text-right">
             <div className="text-xl sm:text-2xl font-bold text-gray-900">
@@ -226,24 +219,8 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
 
 // Main FeaturedDestinations Component
 const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
-  destinations
-}) =>  {
-  const [likedDestinations, setLikedDestinations] = useState<Set<string>>(
-    new Set()
-  );
-
-  const handleLikeToggle = (destinationId: string) => {
-    setLikedDestinations((prev) => {
-      const newLiked = new Set(prev);
-      if (newLiked.has(destinationId)) {
-        newLiked.delete(destinationId);
-      } else {
-        newLiked.add(destinationId);
-      }
-      return newLiked;
-    });
-  };
-
+  destinations,
+}) => {
   return (
     <section className="py-8 sm:py-12 md:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
@@ -271,8 +248,6 @@ const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
             <DestinationCard
               key={destination.id}
               destination={destination}
-              isLiked={likedDestinations.has(destination.id)}
-              onLikeToggle={handleLikeToggle}
             />
           ))}
         </div>

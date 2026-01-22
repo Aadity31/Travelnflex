@@ -4,7 +4,12 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import pool from "./db";
+import { getServerSession } from "next-auth/next";
 
+export async function getUserIdFromSession() {
+  const session = await getServerSession(authOptions);
+  return session?.user?.id || null;
+}
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
