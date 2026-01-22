@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import NotificationBellClient from "../NotificationBell/NotificationBell.client";
+import NotificationBellClient from "./NotificationBell.client";
 
 /* -----------------------------
-   DB Type
+   DB Notification Type
 ------------------------------ */
 interface DBNotification {
   id: number;
@@ -16,12 +16,14 @@ interface DBNotification {
   link: string | null;
 }
 
+type Status = "init" | "done" | "error";
+
 export default function NotificationBellWrapper() {
   const [data, setData] = useState<DBNotification[]>([]);
-  const [status, setStatus] = useState<"init" | "done" | "error">("init");
+  const [status, setStatus] = useState<Status>("init");
 
   useEffect(() => {
-    async function load() {
+    async function load(): Promise<void> {
       console.log("FETCHING NOTIFS...");
 
       try {
@@ -32,14 +34,14 @@ export default function NotificationBellWrapper() {
 
         console.log("STATUS:", res.status);
 
-        const json: DBNotification[] = await res.json();
+        const json = (await res.json()) as DBNotification[];
 
         console.log("DATA:", json);
 
         setData(json);
         setStatus("done");
-      } catch (e) {
-        console.error("FETCH ERROR", e);
+      } catch (err) {
+        console.error("FETCH ERROR", err);
         setStatus("error");
       }
     }
@@ -49,7 +51,7 @@ export default function NotificationBellWrapper() {
 
   return (
     <>
-      {/* Debug */}
+      {/* Debug (hidden) */}
       <div className="hidden">
         DEBUG: {status} / {data.length}
       </div>
