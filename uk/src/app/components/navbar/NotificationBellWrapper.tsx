@@ -1,34 +1,45 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import NotificationBellClient from "../NotificationBell/NotificationBell.client";
+import NotificationBellClient from "./NotificationBell.client";
 
 export default function NotificationBellWrapper() {
   const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState("init");
 
   useEffect(() => {
     async function load() {
+      console.log("FETCHING NOTIFS...");
+
       try {
         const res = await fetch("/api/notifications", {
           credentials: "include",
         });
 
-        if (!res.ok) return;
+        console.log("STATUS:", res.status);
 
         const json = await res.json();
+
+        console.log("DATA:", json);
+
         setData(json);
+        setStatus("done");
       } catch (e) {
-        console.error("Notif fetch failed", e);
-      } finally {
-        setLoading(false);
+        console.error("FETCH ERROR", e);
+        setStatus("error");
       }
     }
 
     load();
   }, []);
 
-  if (loading) return null;
+  return (
+    <>
+      <div className="hidden">
+        DEBUG: {status} / {data.length}
+      </div>
 
-  return <NotificationBellClient notifications={data} />;
+      <NotificationBellClient notifications={data} />
+    </>
+  );
 }
