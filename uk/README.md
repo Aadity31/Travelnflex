@@ -10,9 +10,7 @@ oi sari privacy and policy bana de website than mko batana tub seo ka dekty hai
 Admin 
 agency id = AG001 
 
-activitie
+activities
 
 # activities Table id formate =
 AGENCYCODE_ACTIVITYCODE_SEQ
-
-jabba dabba ababababafdgvae
