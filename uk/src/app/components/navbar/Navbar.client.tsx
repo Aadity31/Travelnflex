@@ -18,9 +18,8 @@ import {
   Compass,
   Sunset,
 } from "lucide-react";
+import type { ReactNode } from "react";
 import { signOut } from "next-auth/react";
-import NotificationBellClient from "@/app/components/NotificationBell/NotificationBell.client";
-import type { Notification } from "@/types/notification";
 
 type UserType = {
   id: string;
@@ -31,10 +30,10 @@ type UserType = {
 
 export default function Navbar({
   user: initialUser,
-  initialNotifications,
+  children,
 }: {
   user: UserType | null;
-  initialNotifications: Notification[];
+  children?: React.ReactNode;
 }) {
   const [currentUser] = useState(initialUser);
   const [isOpen, setIsOpen] = useState(false);
@@ -169,7 +168,7 @@ export default function Navbar({
 
             {/* RIGHT */}
             <div className="flex items-center gap-3">
-              {/* DESKTOP LINKS */}
+              
               <div className="hidden md:flex gap-1">
                 {navLinks.map((l) => (
                   <Link
@@ -189,13 +188,7 @@ export default function Navbar({
               </div>
 
               {/* ⭐ Notification Bell — LOGIN KE BAAD HI */}
-              {currentUser && (
-                <div className="hidden md:flex">
-                  <NotificationBellClient
-                    initialNotifications={initialNotifications}
-                  />
-                </div>
-              )}
+              {children}
 
               {/* AUTH - DESKTOP ONLY */}
               {!currentUser ? (

@@ -1,42 +1,70 @@
 import { NextResponse } from "next/server";
-import pool from "@/lib/db";          // your db file
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth"; // your auth config
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import pool from "@/lib/db";
 
 export async function GET() {
   try {
-    // 1. Get logged-in user
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    console.log("SESSION:", session); // debug
+
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    const userId = session.user.id; // UUID
-
-    // 2. Fetch notifications
-    const { rows } = await pool.query(
+    /* ---------------------------
+       Get User ID
+    ---------------------------- */
+    const userRes = await pool.query(
       `
-      SELECT id, type, title, message, data, is_read, created_at
-      FROM notifications
-      WHERE user_id = $1
-      ORDER BY is_read ASC, created_at DESC
-      LIMIT 20
+      SELECT id
+      FROM users
+      WHERE email = $1
+      LIMIT 1
       `,
-      [userId]
+      [session.user.email]
     );
 
-    // 3. Return
-    return NextResponse.json(rows);
+    const user = userRes.rows[0];
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    /* ---------------------------
+       Get Notifications
+    ---------------------------- */
+    const notifRes = await pool.query(
+      `
+      SELECT
+        id,
+        title,
+        message,
+        type,
+        is_read,
+        created_at
+      FROM notifications
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      LIMIT 20
+      `,
+      [user.id]
+    );
+
+    return NextResponse.json(notifRes.rows);
 
   } catch (err) {
     console.error("Notifications API error:", err);
 
     return NextResponse.json(
-      { error: "Server error" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

@@ -8,19 +8,15 @@ async function getNotifications() {
       {
         cache: "no-store",
         headers: {
-          Cookie: cookies().toString(), // pass session
+          Cookie: cookies().toString(),
         },
       }
     );
 
-    if (!res.ok) {
-      console.error("Notif API error:", res.status);
-      return [];
-    }
+    if (!res.ok) return [];
 
     return res.json();
-  } catch (err) {
-    console.error("Fetch notifications failed:", err);
+  } catch {
     return [];
   }
 }
@@ -28,5 +24,5 @@ async function getNotifications() {
 export default async function NotificationBellServer() {
   const notifications = await getNotifications();
 
-  return <NotificationBellClient initialNotifications={notifications} />;
+  return <NotificationBellClient notifications={notifications} />;
 }
