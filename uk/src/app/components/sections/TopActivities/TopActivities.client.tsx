@@ -11,15 +11,13 @@ import {
   UserGroupIcon,
   FireIcon,
   SparklesIcon,
-  HeartIcon,
   PlayCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
-import {
-  HeartIcon as HeartSolidIcon,
-  StarIcon as StarSolidIcon,
-} from "@heroicons/react/24/solid";
+import { StarIcon as StarSolidIcon } from "@heroicons/react/24/solid";
+
+import WishlistButton from "@/app/components/wishlist/WishlistButton";
 
 // Types
 interface TopActivity {
@@ -53,7 +51,7 @@ interface TopActivity {
 const activityTypes = [
   { value: "all", label: "All Activities", icon: SparklesIcon },
   { value: "adventure", label: "Adventure", icon: FireIcon },
-  { value: "spiritual", label: "Spiritual", icon: HeartIcon },
+  { value: "spiritual", label: "Spiritual", icon: StarIcon },
   { value: "cultural", label: "Cultural", icon: StarIcon },
   { value: "trekking", label: "Trekking", icon: MapPinIcon },
 ];
@@ -61,15 +59,9 @@ const activityTypes = [
 // Activity Card Component
 interface ActivityCardProps {
   activity: TopActivity;
-  isLiked: boolean;
-  onLikeToggle: (activityId: string) => void;
 }
 
-const ActivityCard: React.FC<ActivityCardProps> = ({
-  activity,
-  isLiked,
-  onLikeToggle,
-}) => {
+const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
   const [imageLoading, setImageLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -158,7 +150,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
           </div>
         )}
 
-        {/* Top badges and controls */}
+        {/* Top badges and wishlist */}
         <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
           <div className="flex items-center gap-2">
             <span
@@ -166,14 +158,17 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
                 activity.type
               )}`}
             >
-              {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+              {activity.type.charAt(0).toUpperCase() +
+                activity.type.slice(1)}
             </span>
+
             {activity.isPopular && (
               <span className="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
                 <FireIcon className="w-3 h-3" />
                 Popular
               </span>
             )}
+
             {activity.isTrending && (
               <span className="bg-pink-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
                 <SparklesIcon className="w-3 h-3" />
@@ -182,20 +177,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
             )}
           </div>
 
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              onLikeToggle(activity.id);
-            }}
-            className="bg-white/90 backdrop-blur-sm rounded-full p-2 hover:bg-white transition-colors duration-200"
-            aria-label={isLiked ? "Remove from favorites" : "Add to favorites"}
-          >
-            {isLiked ? (
-              <HeartSolidIcon className="w-5 h-5 text-red-500" />
-            ) : (
-              <HeartIcon className="w-5 h-5 text-gray-600 hover:text-red-500" />
-            )}
-          </button>
+          <WishlistButton itemId={activity.id} size="sm" />
         </div>
 
         {/* Discount Badge */}
@@ -208,7 +190,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
         {/* Rating */}
         <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
           <StarSolidIcon className="w-4 h-4 text-yellow-400" />
-          <span className="font-semibold text-sm">{activity.rating}</span>
+          <span className="font-semibold text-sm">
+            {activity.rating}
+          </span>
           <span className="text-xs text-gray-600">
             ({activity.reviewCount})
           </span>
@@ -321,28 +305,13 @@ const TopActivities: React.FC<{
   activities: TopActivity[];
 }> = ({ activities }) => {
   const [activeFilter, setActiveFilter] = useState<string>("all");
-  const [likedActivities, setLikedActivities] = useState<Set<string>>(
-    new Set()
-  );
 
   const filteredActivities = useMemo(() => {
-    if (activeFilter === "all") {
-      return activities;
-    }
-    return activities.filter((activity) => activity.type === activeFilter);
-  }, [activeFilter]);
-
-  const handleLikeToggle = (activityId: string) => {
-    setLikedActivities((prev) => {
-      const newLiked = new Set(prev);
-      if (newLiked.has(activityId)) {
-        newLiked.delete(activityId);
-      } else {
-        newLiked.add(activityId);
-      }
-      return newLiked;
-    });
-  };
+    if (activeFilter === "all") return activities;
+    return activities.filter(
+      (activity) => activity.type === activeFilter
+    );
+  }, [activeFilter, activities]);
 
   return (
     <section className="py-16 bg-white">
@@ -354,11 +323,14 @@ const TopActivities: React.FC<{
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Adventure & Spiritual
-            <span className="text-orange-600 block">Activities</span>
+            <span className="text-orange-600 block">
+              Activities
+            </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Discover a perfect blend of thrilling adventures and soul-enriching
-            spiritual experiences in the sacred lands of Rishikesh and Haridwar.
+            Discover a perfect blend of thrilling adventures and
+            soul-enriching spiritual experiences in the sacred lands of
+            Rishikesh and Haridwar.
           </p>
         </div>
 
@@ -383,10 +355,16 @@ const TopActivities: React.FC<{
                 {type.value !== "all" && (
                   <span
                     className={`px-2 py-0.5 rounded-full text-xs ${
-                      isActive ? "bg-white/20" : "bg-gray-200"
+                      isActive
+                        ? "bg-white/20"
+                        : "bg-gray-200"
                     }`}
                   >
-                    {activities.filter((a) => a.type === type.value).length}
+                    {
+                      activities.filter(
+                        (a) => a.type === type.value
+                      ).length
+                    }
                   </span>
                 )}
               </button>
@@ -400,8 +378,6 @@ const TopActivities: React.FC<{
             <ActivityCard
               key={activity.id}
               activity={activity}
-              isLiked={likedActivities.has(activity.id)}
-              onLikeToggle={handleLikeToggle}
             />
           ))}
         </div>
