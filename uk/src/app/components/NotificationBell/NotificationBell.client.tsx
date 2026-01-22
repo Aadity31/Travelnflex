@@ -154,7 +154,7 @@ export default function NotificationBellClient({ notifications }: Props) {
                 </button>
               ) : (
                 <span className="text-[9px] sm:text-[10px] xl:text-xs text-gray-500">
-                  You're all caught up!
+                  You&apos;re all caught up!
                 </span>
               )}
             </div>
