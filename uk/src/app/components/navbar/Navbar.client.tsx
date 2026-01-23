@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import UserAvatar from "@/app/components/UserAvatar";
 import Link from "next/link";
+import NotificationBellClient from "../NotificationBell/NotificationBell.client";
 import {
   Menu,
   X,
@@ -188,7 +189,12 @@ export default function Navbar({
               </div>
 
               {/* ⭐ Notification Bell — LOGIN KE BAAD HI */}
-              {children}
+              {currentUser && (
+                <div className="hidden md:flex">
+                  <NotificationBellClient />
+                </div>
+              )}
+
 
               {/* AUTH - DESKTOP ONLY */}
               {!currentUser ? (

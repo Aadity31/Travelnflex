@@ -49,7 +49,8 @@ export async function GET() {
         message,
         type,
         is_read,
-        created_at
+        created_at,
+        link
       FROM notifications
       WHERE user_id = $1
       ORDER BY created_at DESC

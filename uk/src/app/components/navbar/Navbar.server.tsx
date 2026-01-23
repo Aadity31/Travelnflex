@@ -1,4 +1,5 @@
-import NotificationBellServer from "../NotificationBell/NotificationBell.server";
+export const dynamic = "force-dynamic";
+
 import NavbarClient from "./Navbar.client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -20,19 +21,9 @@ export default async function NavbarServer() {
       [session.user.email]
     );
 
+
     user = res.rows[0] ?? null;
   }
 
-  return (
-    <div className="flex items-center gap-3">
-      <NavbarClient user={user}>
-        {user && (
-          <div className="hidden md:flex">
-            <NotificationBellServer />
-          </div>
-        )}
-      </NavbarClient>
-
-    </div>
-  );
+  return <NavbarClient user={user} />;
 }
