@@ -254,29 +254,30 @@ export default function BookingClient({
 
   /* ============  BOOK NOW SECTION ============ */
 
-  const handleBookNow = () => {
-    // Validate that date is selected
-    if (!booking.selectedDate) {
-      return;
-    }
+ const handleBookNow = () => {
+  // Validate that date is selected
+  if (!booking.selectedDate) return;
 
-    // Create URL with booking data as query parameters
-    const params = new URLSearchParams({
-      selectedDate: booking.selectedDate,
-      adults: booking.adults.toString(),
-      children: booking.children.toString(),
-      rooms: booking.rooms.toString(),
-      packageType: booking.packageType,
-      availableSlots: booking.availableSlots.toString(),
-      peopleTotal: pricing.peopleTotal.toString(),
-      roomCost: pricing.roomCost.toString(),
-      discount: pricing.discount.toString(),
-      total: pricing.total.toString(),
-    });
+  // Create URL with booking data as query parameters
+  const params = new URLSearchParams({
+    selectedDate: booking.selectedDate,
+    adults: booking.adults.toString(),
+    children: booking.children.toString(),
+    rooms: booking.rooms.toString(),
+    packageType: booking.packageType,
+    availableSlots: booking.availableSlots.toString(),
+    peopleTotal: pricing.peopleTotal.toString(),
+    roomCost: pricing.roomCost.toString(),
+    discount: pricing.discount.toString(),
+    total: pricing.total.toString(),
+  });
 
-    // Navigate to confirmation page
-    router.push(`/booking/${type}/${data.slug}/confirm?${params.toString()}`);
-  };
+  // Navigate to confirmation page
+  router.push(`/booking/${type}/${data.slug}/confirm?${params.toString()}`);
+};
+
+
+// ${params.toString()}
 
   /* ============ RENDER ============ */
 

@@ -596,7 +596,7 @@ export function BookingCard({
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                <span>Confirm Booking - Pay Later</span>
+                <span>Confirm Booking</span>
               </>
             )}
           </button>
