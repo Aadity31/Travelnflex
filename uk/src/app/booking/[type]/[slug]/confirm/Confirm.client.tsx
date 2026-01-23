@@ -6,12 +6,10 @@ import { useRouter } from "next/navigation";
 import {
   ArrowLeftIcon,
   MapPinIcon,
-  CalendarIcon,
-  UserGroupIcon,
-  HomeIcon,
+
   ShareIcon,
   PrinterIcon,
-  CheckCircleIcon,
+
   LockClosedIcon,
   PhoneIcon,
 } from "@heroicons/react/24/outline";
@@ -109,54 +107,7 @@ export default function BookingConfirmForm({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 md:px-10 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-8 h-8 flex items-center justify-center text-orange-500">
-              <svg
-                className="w-7 h-7"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                />
-              </svg>
-            </div>
-            <h2 className="text-xl font-bold text-gray-900">TripPlanner</h2>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-6">
-              <a
-                href="#"
-                className="text-sm font-medium text-gray-700 hover:text-orange-500"
-              >
-                Trips
-              </a>
-              <a
-                href="#"
-                className="text-sm font-medium text-gray-700 hover:text-orange-500"
-              >
-                Support
-              </a>
-              <a
-                href="#"
-                className="text-sm font-medium text-gray-700 hover:text-orange-500"
-              >
-                Sign In
-              </a>
-            </div>
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold">
-              JD
-            </div>
-          </div>
-        </div>
-      </header>
+      
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10">
@@ -578,24 +529,6 @@ export default function BookingConfirmForm({
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="w-full border-t border-gray-200 py-6 bg-white text-center mt-12">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-          <p>© 2026 TripPlanner Inc. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-orange-500 transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="hover:text-orange-500 transition-colors">
-              Terms of Service
-            </a>
-            <a href="#" className="hover:text-orange-500 transition-colors">
-              Sitemap
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
