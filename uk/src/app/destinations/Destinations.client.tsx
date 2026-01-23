@@ -6,6 +6,11 @@ import Link from "next/link";
 import FilterSidebar from "@/app/components/filters/FilterSidebar";
 import MobileFilterSidebar from "@/app/components/filters/MobileFilterSidebar";
 import { SearchFilters } from "@/types";
+import WishlistButton from "@/app/components/wishlist/WishlistButton";
+import { useWishlistStore } from "@/lib/wishlist/store";
+import LoginPrompt from "@/app/components/auth/LoginPrompt";
+
+
 import {
   StarIcon,
   MapPinIcon,
@@ -38,6 +43,11 @@ export default function DestinationsClient({
 }: {
   initialDestinations: DestinationCard[];
 }) {
+  const wishlist = useWishlistStore();
+
+  //  repeated bulk calls
+  const fetchedRef = useRef(false);
+
   /* -------- LOGIC STATE -------- */
 
   const [showFilters, setShowFilters] = useState(false);
@@ -71,6 +81,15 @@ export default function DestinationsClient({
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+
+    const ids = initialDestinations.map((d) => d.id);
+    wishlist.fetchBulk(ids);
+  }, [initialDestinations, wishlist]);
+
+
   /* ---------------- INFINITE SCROLL LOGIC ---------------- */
 
   useEffect(() => {
@@ -85,8 +104,8 @@ export default function DestinationsClient({
         try {
           const url = cursor
             ? `/api/destinations?createdAt=${encodeURIComponent(
-                cursor.createdAt
-              )}&id=${encodeURIComponent(cursor.id)}`
+              cursor.createdAt
+            )}&id=${encodeURIComponent(cursor.id)}`
             : `/api/destinations`;
 
           const res = await fetch(url);
@@ -102,6 +121,7 @@ export default function DestinationsClient({
           const last = next.at(-1);
 
           setDestinations((prev) => [...prev, ...next]);
+          wishlist.fetchBulk(next.map((d) => d.id));
           setCursor(last ? { createdAt: last.createdAt, id: last.id } : null);
         } catch (err) {
           console.error("Destinations infinite scroll failed:", err);
@@ -157,10 +177,17 @@ export default function DestinationsClient({
     });
   }, [filters, destinations]);
 
+  
+
   /* ---------------- UI ---------------- */
 
   return (
     <main className="min-h-screen bg-gray-50">
+      <LoginPrompt
+        open={wishlist.showLogin}
+        onClose={wishlist.closeLogin}
+      />
+
       {/* Hero Section */}
       <section className="relative h-48 sm:h-56 md:h-64 lg:h-72 bg-gradient-to-r from-orange-600 to-red-600 flex items-center justify-center">
         <div className="text-center text-white px-4">
@@ -291,13 +318,13 @@ export default function DestinationsClient({
             (filters.activityTypes?.length ?? 0) > 0 ||
             (filters.difficulties?.length ?? 0) > 0 ||
             (filters.ratings?.length ?? 0) > 0) && (
-            <button
-              onClick={() => setFilters({})}
-              className="text-xs text-gray-500 underline ml-1 self-center"
-            >
-              Clear all
-            </button>
-          )}
+              <button
+                onClick={() => setFilters({})}
+                className="text-xs text-gray-500 underline ml-1 self-center"
+              >
+                Clear all
+              </button>
+            )}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-10">
@@ -345,8 +372,8 @@ export default function DestinationsClient({
                       {/* Title and Rating */}
                       <div className="mb-1.5">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
-                                                    <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
-                          {destination.name}
+                          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
+                            {destination.name}
                           </h3>
 
 
@@ -406,12 +433,19 @@ export default function DestinationsClient({
                         </span>
                       </div>
 
+                      <WishlistButton
+                        liked={wishlist.get(destination.id)}
+                        onToggle={() => wishlist.toggle(destination.id)}
+                        size="sm"
+                      />
+
+
                       <Link
-  href={`/booking/destination/${destination.slug}`}
-  className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap"
->
-  Explore
-</Link>
+                        href={`/booking/destination/${destination.slug}`}
+                        className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap"
+                      >
+                        Explore
+                      </Link>
                     </div>
                   </div>
                 </article>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -18,6 +18,8 @@ import {
 import { StarIcon as StarSolidIcon } from "@heroicons/react/24/solid";
 
 import WishlistButton from "@/app/components/wishlist/WishlistButton";
+import { useWishlistStore } from "@/lib/wishlist/store";
+import LoginPrompt from "@/app/components/auth/LoginPrompt";
 
 // Types
 interface TopActivity {
@@ -59,9 +61,11 @@ const activityTypes = [
 // Activity Card Component
 interface ActivityCardProps {
   activity: TopActivity;
+  wishlist: ReturnType<typeof useWishlistStore>;
 }
 
-const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
+const ActivityCard: React.FC<ActivityCardProps> = ({ activity, wishlist, }) => {
+
   const [imageLoading, setImageLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -104,6 +108,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
       prev === 0 ? activity.images.length - 1 : prev - 1
     );
   };
+  
 
   return (
     <article className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
@@ -113,9 +118,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
           src={activity.images[currentImageIndex]}
           alt={`${activity.name} - ${activity.shortDescription}`}
           fill
-          className={`object-cover group-hover:scale-110 transition-transform duration-700 ${
-            imageLoading ? "blur-sm" : "blur-0"
-          }`}
+          className={`object-cover group-hover:scale-110 transition-transform duration-700 ${imageLoading ? "blur-sm" : "blur-0"
+            }`}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           onLoad={() => setImageLoading(false)}
         />
@@ -177,7 +181,19 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
             )}
           </div>
 
-          <WishlistButton itemId={activity.id} size="sm" />
+          {/* 🔹 Wishlist button now uses global store instead of API calls */}
+          <WishlistButton
+            liked={wishlist.get(activity.id)}
+            onToggle={() => wishlist.toggle(activity.id)} // use activity.id
+            size="sm"
+          />
+
+
+          <LoginPrompt
+            open={wishlist.showLogin}
+            onClose={wishlist.closeLogin}
+          />
+
         </div>
 
         {/* Discount Badge */}
@@ -280,7 +296,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
                   ₹
                   {Math.round(
                     activity.price.min /
-                      (1 - activity.discount.percentage / 100)
+                    (1 - activity.discount.percentage / 100)
                   ).toLocaleString("en-IN")}
                 </div>
               )}
@@ -304,7 +320,20 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
 const TopActivities: React.FC<{
   activities: TopActivity[];
 }> = ({ activities }) => {
+  const wishlist = useWishlistStore();
+
+  // 🔒 Prevent repeated bulk calls
+  const fetchedRef = useRef(false);
+
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  useEffect(() => {
+  if (fetchedRef.current) return;
+  fetchedRef.current = true;
+
+  const ids = activities.map((a) => a.id);
+  wishlist.fetchBulk(ids);
+}, [activities, wishlist]);
+
 
   const filteredActivities = useMemo(() => {
     if (activeFilter === "all") return activities;
@@ -344,21 +373,19 @@ const TopActivities: React.FC<{
               <button
                 key={type.value}
                 onClick={() => setActiveFilter(type.value)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                  isActive
+                className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 ${isActive
                     ? "bg-orange-600 text-white shadow-lg scale-105"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105"
-                }`}
+                  }`}
               >
                 <IconComponent className="w-5 h-5" />
                 {type.label}
                 {type.value !== "all" && (
                   <span
-                    className={`px-2 py-0.5 rounded-full text-xs ${
-                      isActive
+                    className={`px-2 py-0.5 rounded-full text-xs ${isActive
                         ? "bg-white/20"
                         : "bg-gray-200"
-                    }`}
+                      }`}
                   >
                     {
                       activities.filter(
@@ -378,6 +405,7 @@ const TopActivities: React.FC<{
             <ActivityCard
               key={activity.id}
               activity={activity}
+              wishlist={wishlist}
             />
           ))}
         </div>

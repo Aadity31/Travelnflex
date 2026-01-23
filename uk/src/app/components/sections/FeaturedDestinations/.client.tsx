@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -12,8 +12,12 @@ import {
 } from "@heroicons/react/24/outline";
 
 import WishlistButton from "@/app/components/wishlist/WishlistButton";
+import { useWishlistStore } from "@/lib/wishlist/store";
+import LoginPrompt from "@/app/components/auth/LoginPrompt";
 
-// Types
+
+/* ---------------- TYPES ---------------- */
+
 interface FeaturedDestination {
   id: string;
   name: string;
@@ -34,7 +38,8 @@ interface FeaturedDestinationsClientProps {
   destinations: FeaturedDestination[];
 }
 
-// Badge Component
+/* ---------------- BADGE ---------------- */
+
 interface BadgeProps {
   text: string;
   type: "popular" | "trending" | "new";
@@ -63,13 +68,17 @@ const Badge: React.FC<BadgeProps> = ({ text, type }) => {
   );
 };
 
-// Destination Card Component
+/* ---------------- DESTINATION CARD ---------------- */
+
 interface DestinationCardProps {
   destination: FeaturedDestination;
+  // 🔹 Added: pass wishlist store down instead of calling hook here
+  wishlist: ReturnType<typeof useWishlistStore>;
 }
 
 const DestinationCard: React.FC<DestinationCardProps> = ({
   destination,
+  wishlist,
 }) => {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
@@ -83,9 +92,8 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
             src={destination.image}
             alt={`${destination.name} - ${destination.shortDescription}`}
             fill
-            className={`object-cover group-hover:scale-110 transition-transform duration-700 ${
-              imageLoading ? "blur-sm" : "blur-0"
-            }`}
+            className={`object-cover group-hover:scale-110 transition-transform duration-700 ${imageLoading ? "blur-sm" : "blur-0"
+              }`}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority={destination.badgeType === "popular"}
             onLoad={() => setImageLoading(false)}
@@ -124,10 +132,18 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
             />
           )}
 
+          {/* 🔹 Wishlist button now uses global store instead of API calls */}
           <WishlistButton
-            itemId={destination.id}
+            liked={wishlist.get(destination.id)}
+            onToggle={() => wishlist.toggle(destination.id)}
             size="sm"
           />
+
+          <LoginPrompt
+            open={wishlist.showLogin}
+            onClose={wishlist.closeLogin}
+          />
+
         </div>
 
         {/* Rating badge */}
@@ -217,10 +233,24 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
   );
 };
 
-// Main FeaturedDestinations Component
+/* ---------------- MAIN COMPONENT ---------------- */
+
 const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
   destinations,
 }) => {
+  // 🔹 Added: initialize global wishlist store inside component (hooks rule)
+  const wishlist = useWishlistStore();
+  const fetchedRef = useRef(false);
+  // 🔹 Added: bulk fetch wishlist status for all 6 cards on page load
+  useEffect(() => {
+    if (fetchedRef.current) return; // 🔒 stop loop
+    fetchedRef.current = true;
+
+    const ids = destinations.map((d) => d.id);
+    wishlist.fetchBulk(ids);
+  }, [destinations]);
+
+
   return (
     <section className="py-8 sm:py-12 md:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
@@ -248,6 +278,7 @@ const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
             <DestinationCard
               key={destination.id}
               destination={destination}
+              wishlist={wishlist} // 🔹 Added: pass store down to card
             />
           ))}
         </div>
