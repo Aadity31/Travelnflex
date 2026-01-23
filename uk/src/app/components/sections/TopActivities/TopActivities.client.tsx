@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -18,6 +18,8 @@ import {
 import { StarIcon as StarSolidIcon } from "@heroicons/react/24/solid";
 
 import WishlistButton from "@/app/components/wishlist/WishlistButton";
+import { useWishlistStore } from "@/lib/wishlist/store";
+import LoginPrompt from "@/app/components/auth/LoginPrompt";
 
 // Types
 interface TopActivity {
@@ -59,9 +61,11 @@ const activityTypes = [
 // Activity Card Component
 interface ActivityCardProps {
   activity: TopActivity;
+  wishlist: ReturnType<typeof useWishlistStore>;
 }
 
-const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
+const ActivityCard: React.FC<ActivityCardProps> = ({ activity, wishlist, }) => {
+
   const [imageLoading, setImageLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -177,7 +181,19 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
             )}
           </div>
 
-          <WishlistButton itemId={activity.id} size="sm" />
+          {/* 🔹 Wishlist button now uses global store instead of API calls */}
+                    <WishlistButton
+  liked={wishlist.get(activity.id)} // 🔹 use activity.id (bug fix)
+  onToggle={() => wishlist.toggle(activity.id)} // 🔹 use activity.id
+  size="sm"
+/>
+
+          
+                    <LoginPrompt
+            open={wishlist.showLogin}
+            onClose={wishlist.closeLogin}
+          />
+          
         </div>
 
         {/* Discount Badge */}
@@ -304,6 +320,11 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
 const TopActivities: React.FC<{
   activities: TopActivity[];
 }> = ({ activities }) => {
+  const wishlist = useWishlistStore();
+
+  // 🔒 Prevent repeated bulk calls
+  const fetchedRef = useRef(false);
+
   const [activeFilter, setActiveFilter] = useState<string>("all");
 
   const filteredActivities = useMemo(() => {
@@ -378,6 +399,7 @@ const TopActivities: React.FC<{
             <ActivityCard
               key={activity.id}
               activity={activity}
+              wishlist={wishlist}
             />
           ))}
         </div>
