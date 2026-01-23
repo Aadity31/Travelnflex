@@ -1,0 +1,57 @@
+// lib/bookingSection/recommendedData.ts
+
+import { RecommendedItem } from "@/app/components/recommendations/RecommendedCard";
+
+export const dummyRecommendedItems: RecommendedItem[] = [
+  {
+    id: "1",
+    title: "Evening Ganga Aarti",
+    location: "Haridwar",
+    duration: "1.5 hours",
+    tag: "Spiritual",
+    badgeRight: "Popular",
+    rating: 4.8,
+    ratingCount: 540,
+    image: "/images/dummy-ganga-aarti.jpg",
+    priceLabel: "Starting from",
+    price: "₹500",
+  },
+  {
+    id: "2",
+    title: "White Water Rafting",
+    location: "Rishikesh",
+    duration: "3 hours",
+    tag: "Adventure",
+    badgeRight: "Popular",
+    rating: 4.9,
+    ratingCount: 620,
+    image: "/images/dummy-rafting.jpg",
+    priceLabel: "Starting from",
+    price: "₹1,499",
+  },
+  {
+    id: "3",
+    title: "Ayurvedic Massage",
+    location: "Tapovan",
+    duration: "2 hours",
+    tag: "Wellness",
+    rating: 4.7,
+    ratingCount: 310,
+    image: "/images/dummy-massage.jpg",
+    priceLabel: "Starting from",
+    price: "₹2,000",
+  },
+  {
+    id: "4",
+    title: "Yoga & Meditation Retreat",
+    location: "Rishikesh",
+    duration: "4 hours",
+    tag: "Wellness",
+    badgeRight: "Trending",
+    rating: 4.9,
+    ratingCount: 450,
+    image: "/images/dummy-yoga.jpg",
+    priceLabel: "Starting from",
+    price: "₹1,200",
+  },
+];
