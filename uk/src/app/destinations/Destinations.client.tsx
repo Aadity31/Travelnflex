@@ -177,6 +177,8 @@ export default function DestinationsClient({
     });
   }, [filters, destinations]);
 
+  
+
   /* ---------------- UI ---------------- */
 
   return (

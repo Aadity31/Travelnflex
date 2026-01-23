@@ -326,6 +326,14 @@ const TopActivities: React.FC<{
   const fetchedRef = useRef(false);
 
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  useEffect(() => {
+  if (fetchedRef.current) return;
+  fetchedRef.current = true;
+
+  const ids = activities.map((a) => a.id);
+  wishlist.fetchBulk(ids);
+}, [activities, wishlist]);
+
 
   const filteredActivities = useMemo(() => {
     if (activeFilter === "all") return activities;
