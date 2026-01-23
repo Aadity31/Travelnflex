@@ -1,75 +1,82 @@
-// app/api/notifications/stream/route.ts
-// 🔴 DUMMY API: Server-Sent Events for real-time notifications
-
 import { NextRequest } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import pool from "@/lib/db";
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
+  /* -----------------------------
+     Auth
+  ------------------------------ */
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  /* -----------------------------
+     Get User
+  ------------------------------ */
+  const userRes = await pool.query(
+    `
+    SELECT id
+    FROM users
+    WHERE email = $1
+    LIMIT 1
+    `,
+    [session.user.email]
+  );
+
+  if (userRes.rowCount === 0) {
+    return new Response("User not found", { status: 404 });
+  }
+
+  const userId = userRes.rows[0].id;
+
+  /* -----------------------------
+     SSE Setup
+  ------------------------------ */
   const encoder = new TextEncoder();
 
-  const stream = new ReadableStream({
-    start(controller) {
-      // 🔴 DUMMY: Send a test notification every 15 seconds
-      const interval = setInterval(() => {
-        const dummyNotification = {
-          id: Date.now().toString(),
-          title: "Test Notification",
-          message: "This is a dummy real-time notification",
-          timestamp: "Just now",
-          read: false,
-          type: "update",
-        };
-
-        const data = `data: ${JSON.stringify(dummyNotification)}\n\n`;
-        controller.enqueue(encoder.encode(data));
-      }, 15000);
-
-      // Cleanup on disconnect
-      request.signal.addEventListener("abort", () => {
-        clearInterval(interval);
-        controller.close();
-      });
-    },
-  });
-
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
-    },
-  });
-}
-
-/* ✅ REPLACE entire file with this when backend is ready:
-
-import { NextRequest } from "next/server";
-
-export async function GET(request: NextRequest) {
-  const encoder = new TextEncoder();
-
-  // Get user from auth
-  // const userId = await getUserIdFromRequest(request);
+  let lastCheck = new Date().toISOString();
 
   const stream = new ReadableStream({
     async start(controller) {
-      // Poll database or use Redis pub/sub
+      /* Send initial ping */
+      controller.enqueue(
+        encoder.encode("event: connected\ndata: ok\n\n")
+      );
+
       const interval = setInterval(async () => {
         try {
-          // Check for new notifications from database
-          const newNotifications = await checkForNewNotifications(userId);
+          /* -----------------------------
+             Fetch new notifications
+          ------------------------------ */
+          const res = await pool.query(
+            `
+            SELECT id, title, message, type, is_read, created_at, link
+            FROM notifications
+            WHERE user_id = $1
+              AND created_at > $2
+            ORDER BY created_at ASC
+            `,
+            [userId, lastCheck]
+          );
 
-          if (newNotifications.length > 0) {
-            for (const notification of newNotifications) {
-              const data = `data: ${JSON.stringify(notification)}\n\n`;
+          if (res.rows.length > 0) {
+            lastCheck = new Date().toISOString();
+
+            for (const notif of res.rows) {
+              const data = `data: ${JSON.stringify(notif)}\n\n`;
               controller.enqueue(encoder.encode(data));
             }
           }
-        } catch (error) {
-          console.error("SSE Error:", error);
+        } catch (err) {
+          console.error("SSE error:", err);
         }
-      }, 5000);
+      }, 5000); // poll every 5s
 
-      request.signal.addEventListener("abort", () => {
+      /* Cleanup */
+      req.signal.addEventListener("abort", () => {
         clearInterval(interval);
         controller.close();
       });
@@ -79,17 +86,8 @@ export async function GET(request: NextRequest) {
   return new Response(stream, {
     headers: {
       "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
+      "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
     },
   });
 }
-
-async function checkForNewNotifications(userId: string) {
-  // Your database query here
-  // return await db.notification.findMany({
-  //   where: { userId, createdAt: { gt: lastCheck } }
-  // });
-  return [];
-}
-*/

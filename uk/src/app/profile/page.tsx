@@ -69,6 +69,7 @@ declare global {
 export default function ProfilePage() {
   const { data: session, update } = useSession();
   const [user, setUser] = useState<UserType | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // ✅ Added loading state
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const router = useRouter();
   const widgetRef = useRef<{
@@ -106,53 +107,50 @@ export default function ProfilePage() {
           if (!error && result?.event === "success") {
             const imageUrl = result.info.secure_url;
 
-            // ⭐ 1. IMAGE UPLOAD - withLoading use karo
-            {
-              try {
-                // Delete old image if exists
-                if (user?.image) {
-                  await fetch("/api/profile/delete-image", {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ imageUrl: user.image }),
-                  });
-                }
-
-                // Get current user
-                const userRes = await fetch("/api/auth/user");
-                const userData = await userRes.json();
-
-                if (!userData?.user) {
-                  toast.error("Please refresh and try again");
-                  return;
-                }
-
-                // Update profile picture
-                const res = await fetch("/api/profile/update", {
-                  method: "PUT",
+            try {
+              // Delete old image if exists
+              if (user?.image) {
+                await fetch("/api/profile/delete-image", {
+                  method: "DELETE",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ image: imageUrl }),
+                  body: JSON.stringify({ imageUrl: user.image }),
                 });
-
-                if (res.ok) {
-                  setUser((prev) =>
-                    prev ? { ...prev, image: imageUrl } : null
-                  );
-                  await update({ user: { image: imageUrl } });
-                  router.refresh();
-
-                  toast.success("Profile picture updated successfully! 🎉", {
-                    duration: 3000,
-                    icon: "✨",
-                  });
-                } else {
-                  const data = await res.json();
-                  toast.error(`Failed: ${data.error}`);
-                }
-              } catch (err) {
-                console.error("Upload error:", err);
-                toast.error("Error updating profile picture");
               }
+
+              // Get current user
+              const userRes = await fetch("/api/auth/user");
+              const userData = await userRes.json();
+
+              if (!userData?.user) {
+                toast.error("Please refresh and try again");
+                return;
+              }
+
+              // Update profile picture
+              const res = await fetch("/api/profile/update", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ image: imageUrl }),
+              });
+
+              if (res.ok) {
+                setUser((prev) =>
+                  prev ? { ...prev, image: imageUrl } : null
+                );
+                await update({ user: { image: imageUrl } });
+                router.refresh();
+
+                toast.success("Profile picture updated successfully! 🎉", {
+                  duration: 3000,
+                  icon: "✨",
+                });
+              } else {
+                const data = await res.json();
+                toast.error(`Failed: ${data.error}`);
+              }
+            } catch (err) {
+              console.error("Upload error:", err);
+              toast.error("Error updating profile picture");
             }
           }
 
@@ -165,7 +163,6 @@ export default function ProfilePage() {
     }
   }, [user?.image, update, router]);
 
-
   /* ---------- FETCH USER ---------- */
   useEffect(() => {
     if (session === undefined || hasFetched.current) return;
@@ -175,17 +172,24 @@ export default function ProfilePage() {
     }
 
     const fetchUser = async () => {
-      const res = await fetch("/api/auth/user");
-      const data = await res.json();
-      if (data?.user) {
-        setUser(data.user);
+      try {
+        setIsLoading(true); // ✅ Start loading
+        const res = await fetch("/api/auth/user");
+        const data = await res.json();
+        if (data?.user) {
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        toast.error("Failed to load profile");
+      } finally {
+        setIsLoading(false); // ✅ Stop loading
         hasFetched.current = true;
       }
     };
 
     fetchUser();
   }, [session, router]);
-
 
   /* ---------- IMAGE HANDLERS ---------- */
   const handleCameraClick = () => {
@@ -214,14 +218,95 @@ export default function ProfilePage() {
     }
   };
 
-  if (!user) {
-  return (
-    <div className="min-h-screen bg-gray-50 pt-16">
-      {/* lightweight skeleton, NOT loader */}
+  // ✅ Skeleton Loader Component
+  const SkeletonLoader = () => (
+    <div className="min-h-screen bg-gray-50 pt-14 sm:pt-16 lg:pt-18 pb-4 sm:pb-6 px-3 sm:px-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+          {/* LEFT SIDEBAR Skeleton */}
+          <div className="lg:col-span-4 space-y-4 sm:space-y-6">
+            {/* Profile Card Skeleton */}
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="h-16 sm:h-20 lg:h-24 bg-gray-200 animate-pulse" />
+              <div className="px-4 sm:px-6 pb-4 sm:pb-6 -mt-8 sm:-mt-10 lg:-mt-12 text-center">
+                <div className="relative inline-block group mb-4">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto bg-gray-200 rounded-full animate-pulse ring-4 ring-white" />
+                  <div className="absolute bottom-0 right-0 w-7 h-7 sm:w-8 sm:h-8 bg-gray-300 rounded-full animate-pulse" />
+                </div>
+                <div className="h-6 bg-gray-200 rounded animate-pulse mx-8 mb-2" />
+                <div className="h-4 bg-gray-200 rounded animate-pulse mx-8 mb-4 w-3/4" />
+                <div className="h-10 bg-gray-200 rounded-lg animate-pulse mx-4" />
+                <div className="h-px bg-gray-200 my-4 animate-pulse" />
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 px-4 h-5 bg-gray-200 rounded animate-pulse" />
+                  <div className="flex items-center gap-3 px-4 h-5 bg-gray-200 rounded animate-pulse" />
+                  <div className="flex items-center gap-3 px-4 h-5 bg-gray-200 rounded animate-pulse" />
+                </div>
+              </div>
+            </div>
+
+            {/* Stats Card Skeleton */}
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <div className="h-5 w-24 bg-gray-200 rounded animate-pulse mb-4" />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center p-3 bg-gray-200 rounded-lg animate-pulse h-20" />
+                <div className="text-center p-3 bg-gray-200 rounded-lg animate-pulse h-20" />
+                <div className="text-center p-3 bg-gray-200 rounded-lg animate-pulse h-20" />
+                <div className="text-center p-3 bg-gray-200 rounded-lg animate-pulse h-20" />
+              </div>
+            </div>
+
+            {/* Achievement Badge Skeleton */}
+            <div className="hidden sm:block bg-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 animate-pulse h-24" />
+          </div>
+
+          {/* MAIN CONTENT Skeleton */}
+          <div className="lg:col-span-8 space-y-4 sm:space-y-6">
+            {/* Welcome Banner Skeleton */}
+            <div className="bg-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 h-24 animate-pulse" />
+
+            {/* Quick Links Skeleton */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="bg-white p-4 rounded-xl animate-pulse h-24 shadow-sm" />
+              <div className="bg-white p-4 rounded-xl animate-pulse h-24 shadow-sm" />
+              <div className="bg-white p-4 rounded-xl animate-pulse h-24 shadow-sm" />
+              <div className="bg-white p-4 rounded-xl animate-pulse h-24 shadow-sm" />
+            </div>
+
+            {/* Recent Activity Skeleton */}
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <div className="h-6 w-32 bg-gray-200 rounded animate-pulse mb-4" />
+              <div className="space-y-3">
+                <div className="flex items-start gap-3 h-16 bg-gray-200 rounded-lg animate-pulse p-3" />
+                <div className="flex items-start gap-3 h-16 bg-gray-200 rounded-lg animate-pulse p-3" />
+                <div className="flex items-start gap-3 h-16 bg-gray-200 rounded-lg animate-pulse p-3" />
+                <div className="flex items-start gap-3 h-16 bg-gray-200 rounded-lg animate-pulse p-3" />
+              </div>
+            </div>
+
+            {/* Recommendations Skeleton */}
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="h-36 bg-gray-200 rounded-lg animate-pulse" />
+                <div className="h-36 bg-gray-200 rounded-lg animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
-}
 
+  // ✅ Show skeleton while loading
+  if (isLoading) {
+    return <SkeletonLoader />;
+  }
+
+  // ✅ Show nothing if no user (after loading)
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pt-14 sm:pt-16 lg:pt-18 pb-4 sm:pb-6 px-3 sm:px-4">
@@ -263,7 +348,6 @@ export default function ProfilePage() {
 
                 <button
                   onClick={() => {
-
                     router.push("/profile/edit");
                   }}
                   className="w-full px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg text-xs sm:text-sm font-medium transition flex items-center justify-center gap-1.5 sm:gap-2"
@@ -302,13 +386,13 @@ export default function ProfilePage() {
                       Joined on{" "}
                       {user.joinedDate
                         ? new Date(user.joinedDate).toLocaleDateString(
-                          "en-IN",
-                          {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          }
-                        )
+                            "en-IN",
+                            {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            }
+                          )
                         : "—"}
                     </span>
                   </div>
@@ -512,7 +596,7 @@ export default function ProfilePage() {
   );
 }
 
-// Responsive Components
+// Responsive Components (unchanged)
 function StatBox({
   icon: Icon,
   label,
@@ -544,14 +628,13 @@ function QuickLink({
 }) {
   const router = useRouter();
 
-
   const handleClick = () => {
     router.push(href);
   };
 
   return (
     <button
-      onClick={handleClick} // ✅ Use handler
+      onClick={handleClick}
       className="group flex items-center gap-3 xs:gap-3.5 sm:gap-4 p-3 xs:p-3.5 sm:p-3 bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all text-left shadow-sm hover:shadow-md"
     >
       <div className="w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-lg shadow-orange-500/30">
@@ -618,7 +701,6 @@ function RecommendationCard({
   return (
     <div
       onClick={() => {
-
         router.push(href);
       }}
       className="group cursor-pointer"

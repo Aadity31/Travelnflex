@@ -76,7 +76,7 @@ export default function SettingsPage() {
 
   const handleChangePassword = async () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error("Passwords don't match!");
+      toast.error("Passwords don&apos;t match!");
       return;
     }
     if (passwordData.newPassword.length < 6) {

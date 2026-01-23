@@ -13,12 +13,20 @@ import {
 import type { Activity, SearchFilters } from "@/types";
 import ActivityFilters from "@/app/components/filters/FilterSidebar";
 import MobileActivityFilters from "@/app/components/filters/MobileFilterSidebar";
+import WishlistButton from "@/app/components/wishlist/WishlistButton";
+import { useWishlistStore } from "@/lib/wishlist/store";
+import LoginPrompt from "@/app/components/auth/LoginPrompt";
+
 
 export default function ActivitiesClient({
   initialActivities,
 }: {
   initialActivities: Activity[];
 }) {
+  const wishlist = useWishlistStore();
+// repeated bulk calls
+const fetchedRef = useRef(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement | null>(null);
@@ -37,6 +45,15 @@ export default function ActivitiesClient({
     }
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+  if (fetchedRef.current) return;
+  fetchedRef.current = true;
+
+  const ids = initialActivities.map((a) => a.id);
+  wishlist.fetchBulk(ids);
+}, [initialActivities, wishlist]);
+
 
   const filteredActivities = useMemo(() => {
     return activities.filter((activity) => {
@@ -101,6 +118,8 @@ export default function ActivitiesClient({
           }
           const last = next.at(-1);
           setActivities((prev) => [...prev, ...next]);
+          wishlist.fetchBulk(next.map((a) => a.id)); // wishlist for new activities only
+
           setCursor(last ? new Date(last.createdAt).toISOString() : null);
         } catch (err) {
           console.error("Infinite scroll failed:", err);
@@ -122,6 +141,10 @@ export default function ActivitiesClient({
   return (
     <>
       <main className="min-h-screen bg-gray-50">
+        <LoginPrompt
+          open={wishlist.showLogin}
+          onClose={wishlist.closeLogin}
+        />
         {/* Hero Section - RESPONSIVE */}
         <section className="relative h-48 sm:h-56 md:h-64 lg:h-72 bg-gradient-to-r from-green-600 to-blue-600 flex items-center justify-center">
           <div className="text-center text-white px-4 sm:px-6">
@@ -289,11 +312,11 @@ export default function ActivitiesClient({
               {/* Cards - RESPONSIVE */}
               <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6">
                 {filteredActivities.map((activity) => (
-                 <Link
-  key={activity.id}
-  href={`/booking/activity/${activity.slug}`}
-  className="block"
->
+                  <Link
+                    key={activity.id}
+                    href={`/booking/activity/${activity.slug}`}
+                    className="block"
+                  >
 
 
                     <article
@@ -314,12 +337,12 @@ export default function ActivitiesClient({
                         <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold text-white shadow-md ${activity.type === "adventure"
-                                ? "bg-red-500"
-                                : activity.type === "spiritual"
-                                  ? "bg-purple-500"
-                                  : activity.type === "cultural"
-                                    ? "bg-blue-500"
-                                    : "bg-green-500"
+                              ? "bg-red-500"
+                              : activity.type === "spiritual"
+                                ? "bg-purple-500"
+                                : activity.type === "cultural"
+                                  ? "bg-blue-500"
+                                  : "bg-green-500"
                               }`}
                           >
                             {activity.type
@@ -446,6 +469,12 @@ export default function ActivitiesClient({
                               Per Night
                             </div>
                           </div>
+
+                          <WishlistButton
+                            liked={wishlist.get(activity.id)}
+                            onToggle={() => wishlist.toggle(activity.id)}
+                            size="sm"
+                          />
 
                           <div className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap">
                             View Details
