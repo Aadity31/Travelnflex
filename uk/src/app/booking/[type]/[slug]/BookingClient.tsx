@@ -94,6 +94,7 @@ export default function BookingClient({
   const router = useRouter();
 
   const availableDates = useMemo(() => getAvailableDates(), []);
+  
 
   /* ============ CORRECTED ROOM LOGIC ============ */
 
@@ -469,6 +470,7 @@ export default function BookingClient({
             <div className="lg:hidden">
               <BookingCard
                 booking={booking}
+                destination={data.slug}
                 roomLimits={roomLimits}
                 pricing={pricing}
                 basePrice={data.priceMin}
@@ -487,7 +489,6 @@ export default function BookingClient({
                 onRoomsChange={handleRoomsChange}
                 onDateSelect={handleDateSelect}
                 onBookNow={() => {
-                  // TODO: your submit / navigation
                 }}
               />
             </div>
@@ -675,6 +676,7 @@ export default function BookingClient({
             <div className="top-6">
               <BookingCard
                 booking={booking}
+                destination={data.slug}   // ✅ REQUIRED
                 roomLimits={roomLimits}
                 pricing={pricing}
                 basePrice={data.priceMin}
@@ -692,11 +694,9 @@ export default function BookingClient({
                 onChildrenChange={handleChildrenChange}
                 onRoomsChange={handleRoomsChange}
                 onDateSelect={handleDateSelect}
-                onBookNow={() => {
-                  // TODO: your submit / navigation
-                  handleBookNow;
-                }}
+                onBookNow={handleBookNow} // ✅ FIXED (was not being called)
               />
+
             </div>
           </div>
         </div>

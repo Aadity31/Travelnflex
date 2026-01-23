@@ -66,10 +66,15 @@ export default function BookNowButton({
       ------------------------------ */
       router.push(`/payment/${bookingId}`);
 
-    } catch (err: any) {
-      console.error("Booking error:", err);
-      setError("Something went wrong. Try again.");
-    } finally {
+    } catch (err: unknown) {
+        console.error("Booking error:", err);
+
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Something went wrong. Try again.");
+        }
+      } finally {
       setLoading(false);
     }
   }

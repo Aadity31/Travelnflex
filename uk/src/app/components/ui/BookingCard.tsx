@@ -15,6 +15,7 @@ import {
   PricingResult,
   PackageType,
 } from "@/lib/bookingSection/booking";
+import BookNowButton from "@/app/components/booking/BookNowButton";
 
 interface CalendarProps {
   currentMonth: Date;
@@ -28,6 +29,7 @@ interface CalendarProps {
 
 interface BookingCardProps {
   booking: BookingState;
+  destination: string;
   roomLimits: RoomLimits;
   pricing: PricingResult;
   basePrice: number;
@@ -42,6 +44,7 @@ interface BookingCardProps {
 
 export function BookingCard({
   booking,
+  destination,
   roomLimits,
   pricing,
   basePrice,
@@ -566,40 +569,17 @@ export function BookingCard({
 
         {/* CTA Section */}
         <div className="max-w-2xl space-y-3">
-          <button
-            disabled={!booking.selectedDate}
-            onClick={() => {
-              console.log("BUTTON CLICKED!");
-              console.log("onBookNow about to be called");
-              onBookNow();
-              console.log("onBookNow called successfully");
-            }}
-            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-bold py-3.5 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
-          >
-            {!booking.selectedDate ? (
-              <>
-                <CalendarIcon className="w-5 h-5" />
-                <span>Select Date to Continue</span>
-              </>
-            ) : (
-              <>
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span>Confirm Booking - Pay Later</span>
-              </>
-            )}
-          </button>
+          {booking.selectedDate && (
+            <BookNowButton
+              destination={destination}
+              startDate={booking.selectedDate}
+              endDate={booking.selectedDate}
+              persons={booking.adults + booking.children}
+              amount={pricing.total}
+            />
+          )}
+
+
 
           {/* Trust Badges */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
