@@ -1,10 +1,10 @@
 // app/booking/[type]/[slug]/page.tsx
 
 import { notFound } from "next/navigation";
-import { getActivityBySlug } from "@/lib/db/getActivityBySlug";
-import { getDestinationBySlug } from "@/lib/db/getDestinationBySlug";
-import { getReviews } from "@/lib/db/getReviews";
-import BookingClient from "./BookingClient";
+import { getActivityBySlug } from "@/lib/data/activities/getActivityBySlug";
+import { getDestinationBySlug } from "@/lib/data/destinations/getDestinationBySlug";
+import { getReviews } from "@/lib/data/reviews/getReviews";
+import BookingClient from "./Booking.client";
 
 export default async function BookingPage({
   params,

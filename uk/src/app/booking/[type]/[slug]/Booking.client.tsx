@@ -33,10 +33,10 @@ import {
 import {
   RecommendedCard,
   dummyRecommendedItems,
-} from "@/app/components/ui/RecommendedCard";
+} from "@/app/components/recommendations/RecommendedCard";
 
-import { BookingGallery } from "@/app/components/ui/BookingGallery";
-import { BookingCard } from "@/app/components/ui/BookingCard";
+import { BookingGallery } from "@/app/components/booking/BookingGallery";
+import { BookingCard } from "@/app/components/booking/BookingCard";
 import { useRouter } from "next/navigation";
 
 interface Agency {
