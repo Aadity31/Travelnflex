@@ -6,21 +6,32 @@ import pool from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-/* -----------------------------
-   Razorpay Init
------------------------------- */
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
-
-/* -----------------------------
+/* --------------------------------------------------
    POST: Create Payment Order
------------------------------- */
+-------------------------------------------------- */
+
 export async function POST(req: NextRequest) {
   const client = await pool.connect();
 
   try {
+    /* -----------------------------
+       Env Check + Razorpay Init
+    ------------------------------ */
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!keyId || !keySecret) {
+      return NextResponse.json(
+        { error: "Razorpay configuration missing" },
+        { status: 500 }
+      );
+    }
+
+    const razorpay = new Razorpay({
+      key_id: keyId,
+      key_secret: keySecret,
+    });
+
     /* -----------------------------
        Auth
     ------------------------------ */
@@ -213,7 +224,7 @@ export async function POST(req: NextRequest) {
       orderId: order.id,
       amount: amountInPaise,
       currency: "INR",
-      key: process.env.RAZORPAY_KEY_ID,
+      key: keyId, // public key only
     });
 
   } catch (err) {
