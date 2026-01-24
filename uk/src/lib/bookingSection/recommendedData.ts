@@ -1,6 +1,6 @@
 // lib/bookingSection/recommendedData.ts
 
-import { RecommendedItem } from "@/app/components/recommendations/RecommendedCard";
+import { RecommendedItem } from "@/components/recommendations/RecommendedCard";
 
 export const dummyRecommendedItems: RecommendedItem[] = [
   {

@@ -24,6 +24,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/components/sections/FeaturedDestinations/FeaturedDestinations.client.tsx", "src/app/components/sections/FeaturedDestinations/FeaturedDestinations.server.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/sections/FeaturedDestinations/FeaturedDestinations.client.tsx", "src/components/sections/FeaturedDestinations/FeaturedDestinations.server.tsx"],
   "exclude": ["node_modules", ".next"]
 }

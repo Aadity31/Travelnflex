@@ -3,7 +3,7 @@
 "use client";
 
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-import { RecommendedCard, RecommendedItem } from "@/app/components/recommendations/RecommendedCard";
+import { RecommendedCard, RecommendedItem } from "@/components/recommendations/RecommendedCard";
 
 interface RecommendedActivitiesProps {
   items: RecommendedItem[];

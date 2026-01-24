@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import UserAvatar from "@/app/components/UserAvatar";
+import UserAvatar from "@/components/UserAvatar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {

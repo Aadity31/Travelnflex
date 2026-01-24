@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import UserAvatar from "@/app/components/UserAvatar";
+import UserAvatar from "@/components/UserAvatar";
 import Link from "next/link";
 import NotificationBellClient from "../NotificationBell/NotificationBell.client";
 import {

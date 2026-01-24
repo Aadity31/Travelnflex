@@ -17,9 +17,9 @@ import {
 } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolidIcon } from "@heroicons/react/24/solid";
 
-import WishlistButton from "@/app/components/wishlist/WishlistButton";
+import WishlistButton from "@/components/wishlist/WishlistButton";
 import { useWishlistStore } from "@/lib/wishlist/store";
-import LoginPrompt from "@/app/components/auth/LoginPrompt";
+import LoginPrompt from "@/components/auth/LoginPrompt";
 
 // Types
 interface TopActivity {

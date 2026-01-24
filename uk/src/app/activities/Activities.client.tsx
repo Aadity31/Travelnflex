@@ -11,11 +11,11 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/solid";
 import type { Activity, SearchFilters } from "@/types";
-import ActivityFilters from "@/app/components/filters/FilterSidebar";
-import MobileActivityFilters from "@/app/components/filters/MobileFilterSidebar";
-import WishlistButton from "@/app/components/wishlist/WishlistButton";
+import ActivityFilters from "@/components/filters/FilterSidebar";
+import MobileActivityFilters from "@/components/filters/MobileFilterSidebar";
+import WishlistButton from "@/components/wishlist/WishlistButton";
 import { useWishlistStore } from "@/lib/wishlist/store";
-import LoginPrompt from "@/app/components/auth/LoginPrompt";
+import LoginPrompt from "@/components/auth/LoginPrompt";
 
 
 export default function ActivitiesClient({

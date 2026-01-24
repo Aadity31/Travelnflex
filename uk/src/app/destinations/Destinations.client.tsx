@@ -3,12 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import FilterSidebar from "@/app/components/filters/FilterSidebar";
-import MobileFilterSidebar from "@/app/components/filters/MobileFilterSidebar";
+import FilterSidebar from "@/components/filters/FilterSidebar";
+import MobileFilterSidebar from "@/components/filters/MobileFilterSidebar";
 import { SearchFilters } from "@/types";
-import WishlistButton from "@/app/components/wishlist/WishlistButton";
+import WishlistButton from "@/components/wishlist/WishlistButton";
 import { useWishlistStore } from "@/lib/wishlist/store";
-import LoginPrompt from "@/app/components/auth/LoginPrompt";
+import LoginPrompt from "@/components/auth/LoginPrompt";
 
 
 import {

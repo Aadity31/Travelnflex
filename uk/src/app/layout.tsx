@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-import Credits from "./components/Credits";
-import NavbarServer from "./components/navbar/Navbar.server";
+import Credits from "../components/Credits";
+import NavbarServer from "../components/navbar/Navbar.server";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
 

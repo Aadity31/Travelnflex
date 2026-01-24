@@ -15,7 +15,7 @@ import {
   PricingResult,
   PackageType,
 } from "@/lib/bookingSection/booking";
-import BookNowButton from "@/app/components/booking/BookNowButton";
+import BookNowButton from "@/components/booking/BookNowButton";
 
 interface CalendarProps {
   currentMonth: Date;

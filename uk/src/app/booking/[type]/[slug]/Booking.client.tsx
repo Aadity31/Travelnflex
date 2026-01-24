@@ -19,13 +19,13 @@ import {
   getRatingDistribution,
 } from "@/lib/bookingSection/reviews";
 
-import { BookingGallery } from "@/app/components/booking/BookingGallery";
-import { BookingCard } from "@/app/components/booking/BookingCard";
+import { BookingGallery } from "@/components/booking/BookingGallery";
+import { BookingCard } from "@/components/booking/BookingCard";
 import { useRouter } from "next/navigation";
-import { ReviewsSection } from "@/app/components/booking/ReviewsSection";
-import { RecommendedActivities } from "@/app/components/booking/RecommendedActivities";
+import { ReviewsSection } from "@/components/booking/ReviewsSection";
+import { RecommendedActivities } from "@/components/booking/RecommendedActivities";
 import { dummyRecommendedItems } from "@/lib/bookingSection/recommendedData";
-import { BookingDetails } from "@/app/components/booking/BookingDetails";
+import { BookingDetails } from "@/components/booking/BookingDetails";
 
 interface Agency {
   name: string;
