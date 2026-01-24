@@ -1,5 +1,5 @@
 import TopActivitiesClient from './TopActivities.client';
-import { getActivities } from '@/lib/db/getActivities';
+import { getActivities } from '@/lib/data/activities/getActivities';
 
 // ISR: landing page ke liye safe caching
 export const revalidate = 300; // 5 minutes

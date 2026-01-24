@@ -84,6 +84,11 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
   const [imageError, setImageError] = useState(false);
 
   return (
+    <Link
+                  key={destination.id}
+                  href={`/booking/destination/${destination.slug}`}
+                  className="block"
+                >
     <article className="group bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 sm:hover:-translate-y-2">
       {/* Image Container */}
       <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
@@ -217,19 +222,20 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
             <div className="text-[10px] sm:text-xs text-gray-500">
               per person
             </div>
-          </div>
+          </div>r
         </div>
 
         {/* CTA Button */}
-        <Link
-          href={`/destinations/${destination.slug}`}
-          className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl font-semibold text-center block transition-all duration-300 hover:shadow-lg group-hover:bg-orange-700 flex items-center justify-center gap-2 text-sm sm:text-base"
-        >
-          Explore Destination
-          <ArrowRightIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-300" />
-        </Link>
+        <div
+  className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl font-semibold text-center block transition-all duration-300 hover:shadow-lg group-hover:bg-orange-700 flex items-center justify-center gap-2 text-sm sm:text-base"
+>
+  Explore Destination
+  <ArrowRightIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-300" />
+</div>
+
       </div>
     </article>
+    </Link>
   );
 };
 

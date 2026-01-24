@@ -111,6 +111,11 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, wishlist, }) => {
   
 
   return (
+    <Link
+                    key={activity.id}
+                    href={`/booking/activity/${activity.slug}`}
+                    className="block"
+                  >
     <article className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
       {/* Image Container */}
       <div className="relative h-56 overflow-hidden">
@@ -303,16 +308,16 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, wishlist, }) => {
             </div>
           </div>
 
-          <Link
-            href={`/activities/${activity.slug}`}
+          <div
             className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-200 flex items-center gap-2"
           >
             Book Now
             <PlayCircleIcon className="w-4 h-4" />
-          </Link>
+          </div>
         </div>
       </div>
     </article>
+    </Link>
   );
 };
 

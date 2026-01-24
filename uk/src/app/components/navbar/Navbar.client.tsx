@@ -398,7 +398,7 @@ export default function Navbar({
         </div>
       </div>
 
-      <div className="h-8" />
+      <div className="h-8 bg-black" />
     </>
   );
 }

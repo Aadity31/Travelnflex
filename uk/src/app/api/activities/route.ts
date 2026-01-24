@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getActivitiesInfinite } from '@/lib/db/getActivitiesInfinite';
+import { getActivitiesInfinite } from '@/lib/data/activities/getActivitiesInfinite';
 
 export async function GET(req: Request) {
   try {

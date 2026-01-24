@@ -1,4 +1,4 @@
-import { getActivitiesList } from "@/lib/db/getActivitiesList";
+import { getActivitiesList } from "@/lib/data/activities/getActivitiesList";
 import ActivitiesClient from "./Activities.client";
 
 export default async function ActivitiesPage() {

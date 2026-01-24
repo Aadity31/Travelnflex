@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import DestinationsClient from "./Destinations.client";
-import { getDestinationsList } from "@/lib/db/getDestinationsList";
+import { getDestinationsList } from "@/lib/data/destinations/getDestinationsList";
 
 export const metadata: Metadata = {
   title: "Sacred Destinations - Explore Uttarakhand | Sacred Journeys",
