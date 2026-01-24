@@ -2,11 +2,23 @@
 
 import { useState } from "react";
 import { use } from "react";
+declare global {
+  interface Window {
+    Razorpay: new (options: any) => {
+      open: () => void;
+    };
+  }
+}
 
 interface PageProps {
   params: Promise<{
     bookingId: string;
   }>;
+}
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
 }
 
 export default function PaymentPage({ params }: PageProps) {
@@ -64,8 +76,8 @@ export default function PaymentPage({ params }: PageProps) {
           name: "Devbhoomi Darshan",
           description: "Trip Booking Payment",
           order_id: data.orderId,
-
-          handler: async function (response: any) {
+          
+          handler: async function (response: RazorpayResponse) {
             console.log("Payment success:", response);
 
             alert("Payment Successful!");
