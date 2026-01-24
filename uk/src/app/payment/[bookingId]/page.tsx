@@ -1,25 +1,58 @@
 "use client";
 
-import { useState } from "react";
-import { use } from "react";
+import { useState, use } from "react";
+
+/* --------------------------------------------------
+   Razorpay Types
+-------------------------------------------------- */
+
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+
+  handler: (response: RazorpayResponse) => void;
+
+  prefill?: {
+    email?: string;
+    contact?: string;
+  };
+
+  theme?: {
+    color?: string;
+  };
+}
+
 declare global {
   interface Window {
-    Razorpay: new (options: any) => {
+    Razorpay: new (options: RazorpayOptions) => {
       open: () => void;
     };
   }
 }
+
+/* --------------------------------------------------
+   Page Props
+-------------------------------------------------- */
 
 interface PageProps {
   params: Promise<{
     bookingId: string;
   }>;
 }
-interface RazorpayResponse {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
-}
+
+/* --------------------------------------------------
+   Component
+-------------------------------------------------- */
 
 export default function PaymentPage({ params }: PageProps) {
   /* -----------------------------
@@ -31,7 +64,7 @@ export default function PaymentPage({ params }: PageProps) {
   const [error, setError] = useState("");
 
   /* -----------------------------
-     Handle Payment (Later)
+     Handle Payment
   ------------------------------ */
   async function handlePay() {
     try {
@@ -58,7 +91,6 @@ export default function PaymentPage({ params }: PageProps) {
         throw new Error(text || "Order creation failed");
       }
 
-
       const data = await res.json();
 
       /* -----------------------------
@@ -69,20 +101,21 @@ export default function PaymentPage({ params }: PageProps) {
       script.async = true;
 
       script.onload = () => {
-        const options = {
+        const options: RazorpayOptions = {
           key: data.key,
-          amount: data.amount * 100,
+          amount: data.amount, // backend should send paise
           currency: data.currency,
+
           name: "Devbhoomi Darshan",
           description: "Trip Booking Payment",
           order_id: data.orderId,
-          
-          handler: async function (response: RazorpayResponse) {
+
+          handler: async (response) => {
             console.log("Payment success:", response);
 
             alert("Payment Successful!");
 
-            // TODO: verify payment (next step)
+            // TODO: Verify on backend
           },
 
           prefill: {
@@ -95,7 +128,6 @@ export default function PaymentPage({ params }: PageProps) {
           },
         };
 
-        // @ts-ignore
         const rzp = new window.Razorpay(options);
         rzp.open();
       };
@@ -109,7 +141,6 @@ export default function PaymentPage({ params }: PageProps) {
       setLoading(false);
     }
   }
-
 
   /* -----------------------------
      UI
