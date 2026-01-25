@@ -55,14 +55,14 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <main className="min-h-screen">
+      <main className="min-h-screen custom-scrollbar">
         <HeroSection />
         <QuickSearchBar />
         <FeaturedDestinations />
         <TopActivities />
         <FeaturedGuides />
         <TestimonialsSection />
-        <CTASection />
+        <CTASection />  
         <FooterWithCredits />
       </main>
     </>
