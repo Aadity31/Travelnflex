@@ -59,8 +59,8 @@ export default function Credits({
             {/* Right - Designer Credit */}
             <div className="text-[9px] sm:text-[10px] md:text-xs text-gray-400 order-1 sm:order-3 text-center sm:text-right">
               <span className="inline-flex items-center gap-1 flex-wrap justify-center sm:justify-end">
-                <span>Designed with</span>
-                <Heart className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-500 fill-red-500 animate-pulse" />
+                <span>Designed </span>
+                
                 <span>by</span>
                 <Link
                   href={designerUrl}
