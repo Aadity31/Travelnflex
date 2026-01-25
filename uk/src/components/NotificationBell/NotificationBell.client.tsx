@@ -212,7 +212,7 @@ export default function NotificationBellClient() {
       {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-1.5 sm:p-2 text-[var(--foreground)] hover:text-[var(--color-primary)] rounded-[var(--radius-lg)] transition-[var(--transition-fast)] hover:bg-[var(--background-secondary)]"
+        className="relative p-1.5 sm:p-2 text-white hover:text-[var(--color-primary)] rounded-[var(--radius-lg)] transition-[var(--transition-fast)] "
         aria-label="Notifications"
       >
         <Bell size={20} className="sm:w-[20px] sm:h-[20px]" />
@@ -228,10 +228,15 @@ export default function NotificationBellClient() {
       {isOpen && (
         <div 
           className="fixed top-16 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-md max-h-[60vh]
-            sm:absolute sm:top-full sm:right-0 sm:left-auto sm:translate-x-0 sm:w-[380px] sm:max-h-[450px]
-            pb-2 sm:pb-3 mt-0 sm:mt-3 rounded-[var(--radius-2xl)] 
-            bg-[var(--background)] shadow-[var(--shadow-xl)] 
-            border border-[var(--border-light)] z-50 flex flex-col overflow-hidden"
+  sm:absolute sm:top-full sm:right-0 sm:left-auto sm:translate-x-0 sm:w-[380px] sm:max-h-[450px]
+  mt-0 sm:mt-3 pb-2 sm:pb-3 
+  rounded-[var(--radius-2xl)] 
+  bg-[var(--background)]/95 backdrop-blur-lg
+  shadow-[var(--shadow-xl)] 
+  border border-[var(--border-light)]/50
+  z-50 flex flex-col overflow-hidden
+  [-webkit-backdrop-filter:blur(16px)]"
+
         >
           {/* Header */}
           <div className="px-4 py-3 sm:px-5 sm:py-4 bg-gradient-to-r from-[var(--color-primary)]/5 to-[var(--color-primary-light)]/30 border-b border-[var(--border-light)]">
@@ -259,12 +264,12 @@ export default function NotificationBellClient() {
           <div className="flex-1 overflow-y-auto custom-scrollbar">
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-8 text-center">
-                <Bell size={40} className="text-[var(--foreground-muted)] mb-3 opacity-40" />
+                <Bell size={40} className="text-[var(--foreground-muted)] mb-3 opacity-80" />
                 <p className="text-sm text-[var(--foreground-secondary)] font-medium">
                   No notifications yet
                 </p>
                 <p className="text-xs text-[var(--foreground-muted)] mt-1">
-                  We'll notify you when something arrives
+                  {`We'll notify you when something arrives`}
                 </p>
               </div>
             ) : (

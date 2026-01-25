@@ -91,6 +91,11 @@
   --transition-fast: 150ms ease;
   --transition-normal: 300ms ease;
   --transition-slow: 500ms ease;
+
+  /* Versatile Text Colors */
+  --text-primary: #1f2937; /* Gray-800 - Highly readable on light backgrounds */
+  --text-secondary: #4b5563; /* Gray-600 - Softer, still good contrast */
+  --text-on-dark: #f9fafb; /* Gray-50 - For dark backgrounds */
   
   color-scheme: light;
 }

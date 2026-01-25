@@ -351,6 +351,11 @@ const fetchedRef = useRef(false);
                               : ""}
                           </span>
                         </div>
+                        <WishlistButton
+                            liked={wishlist.get(activity.id)}
+                            onToggle={() => wishlist.toggle(activity.id)}
+                            size="sm"
+                          />
 
                         {/* Image Thumbnails */}
                         <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 flex gap-1">
@@ -469,12 +474,6 @@ const fetchedRef = useRef(false);
                               Per Night
                             </div>
                           </div>
-
-                          <WishlistButton
-                            liked={wishlist.get(activity.id)}
-                            onToggle={() => wishlist.toggle(activity.id)}
-                            size="sm"
-                          />
 
                           <div className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap">
                             View Details
