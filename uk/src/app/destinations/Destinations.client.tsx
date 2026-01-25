@@ -10,7 +10,6 @@ import WishlistButton from "@/components/wishlist/WishlistButton";
 import { useWishlistStore } from "@/lib/wishlist/store";
 import LoginPrompt from "@/components/auth/LoginPrompt";
 
-
 import {
   StarIcon,
   MapPinIcon,
@@ -54,7 +53,7 @@ export default function DestinationsClient({
   const [filters, setFilters] = useState<SearchFilters>({});
 
   const [destinations, setDestinations] = useState<DestinationCard[]>(
-    initialDestinations ?? []
+    initialDestinations ?? [],
   );
 
   const [cursor, setCursor] = useState<{
@@ -89,7 +88,6 @@ export default function DestinationsClient({
     wishlist.fetchBulk(ids);
   }, [initialDestinations, wishlist]);
 
-
   /* ---------------- INFINITE SCROLL LOGIC ---------------- */
 
   useEffect(() => {
@@ -104,8 +102,8 @@ export default function DestinationsClient({
         try {
           const url = cursor
             ? `/api/destinations?createdAt=${encodeURIComponent(
-              cursor.createdAt
-            )}&id=${encodeURIComponent(cursor.id)}`
+                cursor.createdAt,
+              )}&id=${encodeURIComponent(cursor.id)}`
             : `/api/destinations`;
 
           const res = await fetch(url);
@@ -130,7 +128,7 @@ export default function DestinationsClient({
           setIsLoading(false);
         }
       },
-      { rootMargin: "200px" }
+      { rootMargin: "200px" },
     );
 
     observer.observe(loaderRef.current);
@@ -168,7 +166,7 @@ export default function DestinationsClient({
       // 3. Rating Filter
       if (filters.ratings && filters.ratings.length > 0) {
         const meetsRating = filters.ratings.some(
-          (minRating) => destination.rating >= minRating
+          (minRating) => destination.rating >= minRating,
         );
         if (!meetsRating) return false;
       }
@@ -177,16 +175,11 @@ export default function DestinationsClient({
     });
   }, [filters, destinations]);
 
-
-
   /* ---------------- UI ---------------- */
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <LoginPrompt
-        open={wishlist.showLogin}
-        onClose={wishlist.closeLogin}
-      />
+      <LoginPrompt open={wishlist.showLogin} onClose={wishlist.closeLogin} />
 
       {/* Hero Section */}
       <section className="relative h-48 sm:h-56 md:h-64 lg:h-72 bg-gradient-to-r from-orange-600 to-red-600 flex items-center justify-center">
@@ -239,7 +232,7 @@ export default function DestinationsClient({
                   setFilters({
                     ...filters,
                     activityTypes: filters.activityTypes?.filter(
-                      (t) => t !== type
+                      (t) => t !== type,
                     ),
                   })
                 }
@@ -262,7 +255,7 @@ export default function DestinationsClient({
                   setFilters({
                     ...filters,
                     difficulties: filters.difficulties?.filter(
-                      (d) => d !== diff
+                      (d) => d !== diff,
                     ),
                   })
                 }
@@ -318,13 +311,13 @@ export default function DestinationsClient({
             (filters.activityTypes?.length ?? 0) > 0 ||
             (filters.difficulties?.length ?? 0) > 0 ||
             (filters.ratings?.length ?? 0) > 0) && (
-              <button
-                onClick={() => setFilters({})}
-                className="text-xs text-gray-500 underline ml-1 self-center"
-              >
-                Clear all
-              </button>
-            )}
+            <button
+              onClick={() => setFilters({})}
+              className="text-xs text-gray-500 underline ml-1 self-center"
+            >
+              Clear all
+            </button>
+          )}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-10">
@@ -355,7 +348,6 @@ export default function DestinationsClient({
                   href={`/booking/destination/${destination.slug}`}
                   className="block"
                 >
-
                   <article
                     key={destination.id}
                     className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row"
@@ -370,6 +362,14 @@ export default function DestinationsClient({
                         sizes="(max-width: 640px) 100vw, 400px"
                         className="object-cover"
                       />
+                      {/* Wishlist Button - Moved to Top Right */}
+                      <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
+                        <WishlistButton
+                          liked={wishlist.get(destination.id)}
+                          onToggle={() => wishlist.toggle(destination.id)}
+                          size="sm"
+                        />
+                      </div>
                     </div>
 
                     {/* Content Section */}
@@ -381,7 +381,6 @@ export default function DestinationsClient({
                             <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1">
                               {destination.name}
                             </h3>
-
 
                             {/* Rating Badge */}
                             <div className="flex items-center gap-0.5 bg-blue-600 text-white px-1.5 py-0.5 rounded flex-shrink-0">
@@ -438,20 +437,9 @@ export default function DestinationsClient({
                             ({destination.reviewCount} Reviews)
                           </span>
                         </div>
-
-                        <WishlistButton
-                          liked={wishlist.get(destination.id)}
-                          onToggle={() => wishlist.toggle(destination.id)}
-                          size="sm"
-                        />
-
-
-                        <div
-                          className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap"
-                        >
+                        <div className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap">
                           Explore
                         </div>
-
                       </div>
                     </div>
                   </article>

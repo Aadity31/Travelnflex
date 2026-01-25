@@ -86,7 +86,7 @@ export function RecommendedCard({ item }: RecommendedCardProps) {
           </div>
 
           <button className="px-3 py-1.5 rounded-full text-xs font-semibold border border-gray-200 text-gray-800 hover:border-orange-500 hover:text-orange-600 transition-colors">
-            View Details
+            Add to Booking
           </button>
         </div>
       </div>

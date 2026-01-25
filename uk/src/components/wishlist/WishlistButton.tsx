@@ -15,9 +15,7 @@ export default function WishlistButton({
   size = "md",
 }: WishlistButtonProps) {
   const iconSize =
-    size === "sm"
-      ? "w-4 h-4 sm:w-5 sm:h-5"
-      : "w-5 h-5 sm:w-6 sm:h-6";
+    size === "sm" ? "w-4 h-4 sm:w-5 sm:h-5" : "w-5 h-5 sm:w-6 sm:h-6";
 
   return (
     <button
@@ -25,16 +23,52 @@ export default function WishlistButton({
         e.preventDefault();
         onToggle();
       }}
-      className="bg-white/90 backdrop-blur-sm rounded-full p-1.5 sm:p-2 hover:bg-white transition-colors duration-200"
+      className={`
+        group relative
+        rounded-full p-2 sm:p-1.5
+        transition-all duration-300 ease-out
+        ${
+          liked
+            ? ""
+            : "bg-black/25 backdrop-blur-md hover:bg-black/35  shadow-lg hover:shadow-xl"
+        }
+      `}
       aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
     >
-      {liked ? (
-        <HeartSolid className={`${iconSize} text-red-500`} />
-      ) : (
-        <HeartOutline
-          className={`${iconSize} text-gray-600 hover:text-red-500`}
-        />
-      )}
+      {/* Adaptive glow effect */}
+      <div
+        className={`
+          absolute inset-0 rounded-full opacity-0 
+          group-hover:opacity-100 transition-opacity duration-500
+          ${liked ? "bg-red-400/20 blur-lg" : "bg-orange-400/30 blur-lg"}
+        `}
+      />
+
+      {/* Heart icon */}
+      <div className="relative z-10">
+        {liked ? (
+          <HeartSolid
+            className={`
+              ${iconSize} text-red-500
+              animate-heartBeat
+              group-hover:scale-110
+              transition-transform duration-300 ease-out
+              drop-shadow-[0_2px_8px_rgba(239,68,68,0.6)]
+            `}
+          />
+        ) : (
+          <HeartOutline
+            className={`
+              ${iconSize} text-white
+              group-hover:text-orange-400
+              group-hover:scale-110
+              transition-all duration-300 ease-out
+              drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]
+              stroke-[2.5]
+            `}
+          />
+        )}
+      </div>
     </button>
   );
 }
