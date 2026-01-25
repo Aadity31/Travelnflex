@@ -25,7 +25,7 @@ export default function WishlistButton({
       }}
       className={`
         group relative
-        rounded-full p-1 sm:p-1.5
+        rounded-full p-2 sm:p-1.5
         transition-all duration-300 ease-out
         ${
           liked
@@ -40,7 +40,7 @@ export default function WishlistButton({
         className={`
           absolute inset-0 rounded-full opacity-0 
           group-hover:opacity-100 transition-opacity duration-500
-          ${liked ? "bg-red-400/50 blur-lg" : "bg-orange-400/30 blur-lg"}
+          ${liked ? "bg-red-400/20 blur-lg" : "bg-orange-400/30 blur-lg"}
         `}
       />
 
