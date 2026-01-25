@@ -138,7 +138,7 @@ export default function Navbar({
       <nav
         className={`fixed w-full top-0 z-[7000] transition-transform duration-300
         ${hideNav ? "-translate-y-full" : "translate-y-0"}
-        backdrop-blur-xl bg-white/10 
+        backdrop-blur-xl bg-black/30 
         shadow-lg border-b border-white/10 py-2.5`}
       >
         <div className="max-w-[95vw] mx-auto px-4">
