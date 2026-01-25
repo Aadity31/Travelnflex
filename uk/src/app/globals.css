@@ -3,32 +3,68 @@
 @import "tailwindcss";
 
 /* =======================
-   THEME VARIABLES (Light Mode Only)a
+   THEME VARIABLES (Light Mode Only)
 ======================= */
 :root {
-  /* Colors */
+  /* Primary Colors */
   --color-primary: #f97316; /* Orange-500 */
   --color-primary-dark: #ea580c; /* Orange-600 */
   --color-primary-light: #fed7aa; /* Orange-200 */
+  --color-primary-lighter: #ffedd5; /* Orange-100 */
+  --color-primary-lightest: #fff7ed; /* Orange-50 */
+  
+  /* Secondary Colors */
   --color-secondary: #3b82f6; /* Blue-500 */
-  --color-accent: #8b5cf6; /* Purple-500 */
+  --color-secondary-dark: #2563eb; /* Blue-600 */
+  --color-secondary-light: #93c5fd; /* Blue-300 */
+  --color-secondary-lighter: #dbeafe; /* Blue-100 */
+  
+  /* Success Colors */
   --color-success: #10b981; /* Green-500 */
+  --color-success-dark: #059669; /* Green-600 */
+  --color-success-light: #6ee7b7; /* Green-300 */
+  --color-success-lighter: #d1fae5; /* Green-100 */
+  
+  /* Warning Colors */
   --color-warning: #f59e0b; /* Amber-500 */
+  --color-warning-dark: #d97706; /* Amber-600 */
+  --color-warning-light: #fcd34d; /* Amber-300 */
+  --color-warning-lighter: #fef3c7; /* Amber-100 */
+  
+  /* Error Colors */
   --color-error: #ef4444; /* Red-500 */
+  --color-error-dark: #dc2626; /* Red-600 */
+  --color-error-light: #fca5a5; /* Red-300 */
+  --color-error-lighter: #fee2e2; /* Red-100 */
+  
+  /* Accent Colors */
+  --color-accent: #8b5cf6; /* Purple-500 */
+  --color-accent-dark: #7c3aed; /* Purple-600 */
+  --color-accent-light: #c4b5fd; /* Purple-300 */
+  --color-accent-lighter: #f3e8ff; /* Purple-100 */
+  
+  /* Neutral Colors */
+  --color-neutral: #6b7280; /* Gray-500 */
+  --color-neutral-dark: #374151; /* Gray-700 */
+  --color-neutral-darker: #1f2937; /* Gray-800 */
+  --color-neutral-light: #9ca3af; /* Gray-400 */
+  --color-neutral-lighter: #e5e7eb; /* Gray-200 */
   
   /* Backgrounds */
   --background: #ffffff;
   --background-secondary: #f9fafb; /* Gray-50 */
   --background-tertiary: #f3f4f6; /* Gray-100 */
+  --background-hover: #fafafa; /* Subtle hover */
   
-  /* Text */
-  --foreground: #ffffff; /* Gray-900 */
+  /* Text Colors */
+  --foreground: #111827; /* Gray-900 */
   --foreground-secondary: #6b7280; /* Gray-500 */
   --foreground-muted: #9ca3af; /* Gray-400 */
   
   /* Borders */
   --border-light: #e5e7eb; /* Gray-200 */
   --border-medium: #d1d5db; /* Gray-300 */
+  --border-dark: #9ca3af; /* Gray-400 */
   
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -49,6 +85,7 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
   
   /* Transitions */
   --transition-fast: 150ms ease;
