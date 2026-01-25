@@ -17,15 +17,14 @@ import WishlistButton from "@/components/wishlist/WishlistButton";
 import { useWishlistStore } from "@/lib/wishlist/store";
 import LoginPrompt from "@/components/auth/LoginPrompt";
 
-
 export default function ActivitiesClient({
   initialActivities,
 }: {
   initialActivities: Activity[];
 }) {
   const wishlist = useWishlistStore();
-// repeated bulk calls
-const fetchedRef = useRef(false);
+  // repeated bulk calls
+  const fetchedRef = useRef(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -47,13 +46,12 @@ const fetchedRef = useRef(false);
   }, []);
 
   useEffect(() => {
-  if (fetchedRef.current) return;
-  fetchedRef.current = true;
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
 
-  const ids = initialActivities.map((a) => a.id);
-  wishlist.fetchBulk(ids);
-}, [initialActivities, wishlist]);
-
+    const ids = initialActivities.map((a) => a.id);
+    wishlist.fetchBulk(ids);
+  }, [initialActivities, wishlist]);
 
   const filteredActivities = useMemo(() => {
     return activities.filter((activity) => {
@@ -80,7 +78,7 @@ const fetchedRef = useRef(false);
 
       if (filters.ratings && filters.ratings.length > 0) {
         const meetsRating = filters.ratings.some(
-          (minRating) => activity.rating >= minRating
+          (minRating) => activity.rating >= minRating,
         );
         if (!meetsRating) return false;
       }
@@ -130,7 +128,7 @@ const fetchedRef = useRef(false);
       },
       {
         rootMargin: "200px",
-      }
+      },
     );
 
     observer.observe(loaderRef.current);
@@ -141,10 +139,7 @@ const fetchedRef = useRef(false);
   return (
     <>
       <main className="min-h-screen bg-gray-50">
-        <LoginPrompt
-          open={wishlist.showLogin}
-          onClose={wishlist.closeLogin}
-        />
+        <LoginPrompt open={wishlist.showLogin} onClose={wishlist.closeLogin} />
         {/* Hero Section - RESPONSIVE */}
         <section className="relative h-48 sm:h-56 md:h-64 lg:h-72 bg-gradient-to-r from-green-600 to-blue-600 flex items-center justify-center">
           <div className="text-center text-white px-4 sm:px-6">
@@ -204,7 +199,7 @@ const fetchedRef = useRef(false);
                     setFilters({
                       ...filters,
                       activityTypes: filters.activityTypes?.filter(
-                        (t) => t !== type
+                        (t) => t !== type,
                       ),
                     })
                   }
@@ -227,7 +222,7 @@ const fetchedRef = useRef(false);
                     setFilters({
                       ...filters,
                       difficulties: filters.difficulties?.filter(
-                        (d) => d !== diff
+                        (d) => d !== diff,
                       ),
                     })
                   }
@@ -283,13 +278,13 @@ const fetchedRef = useRef(false);
               (filters.activityTypes?.length ?? 0) > 0 ||
               (filters.difficulties?.length ?? 0) > 0 ||
               (filters.ratings?.length ?? 0) > 0) && (
-                <button
-                  onClick={() => setFilters({})}
-                  className="text-xs text-gray-500 underline ml-1 self-center"
-                >
-                  Clear all
-                </button>
-              )}
+              <button
+                onClick={() => setFilters({})}
+                className="text-xs text-gray-500 underline ml-1 self-center"
+              >
+                Clear all
+              </button>
+            )}
           </div>
 
           {/* Layout - RESPONSIVE */}
@@ -317,8 +312,6 @@ const fetchedRef = useRef(false);
                     href={`/booking/activity/${activity.slug}`}
                     className="block"
                   >
-
-
                     <article
                       key={activity.id}
                       className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row"
@@ -336,20 +329,30 @@ const fetchedRef = useRef(false);
                         {/* Type Badge */}
                         <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
                           <span
-                            className={`px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold text-white shadow-md ${activity.type === "adventure"
-                              ? "bg-red-500"
-                              : activity.type === "spiritual"
-                                ? "bg-purple-500"
-                                : activity.type === "cultural"
-                                  ? "bg-blue-500"
-                                  : "bg-green-500"
-                              }`}
+                            className={`px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold text-white shadow-md ${
+                              activity.type === "adventure"
+                                ? "bg-red-500"
+                                : activity.type === "spiritual"
+                                  ? "bg-purple-500"
+                                  : activity.type === "cultural"
+                                    ? "bg-blue-500"
+                                    : "bg-green-500"
+                            }`}
                           >
                             {activity.type
                               ? activity.type.charAt(0).toUpperCase() +
-                              activity.type.slice(1)
+                                activity.type.slice(1)
                               : ""}
                           </span>
+                        </div>
+
+                        {/* Wishlist Button - Moved to Top Right */}
+                        <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
+                          <WishlistButton
+                            liked={wishlist.get(activity.id)}
+                            onToggle={() => wishlist.toggle(activity.id)}
+                            size="sm"
+                          />
                         </div>
 
                         {/* Image Thumbnails */}
@@ -469,12 +472,6 @@ const fetchedRef = useRef(false);
                               Per Night
                             </div>
                           </div>
-
-                          <WishlistButton
-                            liked={wishlist.get(activity.id)}
-                            onToggle={() => wishlist.toggle(activity.id)}
-                            size="sm"
-                          />
 
                           <div className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap">
                             View Details

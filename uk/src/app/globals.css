@@ -3,32 +3,68 @@
 @import "tailwindcss";
 
 /* =======================
-   THEME VARIABLES (Light Mode Only)a
+   THEME VARIABLES (Light Mode Only)
 ======================= */
 :root {
-  /* Colors */
+  /* Primary Colors */
   --color-primary: #f97316; /* Orange-500 */
   --color-primary-dark: #ea580c; /* Orange-600 */
   --color-primary-light: #fed7aa; /* Orange-200 */
+  --color-primary-lighter: #ffedd5; /* Orange-100 */
+  --color-primary-lightest: #fff7ed; /* Orange-50 */
+  
+  /* Secondary Colors */
   --color-secondary: #3b82f6; /* Blue-500 */
-  --color-accent: #8b5cf6; /* Purple-500 */
+  --color-secondary-dark: #2563eb; /* Blue-600 */
+  --color-secondary-light: #93c5fd; /* Blue-300 */
+  --color-secondary-lighter: #dbeafe; /* Blue-100 */
+  
+  /* Success Colors */
   --color-success: #10b981; /* Green-500 */
+  --color-success-dark: #059669; /* Green-600 */
+  --color-success-light: #6ee7b7; /* Green-300 */
+  --color-success-lighter: #d1fae5; /* Green-100 */
+  
+  /* Warning Colors */
   --color-warning: #f59e0b; /* Amber-500 */
+  --color-warning-dark: #d97706; /* Amber-600 */
+  --color-warning-light: #fcd34d; /* Amber-300 */
+  --color-warning-lighter: #fef3c7; /* Amber-100 */
+  
+  /* Error Colors */
   --color-error: #ef4444; /* Red-500 */
+  --color-error-dark: #dc2626; /* Red-600 */
+  --color-error-light: #fca5a5; /* Red-300 */
+  --color-error-lighter: #fee2e2; /* Red-100 */
+  
+  /* Accent Colors */
+  --color-accent: #8b5cf6; /* Purple-500 */
+  --color-accent-dark: #7c3aed; /* Purple-600 */
+  --color-accent-light: #c4b5fd; /* Purple-300 */
+  --color-accent-lighter: #f3e8ff; /* Purple-100 */
+  
+  /* Neutral Colors */
+  --color-neutral: #6b7280; /* Gray-500 */
+  --color-neutral-dark: #374151; /* Gray-700 */
+  --color-neutral-darker: #1f2937; /* Gray-800 */
+  --color-neutral-light: #9ca3af; /* Gray-400 */
+  --color-neutral-lighter: #e5e7eb; /* Gray-200 */
   
   /* Backgrounds */
   --background: #ffffff;
   --background-secondary: #f9fafb; /* Gray-50 */
   --background-tertiary: #f3f4f6; /* Gray-100 */
+  --background-hover: #fafafa; /* Subtle hover */
   
-  /* Text */
-  --foreground: #ffffff; /* Gray-900 */
+  /* Text Colors */
+  --foreground: #111827; /* Gray-900 */
   --foreground-secondary: #6b7280; /* Gray-500 */
   --foreground-muted: #9ca3af; /* Gray-400 */
   
   /* Borders */
   --border-light: #e5e7eb; /* Gray-200 */
   --border-medium: #d1d5db; /* Gray-300 */
+  --border-dark: #9ca3af; /* Gray-400 */
   
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -49,11 +85,17 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
   
   /* Transitions */
   --transition-fast: 150ms ease;
   --transition-normal: 300ms ease;
   --transition-slow: 500ms ease;
+
+  /* Versatile Text Colors */
+  --text-primary: #1f2937; /* Gray-800 - Highly readable on light backgrounds */
+  --text-secondary: #4b5563; /* Gray-600 - Softer, still good contrast */
+  --text-on-dark: #f9fafb; /* Gray-50 - For dark backgrounds */
   
   color-scheme: light;
 }
@@ -84,6 +126,40 @@ body {
 /* =======================
    ANIMATIONS
 ======================= */
+
+/* Smooth Wishlist Heart Beat Animation */
+@keyframes heartBeat {
+  0% {
+    transform: scale(0.85);
+  }
+  40% {
+    transform: scale(1.15);
+  }
+  60% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-heartBeat {
+  animation: heartBeat 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Cursor Blink Animation for Search Bar */
+@keyframes cursorBlink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.animate-cursor-blink {
+  animation: cursorBlink 1s step-end infinite;
+}
 
 /* Slide Up */
 @keyframes slide-up {
@@ -203,32 +279,64 @@ body {
   background-size: 1000px 100%;
 }
 
+
 /* =======================
    SCROLLBAR STYLES
 ======================= */
 
-/* Default Custom Scrollbar */
+/* Smart Scrollbar - Thin when idle, thick when scrolling */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(249, 115, 22, 0.3) transparent;
+  scrollbar-color: rgba(249, 115, 22, 0.5) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px; /* Thin by default */
+  height: 4px;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar {
+  width: 8px; /* Thick on hover/scroll */
+  height: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
+  transition: background 0.3s ease;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-track {
+  background: rgba(255, 247, 237, 0.5); /* Subtle track when scrolling */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(249, 115, 22, 0.3);
+  background: rgba(249, 115, 22, 0.3); /* Very light when idle */
   border-radius: 10px;
+  transition: all 0.3s ease;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(249, 115, 22, 0.5);
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f97316 0%, #ea580c 100%); /* Gradient when scrolling */
+  box-shadow: 0 0 6px rgba(249, 115, 22, 0.4);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: #ea580c; /* Solid orange when dragging */
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
+}
+
+/* Corner */
+.custom-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox specific */
+@supports (scrollbar-width: thin) {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(249, 115, 22, 0.5) transparent;
+  }
 }
 
 /* Filter Tags Scroll */
@@ -267,6 +375,8 @@ body {
     display: none;
   }
 }
+
+
 
 /* =======================
    UTILITY CLASSES
