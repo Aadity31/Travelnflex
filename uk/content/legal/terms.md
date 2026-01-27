@@ -1,12 +1,19 @@
-# TERMS & CONDITIONS
+# Terms & Conditions
 
+**APS Groups Private Limited**
 **Last Updated:** [Insert Date]
 
-These Terms & Conditions (“Terms”) govern access to and use of the website currently accessible as **devbhoomi-darshan** (name subject to change) (the “Platform”).
+These Terms & Conditions (“Terms”) govern your access to and use of the website and platform currently accessible as **devbhoomi-darshan** (name subject to change) (the “Platform”).
 
 The Platform is owned and operated by **APS Groups Private Limited**, a company incorporated under the Companies Act, 2013, having its registered office at Dehradun, Uttarakhand, India (“Company”, “We”, “Us”, “Our”).
 
 By accessing or using the Platform, you confirm that you have read, understood, and agreed to be bound by these Terms and the Privacy Policy. If you do not agree, you must not use the Platform.
+
+---
+
+## Quick Overview (Plain Language Summary)
+
+The Platform connects travelers with independent travel agencies and service providers. We do not operate travel services ourselves. Payments, cancellations, and service quality are primarily governed by the policies of the respective service providers. We facilitate discovery, communication, and in some cases, payments and dispute communication. Your statutory rights under Indian law remain unaffected.
 
 ---
 
@@ -18,7 +25,7 @@ The Company does not itself provide travel services. All travel-related services
 
 The Company’s role is limited to listing service offerings, facilitating discovery and bookings, enabling payment facilitation in certain cases, and providing a basic dispute facilitation mechanism.
 
-Nothing contained on the Platform shall be construed as creating a partnership, joint venture, agency, or employment relationship between the Company and any Service Provider.
+Nothing in these Terms shall be construed as creating a partnership, joint venture, agency, or employment relationship between the Company and any Service Provider.
 
 ---
 
@@ -88,7 +95,12 @@ Nothing in these Terms limits or excludes statutory consumer rights available un
 
 ## 8. User Obligations
 
-Users agree to provide accurate and truthful information, comply with all applicable laws and local regulations, follow safety instructions provided by Service Providers, and refrain from unlawful, abusive, or disruptive conduct.
+Users agree to:
+
+* Provide accurate and truthful information
+* Comply with all applicable laws and local regulations
+* Follow safety instructions provided by Service Providers
+* Refrain from unlawful, abusive, misleading, or disruptive conduct
 
 The Company shall not be responsible for consequences arising from User misconduct or non-compliance.
 
@@ -96,7 +108,7 @@ The Company shall not be responsible for consequences arising from User miscondu
 
 ## 9. Reviews, Ratings, and User Content
 
-Reviews and ratings posted on the Platform represent personal opinions of Users.
+Reviews and ratings posted on the Platform represent the personal opinions of Users.
 
 The Company does not verify the factual accuracy of reviews and does not endorse user-generated content.
 
@@ -106,7 +118,13 @@ The Company reserves the right to remove or moderate content that violates appli
 
 ## 10. Limitation of Liability
 
-To the maximum extent permitted by applicable law, the Company shall not be liable for personal injury, illness, death, accidents, delays, cancellations, weather-related events, force majeure events, loss of profits, loss of data, loss of reputation, or indirect or consequential damages.
+To the maximum extent permitted by applicable law, the Company shall not be liable for:
+
+* Personal injury, illness, or death
+* Accidents, delays, or cancellations
+* Weather-related or force majeure events
+* Loss of profits, data, or reputation
+* Indirect, incidental, or consequential damages
 
 Nothing in these Terms excludes liability that cannot be excluded under Indian law.
 
@@ -116,7 +134,11 @@ If liability is established, the Company’s aggregate liability shall not excee
 
 ## 11. Indemnification
 
-Users agree to indemnify and hold harmless APS Groups Private Limited, its directors, founders, officers, employees, and affiliates from any claims, losses, damages, liabilities, penalties, or expenses arising out of the User’s use of the Platform, interactions with Service Providers, or violation of these Terms or applicable law.
+Users agree to indemnify and hold harmless APS Groups Private Limited, its directors, founders, officers, employees, and affiliates from any claims, losses, damages, liabilities, penalties, or expenses arising out of:
+
+* The User’s use of the Platform
+* Interactions with Service Providers
+* Violation of these Terms or applicable law
 
 This clause does not limit the rights of statutory authorities or regulators.
 
@@ -136,25 +158,26 @@ The Company shall not be liable for any failure or delay in performance caused b
 
 ## 14. Intellectual Property
 
-All intellectual property rights related to the Platform, including content, branding, and technology, are owned by the Company. Unauthorized use is prohibited.
+All intellectual property rights related to the Platform, including content, branding, and technology, are owned by the Company or its licensors. Unauthorized use is prohibited.
 
 ---
 
 ## 15. Grievance Redressal
 
-In accordance with the Consumer Protection (E-Commerce) Rules, 2020, the Company has appointed a Grievance Redressal Officer.
+In accordance with the Consumer Protection (E-Commerce) Rules, 2020, the Company has appointed or will appoint a Grievance Redressal Officer.
 
-**Grievance Redressal Officer:** To be appointed  
-**Email:** grievances@[yourdomain].com  
-**Address:** Dehradun, Uttarakhand, India  
+**Grievance Redressal Officer:** To be appointed
+**Email:** grievances@[yourdomain].com
+**Address:** Dehradun, Uttarakhand, India
 
-Grievances will be acknowledged within 48 hours and resolved within 30 days from the date of receipt.
+* Acknowledgement within 48 hours
+* Resolution within 30 days
 
 ---
 
 ## 16. Governing Law and Jurisdiction
 
-These Terms shall be governed by and construed in accordance with Indian law.
+These Terms shall be governed by and construed in accordance with the laws of India.
 
 For non-consumer disputes, courts at Dehradun, Uttarakhand shall have jurisdiction.
 
@@ -162,14 +185,20 @@ Nothing in this clause restricts a consumer’s statutory right to approach appr
 
 ---
 
-## 17. Changes to Terms
+## 17. Changes to These Terms
 
-The Company may modify these Terms at any time. Continued use of the Platform after such changes constitutes acceptance of the revised Terms.
+The Company may modify these Terms at any time. Updated versions will be published on the Platform.
+
+Continued use of the Platform after changes are posted constitutes acceptance of the revised Terms.
 
 ---
 
 ## 18. Contact Information
 
-APS Groups Private Limited  
-Dehradun, Uttarakhand, India  
+**APS Groups Private Limited**
+Dehradun, Uttarakhand, India
 [Official contact email]
+
+---
+
+
