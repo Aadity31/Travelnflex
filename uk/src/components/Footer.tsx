@@ -148,7 +148,7 @@ export default function FooterWithCredits() {
             <ul className="space-y-2 sm:space-y-2.5 text-xs sm:text-sm">
               <li>
                 <Link
-                  href="/privacy"
+                  href="/privacy-policy"
                   className="hover:text-orange-400 transition-colors inline-flex items-center group"
                 >
                   <span className="group-hover:translate-x-1 transition-transform">
@@ -156,9 +156,10 @@ export default function FooterWithCredits() {
                   </span>
                 </Link>
               </li>
+
               <li>
                 <Link
-                  href="/terms"
+                  href="/terms-and-conditions"
                   className="hover:text-orange-400 transition-colors inline-flex items-center group"
                 >
                   <span className="group-hover:translate-x-1 transition-transform">
@@ -166,9 +167,10 @@ export default function FooterWithCredits() {
                   </span>
                 </Link>
               </li>
+
               <li>
                 <Link
-                  href="/refund"
+                  href="/refund-policy"
                   className="hover:text-orange-400 transition-colors inline-flex items-center group"
                 >
                   <span className="group-hover:translate-x-1 transition-transform">
