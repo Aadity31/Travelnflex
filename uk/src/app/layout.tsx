@@ -8,6 +8,11 @@ import NavbarServer from "../components/navbar/Navbar.server";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
 
+// TEMP: Initialize dummy data source for blog preview
+// Remove this when connecting to real CMS/API
+import { initializeDataSource } from "@/lib/data/blog";
+initializeDataSource({ type: "dummy" });
+
 /* ---------------- Fonts ---------------- */
 const geistSans = Geist({
   variable: "--font-geist-sans",
