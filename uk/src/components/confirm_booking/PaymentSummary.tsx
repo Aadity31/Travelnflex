@@ -1,16 +1,28 @@
 import { LockClosedIcon, PhoneIcon } from "@heroicons/react/24/outline";
+interface BookingPricing {
+  total: number;
+}
 
+interface BookingData {
+  name: string;
+  selectedDate: string | Date;
+  adults: number;
+  children: number;
+  rooms: number;
+  pricing: BookingPricing;
+}
 export default function PaymentSummary({
   bookingData,
   basePrice,
   gst,
   serviceFee,
 }: {
-  bookingData: any;
+  bookingData: BookingData;
   basePrice: number;
   gst: number;
   serviceFee: number;
 }) {
+
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-5 sticky top-6">
       <div className="flex items-center gap-2 mb-6 border-b border-gray-200 pb-4">
