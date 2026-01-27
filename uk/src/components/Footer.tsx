@@ -109,7 +109,7 @@ export default function FooterWithCredits() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/about-us"
                   className="hover:text-orange-400 transition-colors inline-flex items-center group"
                 >
                   <span className="group-hover:translate-x-1 transition-transform">
