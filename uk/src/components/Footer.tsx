@@ -22,50 +22,51 @@ export default function FooterWithCredits() {
     },
   ];
 
+
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-[var(--color-neutral-darker)] text-[var(--text-on-dark)]">
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 md:py-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 py-6 sm:py-8 md:py-10 lg:py-10 xl:py-10">
         {/* Responsive Grid Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr] gap-6 sm:gap-8 md:gap-10 lg:gap-16 mb-4 sm:mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr] gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16 mb-6 sm:mb-8 md:mb-10">
           {/* Brand Section - Full width on mobile */}
           <div className="sm:col-span-2 lg:col-span-1">
             {/* Logo & Brand Name */}
-            <div className="flex items-center gap-2 mb-3 sm:mb-4">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center shadow-lg">
+            <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 mb-3 sm:mb-4">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-error)] rounded-lg flex items-center justify-center shadow-[var(--shadow-lg)]">
                 <svg
-                  className="w-5 h-5 sm:w-5.5 sm:h-5.5 md:w-6 md:h-6 text-white"
+                  className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
                   <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z" />
                 </svg>
               </div>
-              <span className="text-base sm:text-lg md:text-xl font-bold text-white">
+              <span className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-[var(--background)]">
                 Sacred Journey
               </span>
             </div>
 
             {/* Description */}
-            <p className="text-xs sm:text-sm text-gray-400 mb-4 sm:mb-5 leading-relaxed max-w-sm">
+            <p className="text-[0.625rem] sm:text-xs md:text-sm text-[var(--foreground-secondary)] mb-4 sm:mb-5 md:mb-6 leading-relaxed max-w-sm">
               Your trusted guide to spiritual destinations across India. Explore
               sacred places with ease.
             </p>
 
             {/* Social Links */}
-            <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3">
               {socialLinks.map((social) => (
                 <a
                   key={social.name}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-orange-600 transition-all duration-300 transform hover:scale-110 group"
+                  className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-[var(--color-neutral-dark)] rounded-lg flex items-center justify-center hover:bg-[var(--color-primary)] transition-all duration-[var(--transition-normal)] transform hover:scale-110 group"
                   aria-label={social.name}
                 >
                   {social.type === "stroke" ? (
                     <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-white transition-colors"
+                      className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-[var(--foreground-secondary)] group-hover:text-[var(--background)] transition-colors"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -79,7 +80,7 @@ export default function FooterWithCredits() {
                     </svg>
                   ) : (
                     <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-white transition-colors"
+                      className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-[var(--foreground-secondary)] group-hover:text-[var(--background)] transition-colors"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -93,26 +94,26 @@ export default function FooterWithCredits() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-bold mb-3 sm:mb-4 text-sm sm:text-base">
+            <h3 className="text-[var(--background)] font-bold mb-3 sm:mb-4 text-xs sm:text-sm md:text-base">
               Quick Links
             </h3>
-            <ul className="space-y-2 sm:space-y-2.5 text-xs sm:text-sm">
+            <ul className="space-y-2 sm:space-y-2.5 md:space-y-3 text-[0.625rem] sm:text-xs md:text-sm">
               <li>
                 <Link
                   href="/destinations"
-                  className="hover:text-orange-400 transition-colors inline-flex items-center group"
+                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
                 >
-                  <span className="group-hover:translate-x-1 transition-transform">
+                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
                     Destinations
                   </span>
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/about"
-                  className="hover:text-orange-400 transition-colors inline-flex items-center group"
+                  href="/about-us"
+                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
                 >
-                  <span className="group-hover:translate-x-1 transition-transform">
+                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
                     About Us
                   </span>
                 </Link>
@@ -120,9 +121,9 @@ export default function FooterWithCredits() {
               <li>
                 <Link
                   href="/contact"
-                  className="hover:text-orange-400 transition-colors inline-flex items-center group"
+                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
                 >
-                  <span className="group-hover:translate-x-1 transition-transform">
+                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
                     Contact
                   </span>
                 </Link>
@@ -130,9 +131,9 @@ export default function FooterWithCredits() {
               <li>
                 <Link
                   href="/blog"
-                  className="hover:text-orange-400 transition-colors inline-flex items-center group"
+                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
                 >
-                  <span className="group-hover:translate-x-1 transition-transform">
+                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
                     Blog
                   </span>
                 </Link>
@@ -142,16 +143,16 @@ export default function FooterWithCredits() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-white font-bold mb-3 sm:mb-4 text-sm sm:text-base">
+            <h3 className="text-[var(--background)] font-bold mb-3 sm:mb-4 text-xs sm:text-sm md:text-base">
               Legal
             </h3>
-            <ul className="space-y-2 sm:space-y-2.5 text-xs sm:text-sm">
+            <ul className="space-y-2 sm:space-y-2.5 md:space-y-3 text-[0.625rem] sm:text-xs md:text-sm">
               <li>
                 <Link
                   href="/privacy-policy"
-                  className="hover:text-orange-400 transition-colors inline-flex items-center group"
+                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
                 >
-                  <span className="group-hover:translate-x-1 transition-transform">
+                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
                     Privacy Policy
                   </span>
                 </Link>
@@ -160,9 +161,9 @@ export default function FooterWithCredits() {
               <li>
                 <Link
                   href="/terms-and-conditions"
-                  className="hover:text-orange-400 transition-colors inline-flex items-center group"
+                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
                 >
-                  <span className="group-hover:translate-x-1 transition-transform">
+                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
                     Terms & Conditions
                   </span>
                 </Link>
@@ -171,9 +172,9 @@ export default function FooterWithCredits() {
               <li>
                 <Link
                   href="/refund-policy"
-                  className="hover:text-orange-400 transition-colors inline-flex items-center group"
+                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
                 >
-                  <span className="group-hover:translate-x-1 transition-transform">
+                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
                     Refund Policy
                   </span>
                 </Link>
@@ -182,8 +183,6 @@ export default function FooterWithCredits() {
           </div>
         </div>
       </div>
-
-      {/* Credits Component */}
     </footer>
   );
 }

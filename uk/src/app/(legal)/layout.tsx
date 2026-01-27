@@ -1,3 +1,4 @@
+import FooterWithCredits from "@/components/Footer";
 import { ReactNode } from "react";
 
 export const metadata = {
@@ -7,11 +8,7 @@ export const metadata = {
   },
 };
 
-export default function LegalLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function LegalLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <header className="border-b">
@@ -27,6 +24,7 @@ export default function LegalLayout({
           © {new Date().getFullYear()} APS Groups Private Limited
         </div> */}
       </footer>
+      <FooterWithCredits />
     </>
   );
 }
