@@ -163,11 +163,11 @@ export default function Navbar({
               </div>
               <div className="xs:block">
                 <div className="text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-orange-600 via-red-500 to-orange-600 bg-clip-text text-transparent">
-                  Devbhoomi
+                  TravelnFlex
                 </div>
-                <div className="text-[10px] sm:text-xs font-semibold text-orange-500 tracking-widest">
+                {/* <div className="text-[10px] sm:text-xs font-semibold text-orange-500 tracking-widest">
                   DARSHAN
-                </div>
+                </div> */}
               </div>
             </Link>
 
