@@ -53,8 +53,8 @@ function BlogEmptyState() {
         <div className="text-center py-20">
           <h1 className="text-4xl font-bold mb-4">Travel Stories Coming Soon</h1>
           <p className="text-gray-600 text-lg max-w-xl mx-auto mb-8">
-            We're curating the best travel guides, hotel spotlights, and expert tips
-            from our verified agencies and hotels. Check back soon!
+            {`We're curating the best travel guides, hotel spotlights, and expert tips
+            from our verified agencies and hotels. Check back soon!`}
           </p>
           <BlogNewsletter />
         </div>

@@ -52,7 +52,7 @@ function QuoteSection({ content, cite }: { content: string; cite?: string }) {
   return (
     <div className="my-10 border-l-4 border-blue-600 pl-8 py-4 bg-blue-50 rounded-r-xl">
       <blockquote className="text-2xl font-semibold text-slate-900 leading-snug">
-        "{content}"
+        {`"${content}"`}
       </blockquote>
       {cite && (
         <cite className="block mt-4 text-slate-500 not-italic font-medium">

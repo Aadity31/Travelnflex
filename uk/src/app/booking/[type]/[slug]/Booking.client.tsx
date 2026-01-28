@@ -21,7 +21,6 @@ import {
 
 import { BookingGallery } from "@/components/booking/BookingGallery";
 import { BookingCard } from "@/components/booking/BookingCard";
-import { useRouter } from "next/navigation";
 import { ReviewsSection } from "@/components/booking/ReviewsSection";
 import { RecommendedActivities } from "@/components/booking/RecommendedActivities";
 import { dummyRecommendedItems } from "@/lib/bookingSection/recommendedData";
@@ -102,8 +101,6 @@ export default function BookingClient({
     [booking, data.priceMin],
   );
 
-  const averageRating = getAverageRating(reviews, data.rating);
-  const ratingDistribution = getRatingDistribution(reviews);
 
   /* ============ HANDLERS ============ */
 
