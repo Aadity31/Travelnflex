@@ -22,11 +22,10 @@ export default function FooterWithCredits() {
     },
   ];
 
-
   return (
-    <footer className="bg-[var(--color-neutral-darker)] text-[var(--text-on-dark)]">
+    <footer className="bg-[var(--color-neutral-dark)] text-[var(--text-on-dark)]">
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 py-6 sm:py-8 md:py-10 lg:py-10 xl:py-10">
+      <div className="max-w-8xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 py-5 sm:py-6 md:py-7 lg:py-8 xl:py-8">
         {/* Responsive Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr] gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16 mb-6 sm:mb-8 md:mb-10">
           {/* Brand Section - Full width on mobile */}
@@ -131,6 +130,8 @@ export default function FooterWithCredits() {
               <li>
                 <Link
                   href="/blog"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
                 >
                   <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
