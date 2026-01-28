@@ -17,7 +17,6 @@ import {
   Clock,
   Award,
   Settings,
-  ChevronRight,
   Sparkles,
   Star,
   TrendingUp,

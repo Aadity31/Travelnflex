@@ -45,8 +45,8 @@
   
   /* Neutral Colors */
   --color-neutral: #6b7280; /* Gray-500 */
-  --color-neutral-dark: #374151; /* Gray-700 */
-  --color-neutral-darker: #1f2937; /* Gray-800 */
+  --color-neutral-dark: #111418; /* Gray-700 */
+  --color-neutral-darker: #06080a; /* Gray-800 */
   --color-neutral-light: #9ca3af; /* Gray-400 */
   --color-neutral-lighter: #e5e7eb; /* Gray-200 */
   
@@ -93,7 +93,7 @@
   --transition-slow: 500ms ease;
 
   /* Versatile Text Colors */
-  --text-primary: #1f2937; /* Gray-800 - Highly readable on light backgrounds */
+  --text-primary: #333f4f; /* Gray-800 - Highly readable on light backgrounds */
   --text-secondary: #4b5563; /* Gray-600 - Softer, still good contrast */
   --text-on-dark: #f9fafb; /* Gray-50 - For dark backgrounds */
   
@@ -186,6 +186,7 @@ body {
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(249, 115, 22, 0.5) transparent;
+  
 }
 
 .custom-scrollbar::-webkit-scrollbar {
