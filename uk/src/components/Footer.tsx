@@ -42,7 +42,7 @@ export default function FooterWithCredits() {
                 </svg>
               </div>
               <span className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-[var(--background)]">
-                Sacred Journey
+                TravelnFlex
               </span>
             </div>
 

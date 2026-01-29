@@ -9,7 +9,7 @@ import {
   HeartIcon,
   UserGroupIcon,
   LanguageIcon,
-  AcademicCapIcon,
+  BuildingOffice2Icon,
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -18,199 +18,163 @@ import {
   CheckBadgeIcon as CheckBadgeSolidIcon,
 } from "@heroicons/react/24/solid";
 
-// Types
-interface LocalGuide {
+// =====================
+// TYPES
+// =====================
+interface TravelAgency {
   id: string;
   name: string;
-  avatar: string;
+  logo: string;
   location: string;
-  specialities: string[];
+  specialties: string[];
   languages: string[];
-  experience: number; // years
+  experience: number; // years in business
   rating: number;
   reviewCount: number;
-  hourlyRate: number;
+  startingPrice: number; // ₹
   isVerified: boolean;
   isTopRated: boolean;
   isOnline: boolean;
-  responseTime: string; // e.g., "Within 1 hour"
-  completedTrips: number;
+  responseTime: string;
+  completedTours: number;
   description: string;
   certifications: string[];
   availabilityStatus: "available" | "busy" | "offline";
   joinedDate: string;
   profileImages: string[];
   expertise: {
-    spiritual: number; // 1-5 rating
+    spiritual: number;
     adventure: number;
     cultural: number;
-    food: number;
+    budget: number;
   };
 }
 
-// Mock guides data
-const featuredGuides: LocalGuide[] = [
+// =====================
+// MOCK DATA
+// =====================
+const featuredAgencies: TravelAgency[] = [
   {
-    id: "guide-1",
-    name: "Rajesh Kumar",
-    avatar:
-      "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
-    location: "Rishikesh",
-    specialities: [
-      "Spiritual Tours",
-      "Yoga Retreats",
-      "Temple Visits",
-      "Meditation",
-    ],
-    languages: ["Hindi", "English", "Sanskrit"],
-    experience: 12,
+    id: "agency-1",
+    name: "Garhwal Trails",
+    logo: "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
+    location: "Dehradun, Uttarakhand",
+    specialties: ["Char Dham Yatra", "Spiritual Tours", "Family Packages", "Luxury Travel"],
+    languages: ["Hindi", "English"],
+    experience: 14,
     rating: 4.9,
-    reviewCount: 485,
-    hourlyRate: 1500,
+    reviewCount: 620,
+    startingPrice: 8999,
     isVerified: true,
     isTopRated: true,
     isOnline: true,
     responseTime: "Within 30 minutes",
-    completedTrips: 1200,
+    completedTours: 2400,
     description:
-      "Certified yoga instructor and spiritual guide with deep knowledge of Hindu philosophy and ancient traditions. Specializes in authentic ashram experiences.",
-    certifications: [
-      "Certified Yoga Teacher",
-      "Government Licensed Guide",
-      "First Aid Certified",
-    ],
+      "Leading Uttarakhand-based travel agency specializing in Char Dham Yatra, luxury Himalayan tours, and fully customized pilgrimage experiences. Known for safety, reliability, and premium service.",
+    certifications: ["Government Registered", "Tourism Board Certified", "ISO 9001"],
     availabilityStatus: "available",
-    joinedDate: "2018-03-15",
-    profileImages: [
-      "/images/guides/rajesh-1.jpg",
-      "/images/guides/rajesh-2.jpg",
-    ],
+    joinedDate: "2017-02-12",
+    profileImages: ["/images/agencies/garhwal-1.jpg", "/images/agencies/garhwal-2.jpg"],
     expertise: {
       spiritual: 5,
       adventure: 3,
       cultural: 5,
-      food: 4,
+      budget: 4,
     },
   },
   {
-    id: "guide-2",
-    name: "Priya Sharma",
-    avatar:
-      "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
-    location: "Haridwar",
-    specialities: [
-      "Ganga Aarti",
-      "Temple Tours",
-      "Cultural Heritage",
-      "Photography",
-    ],
-    languages: ["Hindi", "English", "Punjabi"],
-    experience: 8,
-    rating: 4.8,
-    reviewCount: 320,
-    hourlyRate: 1200,
+    id: "agency-2",
+    name: "Himalayan Adventures",
+    logo: "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
+    location: "Rishikesh, Uttarakhand",
+    specialties: ["Trekking", "River Rafting", "Corporate Tours", "Student Trips"],
+    languages: ["Hindi", "English"],
+    experience: 10,
+    rating: 4.7,
+    reviewCount: 410,
+    startingPrice: 4999,
     isVerified: true,
     isTopRated: false,
     isOnline: true,
     responseTime: "Within 1 hour",
-    completedTrips: 650,
+    completedTours: 1600,
     description:
-      "Local historian and cultural expert passionate about sharing the rich heritage of Haridwar. Expert in temple architecture and religious ceremonies.",
-    certifications: ["Government Licensed Guide", "Heritage Site Specialist"],
+      "Adventure-focused travel agency delivering high-energy Himalayan trekking, rafting, and corporate adventure retreats. Trusted for certified guides and safety-first operations.",
+    certifications: ["Adventure Tourism Certified", "Safety Compliance Partner"],
     availabilityStatus: "available",
-    joinedDate: "2020-01-20",
-    profileImages: [
-      "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
-    ],
+    joinedDate: "2019-06-08",
+    profileImages: ["/images/agencies/himalayan-1.jpg"],
     expertise: {
-      spiritual: 5,
-      adventure: 2,
-      cultural: 5,
-      food: 3,
+      spiritual: 2,
+      adventure: 5,
+      cultural: 3,
+      budget: 4,
     },
   },
   {
-    id: "guide-3",
-    name: "Arjun Singh",
-    avatar:
-      "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
-    location: "Rishikesh",
-    specialities: [
-      "River Rafting",
-      "Bungee Jumping",
-      "Trekking",
-      "Adventure Sports",
-    ],
-    languages: ["Hindi", "English"],
-    experience: 10,
-    rating: 4.7,
-    reviewCount: 280,
-    hourlyRate: 1800,
+    id: "agency-3",
+    name: "Divine Yatra Services",
+    logo: "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
+    location: "Haridwar, Uttarakhand",
+    specialties: ["Pilgrimage Tours", "Senior Citizen Packages", "Budget Travel"],
+    languages: ["Hindi", "English", "Gujarati"],
+    experience: 18,
+    rating: 4.8,
+    reviewCount: 540,
+    startingPrice: 3999,
     isVerified: true,
     isTopRated: true,
     isOnline: false,
     responseTime: "Within 2 hours",
-    completedTrips: 890,
+    completedTours: 3100,
     description:
-      "Adventure sports enthusiast and certified safety instructor. Specialized in white water rafting and high-altitude adventure activities.",
-    certifications: [
-      "Rafting Instructor",
-      "Safety Equipment Certified",
-      "Wilderness First Aid",
-    ],
+      "Specialized pilgrimage agency offering affordable and senior-friendly Char Dham, Haridwar, and Rishikesh travel packages with full logistics and medical support.",
+    certifications: ["Government Registered", "Senior Travel Specialist"],
     availabilityStatus: "busy",
-    joinedDate: "2019-05-10",
-    profileImages: [
-      "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
-      "https://zydushospitals.com/public/theme/front/images/gastrointestinal-surgery.jpg",
-    ],
+    joinedDate: "2015-09-21",
+    profileImages: ["/images/agencies/divine-1.jpg"],
     expertise: {
-      spiritual: 3,
-      adventure: 5,
-      cultural: 3,
-      food: 2,
+      spiritual: 5,
+      adventure: 1,
+      cultural: 4,
+      budget: 5,
     },
   },
   {
-    id: "guide-4",
-    name: "Kavita Devi",
-    avatar:
-      "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
-    location: "Haridwar & Rishikesh",
-    specialities: [
-      "Food Tours",
-      "Local Cuisine",
-      "Market Visits",
-      "Cooking Classes",
-    ],
-    languages: ["Hindi", "English", "Bengali"],
-    experience: 6,
+    id: "agency-4",
+    name: "Uttarakhand Explorers",
+    logo: "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
+    location: "Nainital, Uttarakhand",
+    specialties: ["Hill Station Tours", "Photography Trips", "Honeymoon Packages"],
+    languages: ["Hindi", "English"],
+    experience: 7,
     rating: 4.6,
-    reviewCount: 195,
-    hourlyRate: 1000,
+    reviewCount: 210,
+    startingPrice: 6999,
     isVerified: true,
     isTopRated: false,
     isOnline: true,
     responseTime: "Within 45 minutes",
-    completedTrips: 420,
+    completedTours: 780,
     description:
-      "Local chef and food enthusiast offering authentic culinary experiences. Expert in traditional North Indian and local Garhwali cuisine.",
-    certifications: ["Culinary Expert", "Food Safety Certified"],
+      "Boutique travel agency curating scenic hill-station tours, romantic getaways, and photography-focused itineraries across Uttarakhand.",
+    certifications: ["Tourism Board Partner"],
     availabilityStatus: "available",
-    joinedDate: "2021-08-05",
-    profileImages: [
-      "https://www.chardham-tours.com/wp-content/uploads/2020/01/yoga.jpg",
-    ],
+    joinedDate: "2021-04-15",
+    profileImages: ["/images/agencies/explorer-1.jpg"],
     expertise: {
-      spiritual: 3,
-      adventure: 2,
+      spiritual: 2,
+      adventure: 3,
       cultural: 4,
-      food: 5,
+      budget: 3,
     },
   },
 ];
 
-// Star Rating Component
+// =====================
+// STAR RATING
+// =====================
 interface StarRatingProps {
   rating: number;
   maxRating?: number;
@@ -256,7 +220,9 @@ const StarRating: React.FC<StarRatingProps> = ({
   );
 };
 
-// Expertise Meter Component
+// =====================
+// EXPERTISE METER
+// =====================
 interface ExpertiseMeterProps {
   label: string;
   level: number;
@@ -285,15 +251,17 @@ const ExpertiseMeter: React.FC<ExpertiseMeterProps> = ({
   );
 };
 
-// Guide Card Component
-interface GuideCardProps {
-  guide: LocalGuide;
+// =====================
+// AGENCY CARD
+// =====================
+interface AgencyCardProps {
+  agency: TravelAgency;
   isLiked: boolean;
-  onLikeToggle: (guideId: string) => void;
+  onLikeToggle: (agencyId: string) => void;
 }
 
-const GuideCard: React.FC<GuideCardProps> = ({
-  guide,
+const AgencyCard: React.FC<AgencyCardProps> = ({
+  agency,
   isLiked,
   onLikeToggle,
 }) => {
@@ -316,9 +284,9 @@ const GuideCard: React.FC<GuideCardProps> = ({
   const getAvailabilityText = (status: string) => {
     switch (status) {
       case "available":
-        return "Available Now";
+        return "Accepting Bookings";
       case "busy":
-        return "Currently Busy";
+        return "Limited Availability";
       case "offline":
         return "Offline";
       default:
@@ -328,15 +296,15 @@ const GuideCard: React.FC<GuideCardProps> = ({
 
   return (
     <article className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-      {/* Header with Avatar and Status */}
+      {/* Header */}
       <div className="relative p-6 pb-4">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-start gap-4">
             <div className="relative flex-shrink-0">
               {!imageError ? (
                 <Image
-                  src={guide.avatar}
-                  alt={`${guide.name} - Local Guide`}
+                  src={agency.logo}
+                  alt={`${agency.name} - Travel Agency`}
                   width={80}
                   height={80}
                   className="rounded-full object-cover ring-4 ring-orange-100"
@@ -344,24 +312,24 @@ const GuideCard: React.FC<GuideCardProps> = ({
                 />
               ) : (
                 <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-xl ring-4 ring-orange-100">
-                  {guide.name
+                  {agency.name
                     .split(" ")
                     .map((n) => n[0])
                     .join("")}
                 </div>
               )}
 
-              {/* Online Status */}
+              {/* Status */}
               <div
                 className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-3 border-white flex items-center justify-center ${getAvailabilityColor(
-                  guide.availabilityStatus
+                  agency.availabilityStatus
                 )}`}
               >
                 <div className="w-2 h-2 bg-white rounded-full"></div>
               </div>
 
-              {/* Verification Badge */}
-              {guide.isVerified && (
+              {/* Verified */}
+              {agency.isVerified && (
                 <div className="absolute -top-2 -right-2 bg-blue-500 rounded-full p-1">
                   <CheckBadgeSolidIcon className="w-4 h-4 text-white" />
                 </div>
@@ -372,23 +340,20 @@ const GuideCard: React.FC<GuideCardProps> = ({
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-1">
-                    {guide.name}
+                    {agency.name}
                   </h3>
                   <div className="flex items-center gap-2 text-gray-600 mb-2">
                     <MapPinIcon className="w-4 h-4" />
-                    <span className="text-sm">{guide.location}</span>
+                    <span className="text-sm">{agency.location}</span>
                   </div>
                 </div>
 
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    onLikeToggle(guide.id);
+                    onLikeToggle(agency.id);
                   }}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                  aria-label={
-                    isLiked ? "Remove from favorites" : "Add to favorites"
-                  }
                 >
                   {isLiked ? (
                     <HeartSolidIcon className="w-5 h-5 text-red-500" />
@@ -398,58 +363,56 @@ const GuideCard: React.FC<GuideCardProps> = ({
                 </button>
               </div>
 
-              {/* Rating and Badges */}
               <div className="flex items-center gap-3 mb-3">
                 <StarRating
-                  rating={guide.rating}
+                  rating={agency.rating}
                   showNumber={true}
-                  reviewCount={guide.reviewCount}
+                  reviewCount={agency.reviewCount}
                 />
-                {guide.isTopRated && (
+                {agency.isTopRated && (
                   <span className="bg-orange-100 text-orange-600 px-2 py-1 rounded-full text-xs font-semibold">
-                    Top Rated
+                    Top Agency
                   </span>
                 )}
               </div>
 
-              {/* Availability Status */}
               <div className="flex items-center gap-2 text-sm">
                 <div
                   className={`w-2 h-2 rounded-full ${getAvailabilityColor(
-                    guide.availabilityStatus
+                    agency.availabilityStatus
                   )}`}
                 ></div>
                 <span className="text-gray-600">
-                  {getAvailabilityText(guide.availabilityStatus)}
+                  {getAvailabilityText(agency.availabilityStatus)}
                 </span>
                 <span className="text-gray-400">•</span>
                 <span className="text-gray-600">
-                  Responds {guide.responseTime.toLowerCase()}
+                  Responds {agency.responseTime.toLowerCase()}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Quick Stats */}
+        {/* Stats */}
         <div className="grid grid-cols-3 gap-4 py-4 border-y border-gray-100">
           <div className="text-center">
             <div className="font-bold text-lg text-gray-900">
-              {guide.experience}
+              {agency.experience}
             </div>
-            <div className="text-xs text-gray-600">Years Exp.</div>
+            <div className="text-xs text-gray-600">Years</div>
           </div>
           <div className="text-center">
             <div className="font-bold text-lg text-gray-900">
-              {guide.completedTrips}
+              {agency.completedTours}
             </div>
-            <div className="text-xs text-gray-600">Trips</div>
+            <div className="text-xs text-gray-600">Tours</div>
           </div>
           <div className="text-center">
             <div className="font-bold text-lg text-orange-600">
-              ₹{guide.hourlyRate}
+              ₹{agency.startingPrice}
             </div>
-            <div className="text-xs text-gray-600">per hour</div>
+            <div className="text-xs text-gray-600">Starting From</div>
           </div>
         </div>
       </div>
@@ -458,9 +421,9 @@ const GuideCard: React.FC<GuideCardProps> = ({
       <div className="px-6 pb-6">
         {/* Specialties */}
         <div className="mb-4">
-          <h4 className="font-semibold text-gray-900 mb-2">Specialties</h4>
+          <h4 className="font-semibold text-gray-900 mb-2">Packages</h4>
           <div className="flex flex-wrap gap-2">
-            {guide.specialities.slice(0, 3).map((specialty, index) => (
+            {agency.specialties.slice(0, 3).map((specialty, index) => (
               <span
                 key={index}
                 className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
@@ -468,9 +431,9 @@ const GuideCard: React.FC<GuideCardProps> = ({
                 {specialty}
               </span>
             ))}
-            {guide.specialities.length > 3 && (
+            {agency.specialties.length > 3 && (
               <span className="text-xs text-gray-500 px-2 py-1">
-                +{guide.specialities.length - 3} more
+                +{agency.specialties.length - 3} more
               </span>
             )}
           </div>
@@ -480,7 +443,7 @@ const GuideCard: React.FC<GuideCardProps> = ({
         <div className="mb-4">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <LanguageIcon className="w-4 h-4" />
-            <span>Speaks: {guide.languages.join(", ")}</span>
+            <span>Support: {agency.languages.join(", ")}</span>
           </div>
         </div>
 
@@ -491,9 +454,9 @@ const GuideCard: React.FC<GuideCardProps> = ({
               showFullDescription ? "" : "line-clamp-3"
             }`}
           >
-            {guide.description}
+            {agency.description}
           </p>
-          {guide.description.length > 150 && (
+          {agency.description.length > 150 && (
             <button
               onClick={() => setShowFullDescription(!showFullDescription)}
               className="text-orange-600 text-sm font-medium mt-1 hover:text-orange-700"
@@ -503,54 +466,60 @@ const GuideCard: React.FC<GuideCardProps> = ({
           )}
         </div>
 
-        {/* Expertise Levels */}
+        {/* Expertise */}
         <div className="mb-6">
           <h4 className="font-semibold text-gray-900 mb-3">Expertise</h4>
           <div className="space-y-2">
             <ExpertiseMeter
               label="spiritual"
-              level={guide.expertise.spiritual}
+              level={agency.expertise.spiritual}
             />
             <ExpertiseMeter
               label="adventure"
-              level={guide.expertise.adventure}
+              level={agency.expertise.adventure}
             />
-            <ExpertiseMeter label="cultural" level={guide.expertise.cultural} />
-            <ExpertiseMeter label="food" level={guide.expertise.food} />
+            <ExpertiseMeter
+              label="cultural"
+              level={agency.expertise.cultural}
+            />
+            <ExpertiseMeter
+              label="budget"
+              level={agency.expertise.budget}
+            />
           </div>
         </div>
 
         {/* Certifications */}
-        {guide.certifications.length > 0 && (
+        {agency.certifications.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center gap-2 text-sm text-gray-600">
-              <AcademicCapIcon className="w-4 h-4" />
-              <span className="font-medium">Certified:</span>
-              <span>{guide.certifications[0]}</span>
-              {guide.certifications.length > 1 && (
+              <BuildingOffice2Icon className="w-4 h-4" />
+              <span className="font-medium">Registered:</span>
+              <span>{agency.certifications[0]}</span>
+              {agency.certifications.length > 1 && (
                 <span className="text-orange-600">
-                  +{guide.certifications.length - 1} more
+                  +{agency.certifications.length - 1} more
                 </span>
               )}
             </div>
           </div>
         )}
 
-        {/* Action Buttons */}
+        {/* Actions */}
         <div className="flex gap-3">
           <Link
-            href={`/guides/${guide.id}`}
+            href={`/agencies/${agency.id}`}
             className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg font-semibold text-center transition-colors duration-200 flex items-center justify-center gap-2"
           >
-            View Profile
+            View Agency
             <ChevronRightIcon className="w-4 h-4" />
           </Link>
           <button
             className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-lg transition-colors duration-200 flex items-center gap-2"
-            disabled={guide.availabilityStatus === "offline"}
+            disabled={agency.availabilityStatus === "offline"}
           >
             <ChatBubbleLeftRightIcon className="w-4 h-4" />
-            Chat
+            Contact
           </button>
         </div>
       </div>
@@ -558,67 +527,68 @@ const GuideCard: React.FC<GuideCardProps> = ({
   );
 };
 
-// Main FeaturedGuides Component
-const FeaturedGuides: React.FC = () => {
-  const [likedGuides, setLikedGuides] = useState<Set<string>>(new Set());
+// =====================
+// MAIN COMPONENT
+// =====================
+const FeaturedAgencies: React.FC = () => {
+  const [likedAgencies, setLikedAgencies] = useState<Set<string>>(new Set());
   const [filterSpecialty, setFilterSpecialty] = useState<string>("all");
 
-  const handleLikeToggle = (guideId: string) => {
-    setLikedGuides((prev) => {
+  const handleLikeToggle = (agencyId: string) => {
+    setLikedAgencies((prev) => {
       const newLiked = new Set(prev);
-      if (newLiked.has(guideId)) {
-        newLiked.delete(guideId);
+      if (newLiked.has(agencyId)) {
+        newLiked.delete(agencyId);
       } else {
-        newLiked.add(guideId);
+        newLiked.add(agencyId);
       }
       return newLiked;
     });
   };
 
-  // Get unique specialties for filter
   const specialties = [
     "all",
-    ...new Set(featuredGuides.flatMap((guide) => guide.specialities)),
+    ...new Set(featuredAgencies.flatMap((a) => a.specialties)),
   ];
 
-  // Filter guides based on specialty
-  const filteredGuides =
+  const filteredAgencies =
     filterSpecialty === "all"
-      ? featuredGuides
-      : featuredGuides.filter((guide) =>
-          guide.specialities.some((specialty) =>
-            specialty.toLowerCase().includes(filterSpecialty.toLowerCase())
+      ? featuredAgencies
+      : featuredAgencies.filter((agency) =>
+          agency.specialties.some((s) =>
+            s.toLowerCase().includes(filterSpecialty.toLowerCase())
           )
         );
 
-  // Calculate stats
   const averageRating =
-    featuredGuides.reduce((sum, guide) => sum + guide.rating, 0) /
-    featuredGuides.length;
-  const totalExperience = featuredGuides.reduce(
-    (sum, guide) => sum + guide.experience,
+    featuredAgencies.reduce((sum, a) => sum + a.rating, 0) /
+    featuredAgencies.length;
+
+  const totalExperience = featuredAgencies.reduce(
+    (sum, a) => sum + a.experience,
     0
   );
-  const availableGuides = featuredGuides.filter(
-    (guide) => guide.availabilityStatus === "available"
+
+  const availableAgencies = featuredAgencies.filter(
+    (a) => a.availabilityStatus === "available"
   ).length;
 
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+        {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-block bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-semibold mb-4">
-            Expert Local Guides
+            Trusted Travel Agencies
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Meet Our Certified
-            <span className="text-orange-600 block">Local Experts</span>
+            Discover Verified
+            <span className="text-orange-600 block">Travel Partners</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8">
-            Connect with passionate local guides who bring destinations to life
-            with authentic insights, cultural knowledge, and personalized
-            experiences.
+            Book your journey with reliable, government-registered travel
+            agencies offering curated packages, transparent pricing, and
+            end-to-end travel support across Uttarakhand.
           </p>
 
           {/* Stats */}
@@ -637,18 +607,18 @@ const FeaturedGuides: React.FC = () => {
               <div className="font-bold text-2xl text-gray-900 mb-2">
                 {totalExperience}+
               </div>
-              <p className="text-sm text-gray-600">Years Combined Experience</p>
+              <p className="text-sm text-gray-600">Years in Business</p>
             </div>
             <div className="w-px h-12 bg-gray-300"></div>
             <div className="text-center">
               <div className="font-bold text-2xl text-green-600 mb-2">
-                {availableGuides}
+                {availableAgencies}
               </div>
-              <p className="text-sm text-gray-600">Available Now</p>
+              <p className="text-sm text-gray-600">Accepting Bookings</p>
             </div>
           </div>
 
-          {/* Specialty Filters */}
+          {/* Filters */}
           <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
             {specialties.slice(0, 6).map((specialty) => (
               <button
@@ -660,66 +630,65 @@ const FeaturedGuides: React.FC = () => {
                     : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                 }`}
               >
-                {specialty === "all" ? "All Guides" : specialty}
+                {specialty === "all" ? "All Agencies" : specialty}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Guides Grid */}
+        {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12">
-          {filteredGuides.map((guide) => (
-            <GuideCard
-              key={guide.id}
-              guide={guide}
-              isLiked={likedGuides.has(guide.id)}
+          {filteredAgencies.map((agency) => (
+            <AgencyCard
+              key={agency.id}
+              agency={agency}
+              isLiked={likedAgencies.has(agency.id)}
               onLikeToggle={handleLikeToggle}
             />
           ))}
         </div>
 
-        {/* No Results */}
-        {filteredGuides.length === 0 && (
+        {/* Empty */}
+        {filteredAgencies.length === 0 && (
           <div className="text-center py-12">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              No guides found
+              No agencies found
             </h3>
             <p className="text-gray-600 mb-6">
-              Try selecting a different specialty
+              Try selecting a different category
             </p>
             <button
               onClick={() => setFilterSpecialty("all")}
               className="bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold"
             >
-              Show All Guides
+              Show All Agencies
             </button>
           </div>
         )}
 
-        {/* CTA Section */}
+        {/* CTA */}
         <div className="text-center">
           <div className="bg-white rounded-2xl shadow-lg p-8 max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Need a Custom Experience?
+              Looking for a Business Partner?
             </h3>
             <p className="text-gray-600 mb-6">
-              Our guides can create personalized itineraries based on your
-              interests, budget, and time constraints. Get a tailored experience
-              that matches your travel style.
+              Join our platform as a verified travel agency and connect with
+              high-intent travelers searching for trusted local partners.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/guides"
+                href="/agencies"
                 className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-xl font-semibold transition-colors duration-200 flex items-center justify-center gap-2"
               >
-                Browse All Guides
+                Browse All Agencies
                 <UserGroupIcon className="w-5 h-5" />
               </Link>
               <Link
-                href="/contact"
+                href="/partner"
                 className="bg-transparent border-2 border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2"
               >
-                Request Custom Guide
+                Become a Partner
                 <ChatBubbleLeftRightIcon className="w-5 h-5" />
               </Link>
             </div>
@@ -730,4 +699,4 @@ const FeaturedGuides: React.FC = () => {
   );
 };
 
-export default FeaturedGuides;
+export default FeaturedAgencies;

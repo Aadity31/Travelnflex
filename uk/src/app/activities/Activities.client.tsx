@@ -141,16 +141,8 @@ export default function ActivitiesClient({
       <main className="min-h-screen bg-gray-50">
         <LoginPrompt open={wishlist.showLogin} onClose={wishlist.closeLogin} />
         {/* Hero Section - RESPONSIVE */}
-        <section className="relative h-48 sm:h-56 md:h-64 lg:h-72 bg-gradient-to-r from-green-600 to-blue-600 flex items-center justify-center">
-          <div className="text-center text-white px-4 sm:px-6">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 md:mb-4">
-              Adventure & Spiritual Activities
-            </h1>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-xs sm:max-w-md md:max-w-2xl mx-auto">
-              Discover a perfect blend of thrilling adventures and
-              soul-enriching spiritual experiences
-            </p>
-          </div>
+        <section className="relative h-18 sm:h-16 md:h-14 lg:h-15 bg-gray-00 bg-opacity-30 backdrop-blur-sm border border-gray-500 flex items-center justify-center">
+        
         </section>
 
         <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
