@@ -134,6 +134,7 @@ export default function DestinationsClient({
     observer.observe(loaderRef.current);
 
     return () => observer.disconnect();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor, hasMore, isLoading]);
 
   /* ---------------- FILTER LOGIC ---------------- */

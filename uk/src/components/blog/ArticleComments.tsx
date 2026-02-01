@@ -29,7 +29,7 @@ export interface ArticleCommentsProps {
 // Comment Form Component
 // ============================================
 
-function CommentForm({ articleId }: { articleId?: string }) {
+function CommentForm({ articleId: _articleId }: { articleId?: string }) {
   const [content, setContent] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 

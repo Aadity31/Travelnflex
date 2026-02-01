@@ -235,6 +235,7 @@ const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
 
     const ids = destinations.map((d) => d.id);
     wishlist.fetchBulk(ids);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [destinations]);
 
   return (

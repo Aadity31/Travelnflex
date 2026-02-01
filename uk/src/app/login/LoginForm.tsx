@@ -95,6 +95,7 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full flex items-center justify-center gap-2 sm:gap-2.5 border-2 border-gray-200 rounded-lg py-2 sm:py-2.5 text-xs sm:text-sm font-medium hover:bg-gray-50 hover:border-orange-300 transition-all duration-300 group mb-4 sm:mb-5 disabled:opacity-50 disabled:cursor-not-allowed"
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"

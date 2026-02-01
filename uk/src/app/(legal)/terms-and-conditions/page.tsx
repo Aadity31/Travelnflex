@@ -75,7 +75,7 @@ export default function TermsPage() {
           <div className="prose prose-neutral max-w-none prose-headings:leading-snug prose-headings:mt-6 prose-headings:mb-2">
             <ReactMarkdown
               components={{
-                h2: ({ node, ...props }) => {
+                h2: ({ node: _node, ...props }) => {
                   const text = String(props.children);
                   const id = text
                     .toLowerCase()

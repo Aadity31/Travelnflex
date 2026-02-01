@@ -23,6 +23,7 @@ export default function UserAvatar({
         style={{ width: size, height: size }}
         className={`rounded-full overflow-hidden ${className}`}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={image}
           alt={name}

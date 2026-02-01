@@ -7,8 +7,6 @@ type GetReviewsParams = {
 };
 
 export async function getReviews({
-  slug,
-  type,
   limit = 10,
 }: GetReviewsParams) {
   // ✅ DUMMY REVIEWS DATA (until table is created)

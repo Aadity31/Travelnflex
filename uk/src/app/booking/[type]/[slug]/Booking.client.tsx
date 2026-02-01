@@ -15,8 +15,6 @@ import {
 
 import {
   Review,
-  getAverageRating,
-  getRatingDistribution,
 } from "@/lib/bookingSection/reviews";
 
 import { BookingGallery } from "@/components/booking/BookingGallery";

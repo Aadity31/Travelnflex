@@ -126,7 +126,7 @@ export default function NotificationBellClient() {
   /* -----------------------------
      UI + DB Actions
   ------------------------------ */
-  const markAsRead = async (id: string) => {
+  const _markAsRead = async (id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );

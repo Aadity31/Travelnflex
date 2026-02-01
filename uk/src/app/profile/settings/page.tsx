@@ -69,7 +69,7 @@ export default function SettingsPage() {
           boxShadow: "0 8px 24px rgba(16, 185, 129, 0.4)",
         },
       });
-    } catch (error) {
+    } catch {
       toast.error("Failed to save preferences");
     }
   };
@@ -103,7 +103,7 @@ export default function SettingsPage() {
         newPassword: "",
         confirmPassword: "",
       });
-    } catch (error) {
+    } catch {
       toast.error("Failed to change password");
     }
   };
@@ -123,7 +123,7 @@ export default function SettingsPage() {
           boxShadow: "0 8px 24px rgba(16, 185, 129, 0.4)",
         },
       });
-    } catch (error) {
+    } catch {
       toast.error("Failed to save");
     } finally {
     }
@@ -140,7 +140,7 @@ export default function SettingsPage() {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       toast.success("Account deletion requested");
       setTimeout(() => router.push("/"), 1000);
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete account");
     } finally {
     }

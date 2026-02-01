@@ -19,7 +19,7 @@ function getPrivacyContent() {
 
     const file = fs.readFileSync(filePath, "utf8");
     return matter(file);
-  } catch (err) {
+  } catch {
     return null;
   }
 }
@@ -75,7 +75,7 @@ export default function PrivacyPolicyPage() {
           <div className="prose prose-neutral max-w-none">
             <ReactMarkdown
               components={{
-                h2: ({ node, ...props }) => {
+                h2: ({ node: _node, ...props }) => {
                   const text = String(props.children);
                   const id = text
                     .toLowerCase()

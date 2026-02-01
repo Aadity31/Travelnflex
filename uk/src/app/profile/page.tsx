@@ -21,6 +21,9 @@ import {
   Star,
   TrendingUp,
   LucideIcon,
+  X,
+  Trash2,
+  Upload,
 } from "lucide-react";
 
 type UserType = {
@@ -34,47 +37,15 @@ type UserType = {
   bio?: string;
 };
 
-interface CloudinaryUploadWidgetError {
-  message: string;
-  http_code?: number;
-}
-
-interface CloudinaryUploadWidgetResult {
-  event: string;
-  info: {
-    secure_url: string;
-    public_id: string;
-    [key: string]: unknown;
-  };
-}
-
-declare global {
-  interface Window {
-    cloudinary?: {
-      createUploadWidget: (
-        config: unknown,
-        callback: (
-          error: CloudinaryUploadWidgetError | null,
-          result: CloudinaryUploadWidgetResult
-        ) => void
-      ) => {
-        open: () => void;
-        close: () => void;
-      };
-    };
-  }
-}
-
 export default function ProfilePage() {
   const { data: session, update } = useSession();
   const [user, setUser] = useState<UserType | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // ✅ Added loading state
+  const [isLoading, setIsLoading] = useState(true);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
-  const [showImagePreview, setShowImagePreview] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const hasFetched = useRef(false);
 
@@ -84,8 +55,6 @@ export default function ProfilePage() {
       router.push("/login");
     }
   }, [session, router]);
-
-  /* ---------- CLOUDINARY UPLOAD ---------- */
 
   /* ---------- FETCH USER ---------- */
   useEffect(() => {
@@ -97,7 +66,7 @@ export default function ProfilePage() {
 
     const fetchUser = async () => {
       try {
-        setIsLoading(true); // ✅ Start loading
+        setIsLoading(true);
         const res = await fetch("/api/auth/user");
         const data = await res.json();
         if (data?.user) {
@@ -107,7 +76,7 @@ export default function ProfilePage() {
         console.error("Error fetching user:", error);
         toast.error("Failed to load profile");
       } finally {
-        setIsLoading(false); // ✅ Stop loading
+        setIsLoading(false);
         hasFetched.current = true;
       }
     };
@@ -120,131 +89,132 @@ export default function ProfilePage() {
     if (user?.image) {
       setShowPhotoModal(true);
     } else {
-      setShowImagePreview(true);
+      fileInputRef.current?.click();
     }
   };
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
-      const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
-      if (!allowedTypes.includes(file.type)) {
-        toast.error("Please select a valid image file (JPG, PNG, WebP)");
-        return;
-      }
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      // Validate file size (5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("File size must be less than 5MB");
-        return;
-      }
-
-      setSelectedFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please select a valid image file (JPG, PNG, or WebP)");
+      return;
     }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSelectedImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const dataURLtoBlob = (dataURL: string): Blob => {
+    const arr = dataURL.split(",");
+    const mime = arr[0].match(/:(.*?);/)?.[1] || "image/jpeg";
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
-
-    // Log Cloudinary config
-    console.log("📤 Uploading to Cloudinary:");
-    console.log("  Cloud Name:", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "NOT SET");
-    console.log("  Upload Preset:", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "NOT SET");
+    if (!selectedImage) {
+      toast.error("Please select an image first");
+      return;
+    }
 
     setIsUploading(true);
+
     try {
+      // Convert data URL to blob for upload
+      const blob = dataURLtoBlob(selectedImage);
+      const file = new File([blob], "profile.jpg", { type: "image/jpeg" });
+
       const formData = new FormData();
-      formData.append("file", selectedFile);
-      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "");
-      formData.append("folder", "profile_pictures");
+      formData.append("file", file);
+      formData.append(
+        "upload_preset",
+        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""
+      );
+      formData.append("folder", "users/profile_pictures");
 
+      // Upload to Cloudinary
       const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-      if (!cloudName) {
-        throw new Error("Cloudinary cloud name is not configured");
-      }
-
-      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-      console.log("  Upload URL:", uploadUrl);
-
-      const response = await fetch(uploadUrl, {
-        method: "POST",
-        body: formData,
-      });
-
-      console.log("  Response status:", response.status);
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("Cloudinary upload error:", errorData);
-        throw new Error(errorData.error?.message || `Upload failed: ${response.status}`);
+        throw new Error("Upload failed");
       }
 
       const data = await response.json();
-      console.log("  Upload successful! Public ID:", data.public_id);
-      // Apply transformation for 400x400 crop with face gravity
-      const imageUrl = data.secure_url.replace('/upload/', '/upload/w_400,h_400,c_fill,g_face/');
-      console.log("  Transformed URL:", imageUrl);
 
-      // Delete old image if exists (non-blocking)
+      // Apply face-centered crop transformation to the URL
+      const transformedUrl = data.secure_url.replace(
+        "/upload/",
+        "/upload/w_400,h_400,c_fill,g_face/"
+      );
+
+      // Delete old image if exists
       if (user?.image) {
-        try {
-          const deleteRes = await fetch("/api/profile/delete-image", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ imageUrl: user.image }),
-          });
-          if (!deleteRes.ok) {
-            const deleteError = await deleteRes.json().catch(() => ({}));
-            console.warn("Failed to delete old image:", deleteError);
-          }
-        } catch (deleteErr) {
-          console.warn("Error deleting old image:", deleteErr);
-        }
+        await fetch("/api/profile/delete-image", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageUrl: user.image }),
+        });
       }
 
-      // Update profile picture
-      const res = await fetch("/api/profile/update", {
+      // Update profile with new image
+      const updateRes = await fetch("/api/profile/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: imageUrl }),
+        body: JSON.stringify({ image: transformedUrl }),
       });
 
-      if (res.ok) {
-        setUser((prev) => (prev ? { ...prev, image: imageUrl } : null));
-        await update({ user: { image: imageUrl } });
+      if (updateRes.ok) {
+        setUser((prev) =>
+          prev ? { ...prev, image: transformedUrl } : null
+        );
+        await update({ user: { image: transformedUrl } });
         router.refresh();
+
+        // Reset states
+        setSelectedImage(null);
+        setShowPhotoModal(false);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
 
         toast.success("Profile picture updated successfully! 🎉", {
           duration: 3000,
           icon: "✨",
         });
-
-        // Reset state
-        setSelectedFile(null);
-        setPreviewUrl(null);
-        setShowImagePreview(false);
       } else {
-        const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
-        console.error("Update profile error:", errorData);
-        toast.error(`Failed: ${errorData.error || "Unknown error"}`);
+        const errorData = await updateRes.json();
+        toast.error(`Failed: ${errorData.error}`);
       }
-    } catch (error) {
-      console.error("Upload error:", error);
+    } catch (err) {
+      console.error("Upload error:", err);
       toast.error("Error uploading image. Please try again.");
     } finally {
       setIsUploading(false);
-    }
-  };
-
-  const handleCancelUpload = () => {
-    setSelectedFile(null);
-    setPreviewUrl(null);
-    setShowImagePreview(false);
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
     }
   };
 
@@ -263,13 +233,9 @@ export default function ProfilePage() {
         setUser((prev) => (prev ? { ...prev, image: null } : null));
         await update();
         toast.success("Picture deleted! 🗑️");
-      } else {
-        const errorData = await res.json().catch(() => ({}));
-        console.error("Delete image error:", errorData);
-        toast.error(errorData.error || "Delete failed");
       }
     } catch (err) {
-      console.error("Delete image error:", err);
+      console.error(err);
       toast.error("Delete failed");
     }
   };
@@ -555,16 +521,16 @@ export default function ProfilePage() {
                   time="5 days ago"
                 />
                 <Activity
-                  icon={Award}
-                  title="Reviewed Rajesh Kumar (Guide)"
-                  description="Rated 5 stars for excellent service"
+                  icon={Star}
+                  title="Reviewed Rishikesh Yoga Retreat"
+                  description="Rated 5 stars - Amazing experience!"
                   time="1 week ago"
                 />
                 <Activity
-                  icon={BookMarked}
-                  title="Saved Badrinath Temple"
-                  description="Added to your travel wishlist"
-                  time="1 week ago"
+                  icon={Award}
+                  title="Earned Spiritual Explorer Badge"
+                  description="Completed 12 sacred journeys"
+                  time="2 weeks ago"
                 />
               </div>
             </div>
@@ -572,21 +538,22 @@ export default function ProfilePage() {
             {/* Recommendations */}
             <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
               <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
-                <Star size={16} className="sm:w-4.5 sm:h-4.5 text-orange-500" />
+                <Sparkles
+                  size={16}
+                  className="sm:w-4.5 sm:h-4.5 text-orange-500"
+                />
                 Recommended For You
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <RecommendationCard
-                  image="https://images.unsplash.com/photo-1585159812596-fac104f2f069?w=400"
-                  title="Yoga Retreat in Rishikesh"
-                  rating="4.9"
-                  price="₹3,999"
+                  title="Badrinath Temple Tour"
+                  description="4-day spiritual journey to the holy shrine"
+                  image="/images/destinations/badrinath.jpg"
                 />
                 <RecommendationCard
-                  image="https://images.unsplash.com/photo-1548013146-72479768bada?w=400"
-                  title="Char Dham Yatra Package"
-                  rating="4.8"
-                  price="₹12,999"
+                  title="Valley of Flowers Trek"
+                  description="Witness nature&apos;s paradise in the Himalayas"
+                  image="/images/destinations/valley-of-flowers.jpg"
                 />
               </div>
             </div>
@@ -594,146 +561,104 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Photo Options Modal */}
-      {showPhotoModal && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-          onClick={() => setShowPhotoModal(false)}
-        >
-          <div
-            className="bg-white rounded-xl sm:rounded-2xl max-w-sm w-full p-4 sm:p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">
-              Profile Picture Options
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">
-              You can upload or remove your profile picture.
-            </p>
-            <p className="text-[10px] sm:text-xs text-gray-500 mb-4 sm:mb-6">
-              Only image files are allowed. Images are stored securely and never shared publicly.
-            </p>
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileSelect}
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+      />
 
-            <div className="space-y-2 sm:space-y-3">
+      {/* Photo Options / Preview Modal */}
+      {showPhotoModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">
+                {selectedImage ? "Preview Photo" : "Profile Picture"}
+              </h3>
               <button
                 onClick={() => {
                   setShowPhotoModal(false);
-                  setShowImagePreview(true);
+                  setSelectedImage(null);
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                  }
                 }}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
+                className="p-1 hover:bg-gray-100 rounded-full transition"
               >
-                <Camera size={14} className="sm:w-4 sm:h-4" />
-                Change Photo
-              </button>
-              <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
-                Upload a profile picture (JPG, PNG, WebP only, max 5MB).
-              </p>
-              <p className="text-[10px] sm:text-xs text-gray-400">
-                Images are securely stored on Cloudinary. No executable files allowed.
-              </p>
-              <button
-                onClick={handleDeleteImage}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition text-xs sm:text-sm"
-              >
-                Delete Photo
-              </button>
-
-              <button
-                onClick={() => setShowPhotoModal(false)}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition text-xs sm:text-sm"
-              >
-                Cancel
+                <X size={20} className="text-gray-500" />
               </button>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Image Preview Modal */}
-      {showImagePreview && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-          onClick={handleCancelUpload}
-        >
-          <div
-            className="bg-white rounded-xl sm:rounded-2xl max-w-md w-full p-4 sm:p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">
-              Upload Profile Picture
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
-              Select an image to use as your profile picture. It will be automatically cropped to fit.
-            </p>
-
-            {/* File Input */}
-            <div className="mb-4">
-              <label className="block">
-                <span className="sr-only">Choose profile picture</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileSelect}
-                  className="block w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-lg file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-orange-50 file:text-orange-700
-                    hover:file:bg-orange-100
-                    file:cursor-pointer
-                    file:transition-colors"
-                />
-              </label>
-              <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
-                JPG, PNG, WebP only. Max 5MB.
-              </p>
-            </div>
-
-            {/* Preview */}
-            {previewUrl && (
-              <div className="mb-4">
-                <p className="text-xs sm:text-sm text-gray-600 mb-2">Preview:</p>
-                <div className="relative w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-white shadow-lg">
-                  <img
-                    src={previewUrl}
-                    alt="Profile preview"
-                    className="w-full h-full object-cover"
-                  />
+            {selectedImage ? (
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="relative w-48 h-48 mx-auto rounded-full overflow-hidden ring-4 ring-orange-100">
+                    <Image
+                      src={selectedImage}
+                      alt="Selected preview"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    This image will be automatically cropped to 400x400 pixels
+                    with face detection
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setSelectedImage(null);
+                      fileInputRef.current?.click();
+                    }}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                  >
+                    Change
+                  </button>
+                  <button
+                    onClick={handleUpload}
+                    disabled={isUploading}
+                    className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    <Upload size={16} />
+                    {isUploading ? "Uploading..." : "Upload"}
+                  </button>
                 </div>
               </div>
-            )}
+            ) : (
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    setShowPhotoModal(false);
+                    fileInputRef.current?.click();
+                  }}
+                  className="w-full px-4 py-3 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-xl transition flex items-center gap-3"
+                >
+                  <Camera size={20} />
+                  <span className="font-medium">Change Photo</span>
+                </button>
 
-            {/* Action Buttons */}
-            <div className="space-y-2 sm:space-y-3">
-              <button
-                onClick={handleUpload}
-                disabled={!selectedFile || isUploading}
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg font-medium transition flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm ${
-                  !selectedFile || isUploading
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-orange-500 hover:bg-orange-600 text-white"
-                }`}
-              >
-                {isUploading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Camera size={14} className="sm:w-4 sm:h-4" />
-                    Upload Photo
-                  </>
+                {user.image && (
+                  <button
+                    onClick={handleDeleteImage}
+                    className="w-full px-4 py-3 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl transition flex items-center gap-3"
+                  >
+                    <Trash2 size={20} />
+                    <span className="font-medium">Remove Photo</span>
+                  </button>
                 )}
-              </button>
-              
-              <button
-                onClick={handleCancelUpload}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition text-xs sm:text-sm"
-              >
-                Cancel
-              </button>
-            </div>
+
+                <button
+                  onClick={() => setShowPhotoModal(false)}
+                  className="w-full px-4 py-3 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -741,21 +666,24 @@ export default function ProfilePage() {
   );
 }
 
-// Responsive Components (unchanged)
+/* ---------- SUBCOMPONENTS ---------- */
+
 function StatBox({
   icon: Icon,
   label,
   value,
 }: {
-  icon: React.ElementType;
+  icon: LucideIcon;
   label: string;
   value: string;
 }) {
   return (
-    <div className="text-center p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-100 transition cursor-pointer">
-      <Icon className="text-orange-500 mx-auto mb-0.5 sm:mb-1" size={16} />
-      <p className="text-base sm:text-lg font-bold text-gray-900">{value}</p>
-      <p className="text-[10px] sm:text-xs text-gray-500">{label}</p>
+    <div className="text-center p-2 sm:p-3 bg-gray-50 rounded-lg">
+      <div className="text-lg sm:text-xl font-bold text-gray-900">{value}</div>
+      <div className="text-[10px] sm:text-xs text-gray-500 flex items-center justify-center gap-1">
+        <Icon size={10} className="sm:w-3 sm:h-3" />
+        {label}
+      </div>
     </div>
   );
 }
@@ -772,24 +700,19 @@ function QuickLink({
   href: string;
 }) {
   const router = useRouter();
-
-  const handleClick = () => {
-    router.push(href);
-  };
-
   return (
     <button
-      onClick={handleClick}
-      className="group flex items-center gap-3 xs:gap-3.5 sm:gap-4 p-3 xs:p-3.5 sm:p-3 bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all text-left shadow-sm hover:shadow-md"
+      onClick={() => router.push(href)}
+      className="flex items-center gap-3 p-3 sm:p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition text-left"
     >
-      <div className="w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-lg shadow-orange-500/30">
-        <Icon size={18} className="xs:w-5 xs:h-5 sm:w-6 sm:h-6 text-white" />
+      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center flex-shrink-0">
+        <Icon className="text-orange-600" size={18} />
       </div>
-      <div className="flex-1 min-w-0">
-        <h3 className="text-xs xs:text-sm sm:text-base font-bold text-gray-900 group-hover:text-orange-600 transition">
+      <div className="min-w-0">
+        <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
           {title}
         </h3>
-        <p className="text-[10px] xs:text-[11px] sm:text-xs text-gray-600 mt-0.5 truncate">
+        <p className="text-xs sm:text-sm text-gray-500 truncate">
           {description}
         </p>
       </div>
@@ -803,75 +726,59 @@ function Activity({
   description,
   time,
 }: {
-  icon: React.ElementType;
+  icon: LucideIcon;
   title: string;
   description: string;
   time: string;
 }) {
   return (
-    <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-50 transition">
-      <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+    <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg">
+      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
         <Icon className="text-orange-500" size={14} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
+        <h4 className="font-medium text-gray-900 text-xs sm:text-sm truncate">
           {title}
-        </p>
-        <p className="text-[10px] sm:text-xs text-gray-600 mt-0.5 truncate">
+        </h4>
+        <p className="text-[10px] sm:text-xs text-gray-500 truncate">
           {description}
         </p>
-        <p className="text-[10px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1">
-          {time}
-        </p>
       </div>
+      <span className="text-[10px] sm:text-xs text-gray-400 flex-shrink-0">
+        {time}
+      </span>
     </div>
   );
 }
 
 function RecommendationCard({
-  image,
   title,
-  rating,
-  price,
-  href = "/activities",
+  description,
+  image,
 }: {
-  image: string;
   title: string;
-  rating: string;
-  price: string;
-  href?: string;
+  description: string;
+  image: string;
 }) {
-  const router = useRouter();
-
   return (
-    <div
-      onClick={() => {
-        router.push(href);
-      }}
-      className="group cursor-pointer"
-    >
-      <div className="relative h-28 sm:h-32 lg:h-36 rounded-lg overflow-hidden mb-2">
+    <div className="flex gap-3 p-3 bg-gray-50 rounded-xl hover:bg-orange-50 transition cursor-pointer">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden">
         <Image
           src={image}
           alt={title}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover group-hover:scale-110 transition duration-300"
+          width={80}
+          height={80}
+          className="w-full h-full object-cover"
         />
-        <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-white/90 backdrop-blur-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full flex items-center gap-0.5 sm:gap-1">
-          <Star
-            size={10}
-            className="sm:w-3 sm:h-3 text-orange-500 fill-orange-500"
-          />
-          <span className="text-[10px] sm:text-xs font-semibold text-gray-900">
-            {rating}
-          </span>
-        </div>
       </div>
-      <h3 className="text-xs sm:text-sm font-semibold text-gray-900 mb-0.5 sm:mb-1 truncate">
-        {title}
-      </h3>
-      <p className="text-xs sm:text-sm font-bold text-orange-600">{price}</p>
+      <div className="flex-1 min-w-0">
+        <h4 className="font-semibold text-gray-900 text-xs sm:text-sm mb-0.5 sm:mb-1 truncate">
+          {title}
+        </h4>
+        <p className="text-[10px] sm:text-xs text-gray-500 line-clamp-2">
+          {description}
+        </p>
+      </div>
     </div>
   );
 }

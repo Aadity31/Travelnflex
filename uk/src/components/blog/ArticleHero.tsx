@@ -7,7 +7,7 @@
  * @module components/blog/ArticleHero
  */
 
-import type { BlogArticle, Publisher } from '@/lib/data/blog/types';
+import type { Publisher } from '@/lib/data/blog/types';
 
 // ============================================
 // Props Interface

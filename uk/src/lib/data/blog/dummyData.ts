@@ -483,12 +483,12 @@ export class DummyBlogDataSource implements BlogListingDataSource, BlogArticleDa
     return dummyRelatedArticles.slice(0, limit);
   }
 
-  async getComments(articleId: string): Promise<Comment[]> {
+  async getComments(_articleId: string): Promise<Comment[]> {
     await new Promise(resolve => setTimeout(resolve, 100));
     return dummyComments;
   }
 
-  async getCTAOffer(articleId: string): Promise<CTAOffer | null> {
+  async getCTAOffer(_articleId: string): Promise<CTAOffer | null> {
     await new Promise(resolve => setTimeout(resolve, 50));
     return dummyCTAOffer;
   }

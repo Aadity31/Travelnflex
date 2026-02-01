@@ -45,6 +45,7 @@ if (!missing.length) return;
     } catch {
       // silent fail (non-blocking UX)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* ---------------- TOGGLE ---------------- */
