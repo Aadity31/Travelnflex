@@ -70,11 +70,11 @@ export default function ProfilePage() {
   const [user, setUser] = useState<UserType | null>(null);
   const [isLoading, setIsLoading] = useState(true); // ✅ Added loading state
   const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [showImagePreview, setShowImagePreview] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
-  const widgetRef = useRef<{
-    open: () => void;
-    close: () => void;
-  } | null>(null);
 
   const hasFetched = useRef(false);
 
@@ -85,82 +85,7 @@ export default function ProfilePage() {
     }
   }, [session, router]);
 
-  /* ---------- CLOUDINARY ---------- */
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.cloudinary) {
-      widgetRef.current = window.cloudinary.createUploadWidget(
-        {
-          cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-          uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
-          sources: ["local", "camera"],
-          multiple: false,
-          maxFileSize: 5000000,
-          clientAllowedFormats: ["jpg", "png", "jpeg", "webp"],
-          cropping: true,
-          croppingAspectRatio: 1,
-          showSkipCropButton: false,
-          eager: [{ width: 400, height: 400, crop: "fill", gravity: "face" }],
-          eager_async: false,
-        },
-        async (error, result) => {
-          if (!error && result?.event === "success") {
-            const imageUrl = result.info.secure_url;
-
-            try {
-              // Delete old image if exists
-              if (user?.image) {
-                await fetch("/api/profile/delete-image", {
-                  method: "DELETE",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ imageUrl: user.image }),
-                });
-              }
-
-              // Get current user
-              const userRes = await fetch("/api/auth/user");
-              const userData = await userRes.json();
-
-              if (!userData?.user) {
-                toast.error("Please refresh and try again");
-                return;
-              }
-
-              // Update profile picture
-              const res = await fetch("/api/profile/update", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ image: imageUrl }),
-              });
-
-              if (res.ok) {
-                setUser((prev) =>
-                  prev ? { ...prev, image: imageUrl } : null
-                );
-                await update({ user: { image: imageUrl } });
-                router.refresh();
-
-                toast.success("Profile picture updated successfully! 🎉", {
-                  duration: 3000,
-                  icon: "✨",
-                });
-              } else {
-                const data = await res.json();
-                toast.error(`Failed: ${data.error}`);
-              }
-            } catch (err) {
-              console.error("Upload error:", err);
-              toast.error("Error updating profile picture");
-            }
-          }
-
-          if (error) {
-            console.error("❌ Upload error:", error);
-            toast.error("Upload failed. Please try again.");
-          }
-        }
-      );
-    }
-  }, [user?.image, update, router]);
+  /* ---------- CLOUDINARY UPLOAD ---------- */
 
   /* ---------- FETCH USER ---------- */
   useEffect(() => {
@@ -192,7 +117,135 @@ export default function ProfilePage() {
 
   /* ---------- IMAGE HANDLERS ---------- */
   const handleCameraClick = () => {
-    user?.image ? setShowPhotoModal(true) : widgetRef.current?.open();
+    if (user?.image) {
+      setShowPhotoModal(true);
+    } else {
+      setShowImagePreview(true);
+    }
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Please select a valid image file (JPG, PNG, WebP)");
+        return;
+      }
+
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File size must be less than 5MB");
+        return;
+      }
+
+      setSelectedFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    // Log Cloudinary config
+    console.log("📤 Uploading to Cloudinary:");
+    console.log("  Cloud Name:", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "NOT SET");
+    console.log("  Upload Preset:", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "NOT SET");
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "");
+      formData.append("folder", "profile_pictures");
+
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+      if (!cloudName) {
+        throw new Error("Cloudinary cloud name is not configured");
+      }
+
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+      console.log("  Upload URL:", uploadUrl);
+
+      const response = await fetch(uploadUrl, {
+        method: "POST",
+        body: formData,
+      });
+
+      console.log("  Response status:", response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Cloudinary upload error:", errorData);
+        throw new Error(errorData.error?.message || `Upload failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("  Upload successful! Public ID:", data.public_id);
+      // Apply transformation for 400x400 crop with face gravity
+      const imageUrl = data.secure_url.replace('/upload/', '/upload/w_400,h_400,c_fill,g_face/');
+      console.log("  Transformed URL:", imageUrl);
+
+      // Delete old image if exists (non-blocking)
+      if (user?.image) {
+        try {
+          const deleteRes = await fetch("/api/profile/delete-image", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ imageUrl: user.image }),
+          });
+          if (!deleteRes.ok) {
+            const deleteError = await deleteRes.json().catch(() => ({}));
+            console.warn("Failed to delete old image:", deleteError);
+          }
+        } catch (deleteErr) {
+          console.warn("Error deleting old image:", deleteErr);
+        }
+      }
+
+      // Update profile picture
+      const res = await fetch("/api/profile/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: imageUrl }),
+      });
+
+      if (res.ok) {
+        setUser((prev) => (prev ? { ...prev, image: imageUrl } : null));
+        await update({ user: { image: imageUrl } });
+        router.refresh();
+
+        toast.success("Profile picture updated successfully! 🎉", {
+          duration: 3000,
+          icon: "✨",
+        });
+
+        // Reset state
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        setShowImagePreview(false);
+      } else {
+        const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Update profile error:", errorData);
+        toast.error(`Failed: ${errorData.error || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Error uploading image. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleCancelUpload = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setShowImagePreview(false);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
   };
 
   const handleDeleteImage = async () => {
@@ -210,9 +263,13 @@ export default function ProfilePage() {
         setUser((prev) => (prev ? { ...prev, image: null } : null));
         await update();
         toast.success("Picture deleted! 🗑️");
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        console.error("Delete image error:", errorData);
+        toast.error(errorData.error || "Delete failed");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Delete image error:", err);
       toast.error("Delete failed");
     }
   };
@@ -561,7 +618,7 @@ export default function ProfilePage() {
               <button
                 onClick={() => {
                   setShowPhotoModal(false);
-                  widgetRef.current?.open();
+                  setShowImagePreview(true);
                 }}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
               >
@@ -583,6 +640,95 @@ export default function ProfilePage() {
 
               <button
                 onClick={() => setShowPhotoModal(false)}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition text-xs sm:text-sm"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Preview Modal */}
+      {showImagePreview && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={handleCancelUpload}
+        >
+          <div
+            className="bg-white rounded-xl sm:rounded-2xl max-w-md w-full p-4 sm:p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">
+              Upload Profile Picture
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
+              Select an image to use as your profile picture. It will be automatically cropped to fit.
+            </p>
+
+            {/* File Input */}
+            <div className="mb-4">
+              <label className="block">
+                <span className="sr-only">Choose profile picture</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-lg file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-orange-50 file:text-orange-700
+                    hover:file:bg-orange-100
+                    file:cursor-pointer
+                    file:transition-colors"
+                />
+              </label>
+              <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
+                JPG, PNG, WebP only. Max 5MB.
+              </p>
+            </div>
+
+            {/* Preview */}
+            {previewUrl && (
+              <div className="mb-4">
+                <p className="text-xs sm:text-sm text-gray-600 mb-2">Preview:</p>
+                <div className="relative w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-white shadow-lg">
+                  <img
+                    src={previewUrl}
+                    alt="Profile preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="space-y-2 sm:space-y-3">
+              <button
+                onClick={handleUpload}
+                disabled={!selectedFile || isUploading}
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg font-medium transition flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm ${
+                  !selectedFile || isUploading
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-orange-500 hover:bg-orange-600 text-white"
+                }`}
+              >
+                {isUploading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Camera size={14} className="sm:w-4 sm:h-4" />
+                    Upload Photo
+                  </>
+                )}
+              </button>
+              
+              <button
+                onClick={handleCancelUpload}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition text-xs sm:text-sm"
               >
                 Cancel
@@ -709,6 +855,7 @@ function RecommendationCard({
           src={image}
           alt={title}
           fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover group-hover:scale-110 transition duration-300"
         />
         <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-white/90 backdrop-blur-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full flex items-center gap-0.5 sm:gap-1">

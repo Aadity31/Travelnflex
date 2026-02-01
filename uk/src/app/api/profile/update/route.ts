@@ -29,6 +29,7 @@ export async function PUT(request: NextRequest) {
 
   try {
     const userId = await getUserId();
+    console.log("Update profile - UserId:", userId);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
