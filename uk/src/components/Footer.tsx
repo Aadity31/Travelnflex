@@ -32,18 +32,15 @@ export default function FooterWithCredits() {
           <div className="sm:col-span-2 lg:col-span-1">
             {/* Logo & Brand Name */}
             <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 mb-3 sm:mb-4">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-error)] rounded-lg flex items-center justify-center shadow-[var(--shadow-lg)]">
-                <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z" />
-                </svg>
-              </div>
-              <span className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-[var(--background)]">
-                TravelnFlex
-              </span>
+                     <div className="mb-2">
+  <div className="h-12 flex items-center">
+    <img
+      src="/logo.svg"
+      alt="TravelnFlex"
+      className="h-full max-w-[160px] object-contain block"
+    />
+  </div>
+</div>
             </div>
 
             {/* Description */}

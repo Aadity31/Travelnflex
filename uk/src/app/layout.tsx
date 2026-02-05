@@ -26,21 +26,29 @@ const geistMono = Geist_Mono({
 
 /* ---------------- SEO Metadata ---------------- */
 export const metadata: Metadata = {
-  metadataBase: new URL("https://devbhoomi-darshan.apsgroupco.com"),
+  metadataBase: new URL("https://travelnflex.apsgroupco.com"),
 
   title: {
-    default: "Devbhoomi Darshan",
-    template: "%s | Devbhoomi Darshan",
+    default: "TravelnFlex",
+    template: "%s | TravelnFlex",
   },
 
   description:
-    "Devbhoomi Darshan helps you explore Uttarakhand through curated spiritual journeys, adventure tours, retreats, and authentic local experiences.",
+    "TravelnFlex helps you explore Uttarakhand through curated spiritual journeys, adventure tours, retreats, and authentic local experiences.",
 
-  applicationName: "Devbhoomi Darshan",
+  applicationName: "TravelnFlex",
 
   keywords: [
     "Uttarakhand tourism",
     "Devbhoomi travel",
+    "spiritual tours Uttarakhand",
+    "adventure trips Uttarakhand",
+    "Uttarakhand travel packages",  
+    "tourism in Uttarakhand",
+    "Uttarakhand pilgrimage tours",
+    "Himalayan adventures",
+    "travelnflex",
+    "travelnflex travel",
     "Char Dham Yatra",
     "Rishikesh tours",
     "spiritual tourism India",
@@ -70,32 +78,32 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://devbhoomi-darshan.apsgroupco.com",
-    siteName: "Devbhoomi Darshan",
-    title: "Devbhoomi Darshan – Sacred journeys made simple",
+    url: "https://travelnflex.apsgroupco.com",
+    siteName: "TravelnFlex",
+    title: "TravelnFlex – Sacred journeys made simple",
     description:
-      "Plan spiritual tours, adventure trips, and authentic experiences across Uttarakhand with Devbhoomi Darshan.",
+      "Plan spiritual tours, adventure trips, and authentic experiences across Uttarakhand with TravelnFlex.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/icon.svg",
         width: 1200,
         height: 630,
-        alt: "Devbhoomi Darshan – Uttarakhand Travel Platform",
+        alt: "TravelnFlex – Uttarakhand Travel Platform",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Devbhoomi Darshan",
+    title: "TravelnFlex",
     description:
       "Sacred journeys made simple. Explore Uttarakhand with curated tours and experiences.",
-    images: ["/icon.png"],
+    images: ["/icon.svg"],
   },
 
   icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
+    icon: "/icon.svg",
+    apple: "/icon.svg",
   },
 };
 
@@ -124,11 +132,11 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "TravelAgency",
-              name: "Devbhoomi Darshan",
-              url: "https://devbhoomi-darshan.apsgroupco.com",
-              logo: "https://devbhoomi-darshan.apsgroupco.com/icon.png",
+              name: "TravelnFlex",
+              url: "https://TravelnFlex.apsgroupco.com",
+              logo: "https://TravelnFlex.apsgroupco.com/icon.svg",
               description:
-                "Devbhoomi Darshan offers spiritual, adventure, and cultural travel experiences across Uttarakhand.",
+                "TravelnFlex offers spiritual, adventure, and cultural travel experiences across Uttarakhand.",
               address: {
                 "@type": "PostalAddress",
                 addressCountry: "IN",

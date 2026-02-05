@@ -461,8 +461,16 @@ export default function ActivitiesClient({
                                 </span>
                               )}
                             </div>
-                            <div className="text-[10px] text-gray-500 leading-none">
-                              Per Night
+                            <div className="flex items-center gap-1">
+                              <span className="text-[10px] text-gray-500 leading-none">
+                                Per Person
+                              </span>
+                              <span className="text-[10px] text-gray-300 leading-none">
+                                •
+                              </span>
+                              <span className="text-[10px] text-gray-500 leading-none">
+                                ({activity.reviewCount} Reviews)
+                              </span>
                             </div>
                           </div>
 
