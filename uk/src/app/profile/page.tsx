@@ -434,7 +434,7 @@ export default function ProfilePage() {
               <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 <StatBox icon={Calendar} label="Bookings" value="12" />
                 <StatBox icon={Heart} label="Favorites" value="24" />
-                <StatBox icon={BookMarked} label="Saved" value="18" />
+                <StatBox icon={BookMarked} label="Saved" value="18" href="/profile/wishlist" />
                 <StatBox icon={Award} label="Reviews" value="8" />
               </div>
             </div>
@@ -482,13 +482,13 @@ export default function ProfilePage() {
                 icon={Heart}
                 title="Favorites"
                 description="Your saved items"
-                href="/profile/favorites"
+                href="/profile/wishlist"
               />
               <QuickLink
                 icon={BookMarked}
                 title="Saved Places"
                 description="Places to visit"
-                href="/profile/saved"
+                href="/profile/wishlist"
               />
               <QuickLink
                 icon={Settings}
@@ -672,12 +672,14 @@ function StatBox({
   icon: Icon,
   label,
   value,
+  href,
 }: {
   icon: LucideIcon;
   label: string;
   value: string;
+  href?: string;
 }) {
-  return (
+  const content = (
     <div className="text-center p-2 sm:p-3 bg-gray-50 rounded-lg">
       <div className="text-lg sm:text-xl font-bold text-gray-900">{value}</div>
       <div className="text-[10px] sm:text-xs text-gray-500 flex items-center justify-center gap-1">
@@ -686,6 +688,19 @@ function StatBox({
       </div>
     </div>
   );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        className="block hover:opacity-80 transition-opacity"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return content;
 }
 
 function QuickLink({

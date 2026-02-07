@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   Shield,
   CheckCircle2,
+  Heart,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -298,6 +299,23 @@ export default function EditProfilePage() {
                 </li>
               </ul>
             </div>
+
+            {/* Saved Places Button */}
+            <a
+              href="/profile/wishlist"
+              className="flex items-center gap-3 p-4 bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 shadow-lg hover:shadow-xl hover:border-orange-500/50 transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform">
+                <Heart className="text-white" size={20} />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-gray-900">Saved Places</h3>
+                <p className="text-xs text-gray-500">Your wishlist</p>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-orange-500 transition-colors">
+                <ArrowLeft className="w-4 h-4 text-gray-400 group-hover:text-white rotate-180" />
+              </div>
+            </a>
           </div>
 
           {/* Main Form Area */}
@@ -371,7 +389,7 @@ export default function EditProfilePage() {
                           size={10}
                           className="sm:w-3 sm:h-3 text-green-600"
                         />
-                        We&apos;ll use this for booking confirmations
+                        We'll use this for booking confirmations
                       </p>
                     </div>
 
@@ -400,7 +418,7 @@ export default function EditProfilePage() {
                           name="gender"
                           onChange={handleInputChange}
                           required
-                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-gray-50 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:bg-white outline-none transition-all text-gray-900 font-medium cursor-pointer"
+                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-gray-50 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all text-gray-900 font-medium cursor-pointer"
                         >
                           <option value="">Select Gender</option>
                           <option value="male">👨 Male</option>
@@ -529,6 +547,23 @@ export default function EditProfilePage() {
                 </li>
               </ul>
             </div>
+
+            {/* Mobile Saved Places Button */}
+            <a
+              href="/profile/wishlist"
+              className="lg:hidden mt-4 flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl hover:border-orange-500/50 transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform">
+                <Heart className="text-white" size={20} />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-gray-900">Saved Places</h3>
+                <p className="text-xs text-gray-500">Your wishlist</p>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-orange-500 transition-colors">
+                <ArrowLeft className="w-4 h-4 text-gray-400 group-hover:text-white rotate-180" />
+              </div>
+            </a>
           </div>
         </div>
       </div>

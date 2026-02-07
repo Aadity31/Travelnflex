@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
-
+import { useRouter } from "next/navigation";
 import {
   PACKAGE_CONFIG,
   getRoomLimits,
@@ -23,6 +23,7 @@ import { ReviewsSection } from "@/components/booking/ReviewsSection";
 import { RecommendedActivities } from "@/components/booking/RecommendedActivities";
 import { dummyRecommendedItems } from "@/lib/bookingSection/recommendedData";
 import { BookingDetails } from "@/components/booking/BookingDetails";
+import { ArrowLeft } from "lucide-react";
 
 interface Agency {
   name: string;
@@ -66,6 +67,7 @@ export default function BookingClient({
   reviews,
   type,
 }: BookingClientProps) {
+  const router = useRouter();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [booking, setBooking] = useState<BookingState>({
     packageType: "solo",
@@ -231,15 +233,23 @@ export default function BookingClient({
 
 
 
-
   /* ============ RENDER ============ */
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white ">
-      <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <main className="min-h-screen bg-gray-50">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-8">
+        {/* Back Button */}
+        <button
+          onClick={() => router.back()}
+          className="group inline-flex items-center gap-2 text-gray-600 hover:text-orange-600 transition-all mb-6"
+        >
+          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          <span className="font-medium">Back</span>
+        </button>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* ============ LEFT COLUMN ============ */}
-          <div className="lg:col-span-8 space-y-6 mt-4">
+          <div className="lg:col-span-8 space-y-8">
             {/* IMAGE GALLERY */}
             <BookingGallery
               images={displayData.images}
@@ -301,8 +311,8 @@ export default function BookingClient({
           </div>
 
           {/* ============ DESKTOP BOOKING CARD (STICKY) ============ */}
-          <div className="hidden lg:block lg:col-span-4 mt-4">
-            <div className="top-6">
+          <div className="hidden lg:block lg:col-span-4">
+            <div className="sticky top-8">
               <BookingCard
                 booking={booking}
                 destination={data.slug}
