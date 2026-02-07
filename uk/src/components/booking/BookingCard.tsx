@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Shield,
   CreditCard,
-  Clock,
   Headphones,
   CheckCircle2,
   Minus,

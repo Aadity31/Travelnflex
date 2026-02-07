@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function FooterWithCredits() {
   const socialLinks = [
@@ -34,11 +35,14 @@ export default function FooterWithCredits() {
             <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 mb-3 sm:mb-4">
                      <div className="mb-2">
   <div className="h-12 flex items-center">
-    <img
-      src="/logo.svg"
-      alt="TravelnFlex"
-      className="h-full max-w-[160px] object-contain block"
-    />
+    <Image
+              src="/logo.svg"
+              alt="TravelnFlex"
+              className="h-full max-w-[160px] object-contain block"
+              width={160}
+              height={48}
+              priority
+            />
   </div>
 </div>
             </div>

@@ -1,9 +1,5 @@
 import pool from "../db";
 
-interface QueryRow {
-  [key: string]: unknown;
-}
-
 export interface TableColumn {
   column_name: string;
   data_type: string;

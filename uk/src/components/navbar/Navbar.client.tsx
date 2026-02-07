@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import UserAvatar from "@/components/UserAvatar";
 import Link from "next/link";
+import Image from "next/image";
 import NotificationBellClient from "../NotificationBell/NotificationBell.client";
 import {
   Menu,
@@ -155,11 +156,14 @@ export default function Navbar({
               
       
                <div className="xs:block">
-               <img
-  src="/logo.svg"
-  alt="TravelnFlex Logo"
-  className="w-40 h-40 object-contain"
-/>
+               <Image
+                src="/logo.svg"
+                alt="TravelnFlex Logo"
+                className="w-40 h-40 object-contain"
+                width={160}
+                height={160}
+                priority
+              />
 
               </div>
             </Link>
