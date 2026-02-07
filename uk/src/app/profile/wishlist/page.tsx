@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { Heart, Search, ArrowUpDown, ArrowRight, Star, MapPin, Clock, ArrowLeft } from "lucide-react";
-import UserAvatar from "@/components/UserAvatar";
 import { useRouter } from "next/navigation";
 
 export default function WishlistPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
-  const { data: session } = useSession();
+  const { data: _session } = useSession();
   const router = useRouter();
 
   // Mock wishlist data
@@ -226,7 +226,7 @@ export default function WishlistPage() {
               className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col h-full"
             >
               <div className="h-48 relative overflow-hidden">
-                <img
+                <Image
                   alt={item.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   src={item.image}
@@ -335,10 +335,12 @@ export default function WishlistPage() {
             {recommendations.map((item) => (
               <div key={item.id} className="group cursor-pointer">
                 <div className="relative rounded-xl overflow-hidden h-40 mb-3 bg-gray-200">
-                  <img
+                  <Image
                     alt={item.name}
                     className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
                     src={item.image}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                   />
                   <button className="absolute top-2 right-2 bg-white/30 backdrop-blur-sm hover:bg-white text-white hover:text-red-500 p-1.5 rounded-full transition-colors">
                     <Heart className="w-4 h-4" />
