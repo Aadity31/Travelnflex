@@ -3,7 +3,6 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
   PACKAGE_CONFIG,
   getRoomLimits,
@@ -23,7 +22,6 @@ import { ReviewsSection } from "@/components/booking/ReviewsSection";
 import { RecommendedActivities } from "@/components/booking/RecommendedActivities";
 import { dummyRecommendedItems } from "@/lib/bookingSection/recommendedData";
 import { BookingDetails } from "@/components/booking/BookingDetails";
-import { ArrowLeft } from "lucide-react";
 
 interface Agency {
   name: string;
@@ -52,6 +50,8 @@ interface UnifiedData {
   priceMax: number;
   currency?: string;
   agency?: Agency;
+  hotelImages?: string[];
+  hotelImagePublicIds?: string[];
 }
 
 interface BookingClientProps {
@@ -67,7 +67,6 @@ export default function BookingClient({
   reviews,
   type,
 }: BookingClientProps) {
-  const router = useRouter();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [booking, setBooking] = useState<BookingState>({
     packageType: "solo",
@@ -218,6 +217,10 @@ export default function BookingClient({
       data.images && data.images.length > 0
         ? data.images
         : ["/placeholder-image.jpg"],
+    hotelImages:
+      data.hotelImages && data.hotelImages.length > 0
+        ? data.hotelImages
+        : [],
     highlights:
       type === "activity"
         ? data.includes || data.highlights || []
@@ -238,21 +241,13 @@ export default function BookingClient({
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-8">
-        {/* Back Button */}
-        <button
-          onClick={() => router.back()}
-          className="group inline-flex items-center gap-2 text-gray-600 hover:text-orange-600 transition-all mb-6"
-        >
-          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-medium">Back</span>
-        </button>
-
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* ============ LEFT COLUMN ============ */}
           <div className="lg:col-span-8 space-y-8">
             {/* IMAGE GALLERY */}
             <BookingGallery
               images={displayData.images}
+              hotelImages={displayData.hotelImages}
               name={data.name}
               type={type}
               activityType={data.type}

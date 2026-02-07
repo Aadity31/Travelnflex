@@ -22,6 +22,8 @@ export async function getDestinationBySlug(slug: string) {
       d.badge_text,
       d.badge_type,
       d.created_at,
+      d.hotel_images,
+      d.hotel_image_public_ids,
 
       p.price_per_person,
       p.currency,
@@ -57,6 +59,8 @@ export async function getDestinationBySlug(slug: string) {
     reviewCount: row.review_count,
     
     images: [row.cover_image, ...(row.gallery_images || [])],
+    hotelImages: row.hotel_images || [],
+    hotelImagePublicIds: row.hotel_image_public_ids || [],
     
     highlights: row.highlights || [],
     popularActivities: row.popular_activities || [],

@@ -65,6 +65,8 @@ export async function getActivityBySlug(slug: string) {
     maxGroupSize: row.max_group_size,
     
     images: [row.cover_image, ...(row.gallery_images || [])],
+    hotelImages: [],
+    hotelImagePublicIds: [],
     
     highlights: row.highlights || [],
     includes: row.includes || [],
