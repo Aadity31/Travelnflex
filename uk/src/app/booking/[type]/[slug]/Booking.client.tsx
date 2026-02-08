@@ -390,7 +390,8 @@ export default function BookingClient({
       const year = currentMonth.getFullYear();
       const month = currentMonth.getMonth();
       const date = new Date(year, month, day);
-      const dateStr = date.toISOString().split("T")[0];
+      // Fix timezone issue by using toLocaleDateString instead of toISOString
+      const dateStr = date.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -404,7 +405,8 @@ export default function BookingClient({
       const year = currentMonth.getFullYear();
       const month = currentMonth.getMonth();
       const date = new Date(year, month, day);
-      return date.toISOString().split("T")[0];
+      // Fix timezone issue by using toLocaleDateString instead of toISOString
+      return date.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
     },
     [currentMonth]
   );
