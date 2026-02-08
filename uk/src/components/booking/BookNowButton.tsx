@@ -49,7 +49,6 @@ export default function BookNowButton({
   const pathname = usePathname();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [showDateWarning, setShowDateWarning] = useState(false);
@@ -163,10 +162,7 @@ export default function BookNowButton({
         throw new Error("Booking initialization failed");
       }
 
-      setSuccess(true);
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      router.push(`/booking/${encodeURIComponent(intent.destination)}/confirm?bookingId=${encodeURIComponent(data.bookingId)}`);
+      router.push(`/booking/${type || 'destination'}/${encodeURIComponent(intent.destination)}/confirm?bookingId=${encodeURIComponent(data.bookingId)}`);
     } catch (err) {
       console.error("Booking error:", err);
       if (err instanceof Error) {
@@ -181,8 +177,8 @@ export default function BookNowButton({
 
   // Handle initial booking click
   async function handleBooking() {
-    if (loading || success || !RateLimiter.canMakeRequest()) {
-      if (!loading && !success) {
+    if (loading || !RateLimiter.canMakeRequest()) {
+      if (!loading) {
         setError("Please wait before trying again");
       }
       return;
@@ -225,44 +221,10 @@ export default function BookNowButton({
         return;
       }
 
-      // Create booking
-      const res = await fetch("/api/bookings/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Requested-With": "XMLHttpRequest",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          destination: sanitizeInput(destination),
-          startDate: sanitizeInput(startDate),
-          endDate: sanitizeInput(endDate),
-          persons: Number(persons),
-          amount: Number(amount),
-          timestamp: Date.now(),
-        }),
-      });
-
-      if (res.status === 429) {
-        throw new Error("Too many requests. Please try again later.");
-      }
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || "Booking failed. Please try again.");
-      }
-
-      const data = await res.json();
-
-      if (!data?.bookingId || typeof data.bookingId !== "string") {
-        console.error("Invalid API response:", data);
-        throw new Error("Booking initialization failed");
-      }
-
-      setSuccess(true);
+      // Navigate directly to confirm page without creating booking
+      // Navigate directly to confirm page
       await new Promise((resolve) => setTimeout(resolve, 500));
-
-      router.push(`/booking/${encodeURIComponent(destination)}/confirm?bookingId=${encodeURIComponent(data.bookingId)}`);
+      router.push(`/booking/${type || 'destination'}/${encodeURIComponent(destination)}/confirm`);
 
     } catch (err) {
       console.error("Booking error:", err);
@@ -281,32 +243,24 @@ export default function BookNowButton({
       {/* Book Now Button */}
       <button
         onClick={handleBooking}
-        disabled={loading || success || disabled}
+        disabled={loading || disabled}
         className={`
           w-full py-4 px-6 rounded-xl font-bold text-lg
           flex items-center justify-center gap-2
           transition-all duration-300
           ${
-            success
-              ? "bg-green-500 text-white"
-              : disabled
-              ? "bg-gradient-to-r from-gray-400 to-gray-500 text-white cursor-pointer"
+            loading
+              ? "bg-gray-400 text-white cursor-wait"
               : "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40"
           }
-          ${loading ? "opacity-70" : ""}
-          ${!success && !loading ? "hover:scale-[1.02] active:scale-[0.98]" : ""}
+          ${!loading ? "hover:scale-[1.02] active:scale-[0.98]" : ""}
         `}
-        aria-label={success ? "Booking confirmed" : `Book now for ₹${amount.toLocaleString("en-IN")}`}
+        aria-label={`Book now for ₹${amount.toLocaleString("en-IN")}`}
       >
         {loading ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
             Processing...
-          </>
-        ) : success ? (
-          <>
-            <CheckCircle2 className="w-5 h-5" />
-            Booking Confirmed!
           </>
         ) : !authChecked ? (
           <>

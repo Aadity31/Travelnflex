@@ -52,19 +52,11 @@ export default async function BookingConfirmPage({
   const rooms = parseInt(searchParams.rooms || "0");
   const packageType = searchParams.packageType || "standard";
 
-  // Validate required fields
-  if (!selectedDate || adults === 0) {
-    notFound();
-  }
-
-  // Parse pricing data
-  const peopleTotal = parseInt(searchParams.peopleTotal || "0");
-  const roomCost = parseInt(searchParams.roomCost || "0");
-  const discount = parseInt(searchParams.discount || "0");
-  const total = parseInt(searchParams.total || "0");
+  // Allow access without search params for direct navigation
+  const hasBookingParams = selectedDate && adults > 0;
 
   // Construct booking data object
-  const bookingData = {
+  const bookingData = hasBookingParams ? {
     name: data.name,
     image:
       data.images && data.images.length > 0
@@ -77,10 +69,29 @@ export default async function BookingConfirmPage({
     rooms,
     packageType,
     pricing: {
-      peopleTotal,
-      roomCost,
-      discount,
-      total,
+      peopleTotal: parseInt(searchParams.peopleTotal || "0"),
+      roomCost: parseInt(searchParams.roomCost || "0"),
+      discount: parseInt(searchParams.discount || "0"),
+      total: parseInt(searchParams.total || "0"),
+    },
+  } : {
+    // Default values for direct navigation
+    name: data.name,
+    image:
+      data.images && data.images.length > 0
+        ? data.images[0]
+        : "/placeholder-image.jpg",
+    location: data.location,
+    selectedDate: selectedDate || new Date().toISOString().split('T')[0],
+    adults: 1,
+    children: 0,
+    rooms: 1,
+    packageType: "solo",
+    pricing: {
+      peopleTotal: data.priceMin || 0,
+      roomCost: 0,
+      discount: 0,
+      total: data.priceMin || 0,
     },
   };
 

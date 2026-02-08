@@ -112,24 +112,48 @@ export default function PaymentSummary({
           </h4>
           
           <div className="space-y-2.5 mb-3">
+            {/* Adult Price */}
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Base Package Price</span>
+              <span className="text-sm text-gray-600">Adult X {bookingData.adults}</span>
               <span className="text-sm font-semibold text-gray-900">
                 ₹{basePrice.toLocaleString("en-IN")}
               </span>
             </div>
+            
+            {/* Child Price */}
+            {bookingData.children > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Child X {bookingData.children}</span>
+                <span className="text-sm font-semibold text-gray-900">
+                  ₹{basePrice.toLocaleString("en-IN")}
+                </span>
+              </div>
+            )}
+            
+            {/* Hotel Price */}
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Taxes & GST (5%)</span>
+              <span className="text-sm text-gray-600">Hotel X {bookingData.rooms}</span>
               <span className="text-sm font-semibold text-gray-900">
-                ₹{gst.toLocaleString("en-IN")}
+                ₹{basePrice.toLocaleString("en-IN")}
               </span>
             </div>
-            <div className="flex justify-between items-center pb-3 border-b-2 border-dashed border-gray-300">
-              <span className="text-sm text-gray-600">Service Fee</span>
-              <span className="text-sm font-semibold text-gray-900">
-                ₹{serviceFee.toLocaleString("en-IN")}
-              </span>
-            </div>
+            
+            {gst > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Taxes & GST (5%)</span>
+                <span className="text-sm font-semibold text-gray-900">
+                  ₹{gst.toLocaleString("en-IN")}
+                </span>
+              </div>
+            )}
+            {serviceFee > 0 && (
+              <div className="flex justify-between items-center pb-3 border-b-2 border-dashed border-gray-300">
+                <span className="text-sm text-gray-600">Service Fee</span>
+                <span className="text-sm font-semibold text-gray-900">
+                  ₹{serviceFee.toLocaleString("en-IN")}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-between items-center bg-white rounded-lg p-3 border-2 border-green-200">
