@@ -8,7 +8,6 @@ import {
   PACKAGE_CONFIG,
   getRoomLimits,
   calculatePricing,
-  getAvailableDates,
   BookingState,
   PackageType,
 } from "@/lib/bookingSection/booking";
@@ -199,14 +198,41 @@ export default function BookingClient({
     availableSlots: 0,
   });
   const [isClient, setIsClient] = useState(false);
+  const [availableDates, setAvailableDates] = useState<Record<string, number>>({});
+  const [loadingDates, setLoadingDates] = useState(true);
 
   // Prevent hydration mismatch
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Memoize available dates first (before other hooks that depend on it)
-  const availableDates = useMemo(() => getAvailableDates(), []);
+  // Fetch available dates from API
+  useEffect(() => {
+    if (!isClient || !data?.id) return;
+
+    const fetchAvailableDates = async () => {
+      try {
+        setLoadingDates(true);
+        const response = await fetch(
+          `/api/destinations/available-dates?destinationId=${data.id}`
+        );
+        const result = await response.json();
+
+        if (result.success && result.dates) {
+          setAvailableDates(result.dates);
+        } else {
+          // Fallback to mock dates if no data in DB
+          console.warn('No available dates in DB, using fallback');
+        }
+      } catch (error) {
+        console.error('Failed to fetch available dates:', error);
+      } finally {
+        setLoadingDates(false);
+      }
+    };
+
+    fetchAvailableDates();
+  }, [isClient, data?.id]);
 
   /* ============ CORRECTED ROOM LOGIC ============ */
 
