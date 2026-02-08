@@ -144,9 +144,9 @@ const CTAButton: React.FC<CTAButtonProps> = ({
 
   const variantStyles = {
     primary:
-      'bg-[var(--color-primary)] hover:bg-white hover:text-[var(--color-primary)] text-white',
+      'bg-[var(--color-primary-dark)] hover:bg-[var(--color-primary)] text-white',
     secondary:
-      'bg-white text-[var(--color-primary)] hover:bg-[var(--background-secondary)] transform hover:-translate-y-1 shadow-[var(--shadow-xl)]',
+      'bg-white text-[var(--color-primary-dark)] hover:bg-[var(--color-background-secondary)] transform hover:-translate-y-1 shadow-[var(--shadow-xl)]',
     outline:
       'bg-[var(--color-primary-dark)]/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/10',
   };

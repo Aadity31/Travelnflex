@@ -48,13 +48,13 @@ const Badge: React.FC<BadgeProps> = ({ text, type }) => {
   const getBadgeStyles = () => {
     switch (type) {
       case "popular":
-        return "bg-orange-500 text-white";
+        return "bg-[var(--color-primary)] text-white";
       case "trending":
         return "bg-purple-500 text-white";
       case "new":
-        return "bg-green-500 text-white";
+        return "bg-[var(--color-success)] text-white";
       default:
-        return "bg-gray-500 text-white";
+        return "bg-[var(--color-neutral)] text-white";
     }
   };
 
@@ -165,7 +165,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
           </div>
 
           {/* Title - Readable sizes */}
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 group-hover:text-orange-600 transition-colors duration-300 leading-tight">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 group-hover:text-[var(--color-primary)] transition-colors duration-300 leading-tight">
             {destination.name}
           </h3>
 
@@ -183,7 +183,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
               {destination.popularActivities.slice(0, 3).map((activity, index) => (
                 <span
                   key={index}
-                  className="bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full text-xs font-medium border border-orange-200"
+                  className="bg-[var(--color-primary-lightest)] text-[var(--color-primary-dark)] px-2.5 py-1 rounded-full text-xs font-medium border border-[var(--color-primary-light)]"
                 >
                   {activity}
                 </span>
@@ -211,7 +211,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
           </div>
 
           {/* CTA Button */}
-          <div className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-5 rounded-lg font-semibold text-center transition-all duration-300 hover:shadow-lg group-hover:bg-orange-700 flex items-center justify-center gap-2 text-base">
+          <div className="w-full bg-[var(--color-primary-dark)] hover:bg-[var(--color-primary)] text-white py-3 px-5 rounded-lg font-semibold text-center transition-all duration-300 hover:shadow-lg group-hover:bg-[var(--color-primary)] flex items-center justify-center gap-2 text-base">
             Explore Destination
             <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </div>
@@ -243,12 +243,12 @@ const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header - Readable sizes */}
         <div className="text-center mb-12">
-          <div className="inline-block bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+          <div className="inline-block bg-[var(--color-primary-lightest)] text-[var(--color-primary)] px-4 py-2 rounded-full text-sm font-semibold mb-4">
             Sacred Destinations
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 px-4">
             Discover Your Perfect
-            <span className="text-orange-600 block mt-2">
+            <span className="text-[var(--color-primary-dark)] block mt-2">
               Spiritual Journey
             </span>
           </h2>
@@ -277,7 +277,7 @@ const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
         <div className="text-center px-4">
           <Link
             href="/destinations"
-            className="inline-flex items-center gap-3 bg-white text-orange-600 px-8 py-4 rounded-xl font-semibold border-2 border-orange-600 hover:bg-orange-600 hover:text-white transition-all duration-300 hover:shadow-lg text-base"
+            className="inline-flex items-center gap-3 bg-white text-[var(--color-primary-dark)] px-8 py-4 rounded-xl font-semibold border-2 border-[var(--color-primary-dark)] hover:bg-[var(--color-primary-dark)] hover:text-white transition-all duration-300 hover:shadow-lg text-base"
           >
             View All Destinations
             <ArrowRightIcon className="w-5 h-5" />

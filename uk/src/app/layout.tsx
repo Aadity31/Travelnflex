@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
@@ -13,15 +13,19 @@ import { Providers } from "./providers";
 import { initializeDataSource } from "@/lib/data/blog";
 initializeDataSource({ type: "dummy" });
 
-/* ---------------- Fonts ---------------- */
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/* ---------------- Fonts - Apple/Google Style ---------------- */
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 /* ---------------- SEO Metadata ---------------- */
@@ -117,7 +121,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="custom-scrollbar">
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+        className={`${inter.variable} ${jetbrainsMono.variable} antialiased font-sans`}
       >
         {/* Cloudinary Upload Widget */}
         <Script
