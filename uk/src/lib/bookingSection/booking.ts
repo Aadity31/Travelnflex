@@ -23,6 +23,8 @@ export interface PricingResult {
   subtotal: number;
   discount: number;
   total: number;
+  originalPrice?: number;
+  discountPercentage?: number;
 }
 
 export const PACKAGE_CONFIG = {
@@ -100,9 +102,9 @@ export function getRoomLimits(
 
 export function calculatePricing(
   booking: BookingState,
-  basePrice: number
+  basePrice: number,
+  discountRate: number = 0 // Use database discount rate instead of hardcoded
 ): PricingResult {
-  const discountRate = PACKAGE_CONFIG[booking.packageType].discount;
   const pricePerPersonRaw = basePrice * (1 - discountRate);
 
   const totalPeople = booking.adults + booking.children * 0.5;

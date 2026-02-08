@@ -27,9 +27,23 @@ export async function getDestinationBySlug(slug: string) {
 
       p.price_per_person,
       p.currency,
+      p.solo_traveler_price,
+      p.solo_traveler_includes,
+      p.family_package_price,
+      p.family_package_includes,
+      p.join_group_price,
+      p.join_group_includes,
+      p.own_group_price,
+      p.own_group_includes,
 
-      disc.percentage AS discount_percentage,
-      disc.valid_until AS discount_valid_until
+      disc.solo_traveler_discount,
+      disc.solo_traveler_valid_until,
+      disc.family_package_discount,
+      disc.family_package_valid_until,
+      disc.join_group_discount,
+      disc.join_group_valid_until,
+      disc.own_group_discount,
+      disc.own_group_valid_until
 
     FROM destinations d
     JOIN destination_prices p ON p.destination_id = d.id
@@ -69,22 +83,37 @@ export async function getDestinationBySlug(slug: string) {
     badgeText: row.badge_text,
     badgeType: row.badge_type,
     
-    priceMin: row.price_per_person,
-    priceMax: row.price_per_person,
+    // Use solo_traveler_price as default price, fallback to price_per_person
+    priceMin: row.solo_traveler_price || row.price_per_person,
+    priceMax: row.solo_traveler_price || row.price_per_person,
     currency: row.currency,
     
-    discount: row.discount_percentage
-      ? {
-          percentage: row.discount_percentage,
-          validUntil: row.discount_valid_until,
-        }
-      : undefined,
+    // Package-specific pricing
+    soloTravelerPrice: row.solo_traveler_price || row.price_per_person,
+    familyPackagePrice: row.family_package_price,
+    joinGroupPrice: row.join_group_price,
+    ownGroupPrice: row.own_group_price,
     
-    // ✅ DUMMY AGENCY DATA
-    agency: {
-      name: "Sacred Journeys India",
-      logo: "/agency-logo.png",
-      description: "Professional tour agency with years of experience in organizing adventure and spiritual tours across India."
+    // Package-specific includes
+    soloTravelerIncludes: row.solo_traveler_includes ? row.solo_traveler_includes.split('\n').filter(Boolean) : [],
+    familyPackageIncludes: row.family_package_includes ? row.family_package_includes.split('\n').filter(Boolean) : [],
+    joinGroupIncludes: row.join_group_includes ? row.join_group_includes.split('\n').filter(Boolean) : [],
+    ownGroupIncludes: row.own_group_includes ? row.own_group_includes.split('\n').filter(Boolean) : [],
+    
+    // Package-specific discounts
+    discount: {
+      soloTraveler: row.solo_traveler_discount
+        ? { percentage: row.solo_traveler_discount, validUntil: row.solo_traveler_valid_until }
+        : undefined,
+      familyPackage: row.family_package_discount
+        ? { percentage: row.family_package_discount, validUntil: row.family_package_valid_until }
+        : undefined,
+      joinGroup: row.join_group_discount
+        ? { percentage: row.join_group_discount, validUntil: row.join_group_valid_until }
+        : undefined,
+      ownGroup: row.own_group_discount
+        ? { percentage: row.own_group_discount, validUntil: row.own_group_valid_until }
+        : undefined,
     },
     
     createdAt: row.created_at,

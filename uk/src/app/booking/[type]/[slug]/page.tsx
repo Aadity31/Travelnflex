@@ -29,9 +29,9 @@ export default async function BookingPage({
   } else if (type === 'destination') {
     data = await getDestinationBySlug(slug);
     reviews = await getReviews({ slug, type: 'destination' });
-    // Fetch available dates for destination
+    // Fetch available dates for destination (solo traveler by default)
     if (data?.id) {
-      availableDates = await getAvailableDatesByDestination(data.id);
+      availableDates = await getAvailableDatesByDestination(data.id, 'solo_traveler');
     }
   } else {
     notFound();

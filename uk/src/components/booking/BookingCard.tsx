@@ -32,6 +32,7 @@ interface CalendarProps {
   goPrevMonth: () => void;
   goNextMonth: () => void;
   isLoadingDates?: boolean;
+  nextMonthWarning?: string | null;
 }
 
 interface BookingCardProps {
@@ -47,6 +48,53 @@ interface BookingCardProps {
   onRoomsChange: (delta: number) => void;
   onDateSelect: (dateStr: string) => void;
   onBookNow?: () => void; // Optional - handled internally by BookNowButton
+  // Database discounts - can be simple (for activities) or package-specific (for destinations)
+  discounts?: {
+    soloTraveler?: { percentage: number; validUntil: string };
+    familyPackage?: { percentage: number; validUntil: string };
+    joinGroup?: { percentage: number; validUntil: string };
+    ownGroup?: { percentage: number; validUntil: string };
+  } | { percentage: number; validUntil: string };
+}
+
+// Helper to get discount for a package type
+function getDiscountForPackage(
+  pkg: PackageType,
+  discounts?: BookingCardProps['discounts']
+): number {
+  if (!discounts) return 0;
+  
+  // Handle simple discount format (for activities)
+  if ('percentage' in discounts && !('soloTraveler' in discounts)) {
+    const { percentage, validUntil } = discounts as { percentage: number; validUntil: string };
+    if (!percentage) return 0;
+    
+    const validUntilDate = new Date(validUntil);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (validUntilDate < today) return 0;
+    
+    return percentage / 100;
+  }
+  
+  // Handle package-specific discount format (for destinations)
+  const key = pkg === 'solo' ? 'soloTraveler'
+    : pkg === 'family' ? 'familyPackage'
+    : pkg === 'group' ? 'joinGroup'
+    : 'ownGroup';
+  
+  const discount = (discounts as any)[key];
+  if (!discount || !discount.percentage) return 0;
+  
+  // Check if discount is still valid
+  const validUntilDate = new Date(discount.validUntil);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  if (validUntilDate < today) return 0;
+  
+  return discount.percentage / 100;
 }
 
 export function BookingCard({
@@ -61,6 +109,7 @@ export function BookingCard({
   onChildrenChange,
   onRoomsChange,
   onDateSelect,
+  discounts,
 }: BookingCardProps) {
   const {
     currentMonth,
@@ -70,6 +119,7 @@ export function BookingCard({
     getDateString,
     goPrevMonth,
     goNextMonth,
+    nextMonthWarning,
   } = calendar;
 
   return (
@@ -94,14 +144,14 @@ export function BookingCard({
           </div>
 
           {/* Discount */}
-          {pricing.discount > 0 && (
+          {(pricing.originalPrice && pricing.originalPrice > pricing.pricePerPerson) && (
             <div className="mt-3 flex items-center gap-2">
               <span className="text-sm line-through text-white/60">
-                ₹{basePrice}
+                ₹{pricing.originalPrice}
               </span>
 
               <span className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1 text-sm font-bold text-orange-600 shadow-sm">
-                Save ₹{pricing.discount}
+                Save {pricing.discountPercentage || Math.round((pricing.originalPrice - pricing.pricePerPerson) / pricing.originalPrice * 100)}%
               </span>
             </div>
           )}
@@ -153,12 +203,18 @@ export function BookingCard({
                     </p>
                   </div>
 
-                  {/* Discount badge */}
-                  {config.discount > 0 && (
-                    <div className="mt-3 inline-flex items-center gap-1 rounded-lg bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
-                      Save {config.discount * 100}%
-                    </div>
-                  )}
+                  {/* Discount badge - use database discounts */}
+                  {(() => {
+                    const dbDiscount = getDiscountForPackage(pkg, discounts);
+                    if (dbDiscount > 0) {
+                      return (
+                        <div className="mt-3 inline-flex items-center gap-1 rounded-lg bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
+                          Save {Math.round(dbDiscount * 100)}%
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                 </button>
               );
             })}
@@ -309,6 +365,13 @@ export function BookingCard({
               <ChevronRight className="w-5 h-5 text-gray-600" />
             </button>
           </div>
+
+          {/* Next Month Warning */}
+          {nextMonthWarning && (
+            <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800 text-center">
+              {nextMonthWarning}
+            </div>
+          )}
 
           {/* Calendar Grid */}
           <div className="bg-gray-50 rounded-xl p-4">

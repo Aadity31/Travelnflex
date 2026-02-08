@@ -122,6 +122,23 @@ interface UnifiedData {
   agency?: Agency;
   hotelImages?: string[];
   hotelImagePublicIds?: string[];
+  // Package-specific pricing (from destination_prices table)
+  soloTravelerPrice?: number;
+  familyPackagePrice?: number;
+  joinGroupPrice?: number;
+  ownGroupPrice?: number;
+  // Package-specific includes (from destination_prices table)
+  soloTravelerIncludes?: string[];
+  familyPackageIncludes?: string[];
+  joinGroupIncludes?: string[];
+  ownGroupIncludes?: string[];
+  // Discount - can be simple (for activities) or package-specific (for destinations)
+  discount?: {
+    soloTraveler?: { percentage: number; validUntil: string };
+    familyPackage?: { percentage: number; validUntil: string };
+    joinGroup?: { percentage: number; validUntil: string };
+    ownGroup?: { percentage: number; validUntil: string };
+  } | { percentage: number; validUntil: string }; // Simple format for activities
 }
 
 interface BookingClientProps {
@@ -193,6 +210,7 @@ export default function BookingClient({
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [availableDates, setAvailableDates] = useState<Record<string, number>>({});
   const [isLoadingDates, setIsLoadingDates] = useState(false);
+  const [nextMonthWarning, setNextMonthWarning] = useState<string | null>(null);
   const [booking, setBooking] = useState<BookingState>({
     packageType: "solo",
     adults: 1,
@@ -285,9 +303,92 @@ export default function BookingClient({
     }));
   }, [roomLimits.min, roomLimits.max]);
 
+  // Get price based on package type from destination_prices table
+  const getPriceByPackageType = useCallback((pkgType: PackageType): number => {
+    if (!data) return 0;
+    
+    switch (pkgType) {
+      case "solo":
+        return data.soloTravelerPrice || data.priceMin;
+      case "family":
+        return data.familyPackagePrice || data.priceMin;
+      case "private":
+        return data.ownGroupPrice || data.priceMin;
+      case "group":
+        return data.joinGroupPrice || data.priceMin;
+      default:
+        return data.priceMin;
+    }
+  }, [data]);
+
+  // Get current price based on selected package type
+  const currentPrice = useMemo(
+    () => getPriceByPackageType(booking.packageType),
+    [booking.packageType, getPriceByPackageType],
+  );
+
+  // Get effective discount percentage for selected package type
+  const effectiveDiscount = useMemo(() => {
+    if (!data?.discount) return 0;
+    
+    // Handle simple discount format (for activities)
+    if ('percentage' in data.discount && !('soloTraveler' in data.discount)) {
+      const simpleDiscount = data.discount as { percentage: number; validUntil: string };
+      if (!simpleDiscount.percentage) return 0;
+      
+      const validUntilDate = new Date(simpleDiscount.validUntil);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (validUntilDate < today) return 0;
+      
+      return simpleDiscount.percentage / 100;
+    }
+    
+    // Handle package-specific discount format (for destinations)
+    const discountKey = booking.packageType === 'solo' ? 'soloTraveler'
+      : booking.packageType === 'family' ? 'familyPackage'
+      : booking.packageType === 'group' ? 'joinGroup'
+      : 'ownGroup';
+    
+    // Cast to package-specific type
+    const packageDiscounts = data.discount as {
+      soloTraveler?: { percentage: number; validUntil: string };
+      familyPackage?: { percentage: number; validUntil: string };
+      joinGroup?: { percentage: number; validUntil: string };
+      ownGroup?: { percentage: number; validUntil: string };
+    };
+    
+    const packageDiscount = packageDiscounts[discountKey];
+    if (!packageDiscount) return 0;
+    
+    const { percentage, validUntil } = packageDiscount;
+    if (!percentage) return 0;
+    
+    // Check if discount is still valid
+    const validUntilDate = new Date(validUntil);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (validUntilDate < today) return 0;
+    
+    return percentage / 100; // Convert to decimal
+  }, [data?.discount, booking.packageType]);
+
   const pricing = useMemo(
-    () => calculatePricing(booking, data.priceMin),
-    [booking, data.priceMin],
+    () => {
+      // Pass currentPrice and effectiveDiscount to calculatePricing
+      // calculatePricing will apply the database discount rate
+      const result = calculatePricing(booking, currentPrice, effectiveDiscount);
+      
+      // Add discount info to result
+      return {
+        ...result,
+        originalPrice: currentPrice,
+        discountPercentage: effectiveDiscount > 0 ? effectiveDiscount * 100 : 0,
+      };
+    },
+    [booking, currentPrice, effectiveDiscount],
   );
 
   /* ============ HANDLERS ============ */
@@ -322,9 +423,12 @@ export default function BookingClient({
   );
 
   const goPrevMonth = useCallback(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const newMonth = new Date(currentMonth);
     newMonth.setMonth(currentMonth.getMonth() - 1);
-    if (newMonth >= new Date()) {
+    // Only allow going back if the new month is the current month or future
+    if (newMonth.getTime() >= today.getTime()) {
       setCurrentMonth(newMonth);
     }
   }, [currentMonth]);
@@ -332,8 +436,24 @@ export default function BookingClient({
   const goNextMonth = useCallback(() => {
     const newMonth = new Date(currentMonth);
     newMonth.setMonth(currentMonth.getMonth() + 1);
+    
+    // Check if there are any available dates in the next month
+    const year = newMonth.getFullYear();
+    const month = String(newMonth.getMonth() + 1).padStart(2, '0');
+    const nextMonthPrefix = `${year}-${month}`;
+    
+    const hasDatesInNextMonth = Object.keys(availableDates).some(
+      (date) => date.startsWith(nextMonthPrefix)
+    );
+    
+    if (!hasDatesInNextMonth) {
+      setNextMonthWarning("No schedules available for next month");
+      setTimeout(() => setNextMonthWarning(null), 3000);
+      return;
+    }
+    
     setCurrentMonth(newMonth);
-  }, [currentMonth]);
+  }, [currentMonth, availableDates]);
 
   const handleAdultsChange = useCallback((delta: number) => {
     setBooking((prev) => {
@@ -430,12 +550,11 @@ export default function BookingClient({
       type === "activity"
         ? data.includes || data.highlights || []
         : data.highlights || data.popularActivities || [],
-    agency: data.agency || {
-      name:
-        type === "activity" ? "Adventure Tours India" : "Sacred Journeys India",
-      logo: "/agency-logo.png",
-      description: "Professional tour operator with years of experience.",
-    },
+    // Use solo traveler includes for destinations
+    includes:
+      type === "destination"
+        ? data.soloTravelerIncludes || []
+        : data.includes || [],
   }), [data, type]);
 
   /* ============ SEO METADATA ============ */
@@ -496,7 +615,7 @@ export default function BookingClient({
                 difficulty={data.difficulty}
                 description={displayData.description}
                 highlights={displayData.highlights}
-                agency={displayData.agency}
+                includes={displayData.includes}
                 type={type}
               />
 
@@ -524,7 +643,7 @@ export default function BookingClient({
                     destination={data.slug}
                     roomLimits={roomLimits}
                     pricing={pricing}
-                    basePrice={data.priceMin}
+                    basePrice={currentPrice}
                     calendar={{
                       currentMonth,
                       daysInMonth,
@@ -534,12 +653,14 @@ export default function BookingClient({
                       goPrevMonth,
                       goNextMonth,
                       isLoadingDates,
+                      nextMonthWarning,
                     }}
                     onPackageChange={handlePackageChange}
                     onAdultsChange={handleAdultsChange}
                     onChildrenChange={handleChildrenChange}
                     onRoomsChange={handleRoomsChange}
                     onDateSelect={handleDateSelect}
+                    discounts={data.discount}
                   />
                 </Suspense>
               </div>
@@ -555,7 +676,7 @@ export default function BookingClient({
               destination={data.slug}
               roomLimits={roomLimits}
               pricing={pricing}
-              basePrice={data.priceMin}
+              basePrice={currentPrice}
               calendar={{
                 currentMonth,
                 daysInMonth,
@@ -565,12 +686,14 @@ export default function BookingClient({
                 goPrevMonth,
                 goNextMonth,
                 isLoadingDates,
+                nextMonthWarning,
               }}
               onPackageChange={handlePackageChange}
               onAdultsChange={handleAdultsChange}
               onChildrenChange={handleChildrenChange}
               onRoomsChange={handleRoomsChange}
               onDateSelect={handleDateSelect}
+              discounts={data.discount}
             />
           </Suspense>
         </div>

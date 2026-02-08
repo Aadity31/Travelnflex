@@ -25,7 +25,7 @@ interface BookingDetailsProps {
   difficulty?: string;
   description: string;
   highlights: string[];
-  agency: Agency;
+  includes?: string[];
   type: "activity" | "destination";
 }
 
@@ -37,7 +37,7 @@ export function BookingDetails({
   difficulty,
   description,
   highlights,
-  agency,
+  includes,
   type,
 }: BookingDetailsProps) {
   return (
@@ -120,29 +120,20 @@ export function BookingDetails({
         </section>
       )}
 
-      {/* Agency */}
-      <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-        <h2 className="text-lg font-bold text-gray-900 mb-3">Hosted By</h2>
-        <div className="flex items-start gap-3">
-          <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gradient-to-br from-orange-500 to-red-500 shadow-sm">
-            <div className="w-full h-full flex items-center justify-center text-white text-xl font-bold">
-              {agency.name.charAt(0)}
-            </div>
+      {/* Includes */}
+      {(includes && includes.length > 0) && (
+        <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+          <h2 className="text-lg font-bold text-gray-900 mb-3">What's Included</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {includes.map((item, index) => (
+              <div key={index} className="flex items-start gap-2">
+                <CheckCircleIcon className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700 text-sm">{item}</span>
+              </div>
+            ))}
           </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-base font-bold text-gray-900 mb-1">
-              {agency.name}
-            </h3>
-            <p className="text-xs text-gray-600 mb-2 flex items-center gap-1.5">
-              <ShieldCheckIcon className="w-3.5 h-3.5 text-green-600" />
-              Verified • 500+ tours completed
-            </p>
-            <p className="text-gray-700 text-sm line-clamp-2">
-              {agency.description}
-            </p>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }
