@@ -141,10 +141,7 @@ export default function ActivitiesClient({
     <>
       <main className="min-h-screen bg-gray-50">
         <LoginPrompt open={wishlist.showLogin} onClose={wishlist.closeLogin} />
-        {/* Hero Section - RESPONSIVE */}
-        <section className="relative h-18 sm:h-16 md:h-14 lg:h-15 bg-gray-00 bg-opacity-30 backdrop-blur-sm border border-gray-500 flex items-center justify-center">
-        
-        </section>
+       
 
         <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
           {/* Mobile Filter Button - RESPONSIVE */}
