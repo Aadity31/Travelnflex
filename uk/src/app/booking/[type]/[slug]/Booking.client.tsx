@@ -129,6 +129,7 @@ interface BookingClientProps {
   data: UnifiedData;
   reviews: Review[];
   type: "activity" | "destination";
+  availableDates?: Record<string, number>;
 }
 
 // Error boundary component
@@ -188,8 +189,10 @@ export default function BookingClient({
   data,
   reviews,
   type,
+  availableDates: initialAvailableDates = {},
 }: BookingClientProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [availableDates, setAvailableDates] = useState<Record<string, number>>({});
   const [booking, setBooking] = useState<BookingState>({
     packageType: "solo",
     adults: 1,
@@ -199,14 +202,74 @@ export default function BookingClient({
     availableSlots: 0,
   });
   const [isClient, setIsClient] = useState(false);
+  const [isLoadingDates, setIsLoadingDates] = useState(false);
 
   // Prevent hydration mismatch
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Memoize available dates first (before other hooks that depend on it)
-  const availableDates = useMemo(() => getAvailableDates(), []);
+  // Map internal package type to database package type
+  const getDbPackageType = (pkgType: PackageType): string => {
+    switch (pkgType) {
+      case "solo":
+        return "solo_traveler";
+      case "family":
+        return "family_package";
+      case "group":
+        return "join_group";
+      case "private":
+        return "own_group";
+      default:
+        return "solo_traveler";
+    }
+  };
+
+  // Fetch available dates when package type changes
+  const fetchAvailableDates = useCallback(async (pkgType: PackageType) => {
+    if (!data?.id) return;
+    
+    setIsLoadingDates(true);
+    try {
+      const dbPackageType = getDbPackageType(pkgType);
+      const params = new URLSearchParams({
+        type,
+        id: data.id,
+        packageType: dbPackageType,
+      });
+      
+      const response = await fetch(`/api/available-dates?${params}`);
+      if (response.ok) {
+        const result = await response.json();
+        if (Object.keys(result.availableDates || {}).length > 0) {
+          setAvailableDates(result.availableDates);
+        } else {
+          // Fallback to initial dates if no specific package dates
+          setAvailableDates(initialAvailableDates);
+        }
+      } else {
+        setAvailableDates(initialAvailableDates);
+      }
+    } catch (error) {
+      console.error("Error fetching available dates:", error);
+      setAvailableDates(initialAvailableDates);
+    } finally {
+      setIsLoadingDates(false);
+    }
+  }, [data?.id, type, initialAvailableDates]);
+
+  // Initial fetch of available dates
+  useEffect(() => {
+    if (isClient && data?.id) {
+      // Use initial dates from server first
+      if (Object.keys(initialAvailableDates).length > 0) {
+        setAvailableDates(initialAvailableDates);
+      } else {
+        // Fetch dates for initial package type
+        fetchAvailableDates("solo");
+      }
+    }
+  }, [isClient, data?.id, initialAvailableDates, fetchAvailableDates]);
 
   /* ============ CORRECTED ROOM LOGIC ============ */
 
@@ -230,17 +293,22 @@ export default function BookingClient({
 
   /* ============ HANDLERS ============ */
 
-  const handlePackageChange = useCallback((pkg: PackageType) => {
-    const config = PACKAGE_CONFIG[pkg];
-    setBooking({
-      packageType: pkg,
-      adults: config.minAdults,
-      children: 0,
-      rooms: 1,
-      selectedDate: null,
-      availableSlots: 0,
-    });
-  }, []);
+  const handlePackageChange = useCallback(
+    (pkg: PackageType) => {
+      const config = PACKAGE_CONFIG[pkg];
+      setBooking({
+        packageType: pkg,
+        adults: config.minAdults,
+        children: 0,
+        rooms: 1,
+        selectedDate: null,
+        availableSlots: 0,
+      });
+      // Fetch available dates for the new package type
+      fetchAvailableDates(pkg);
+    },
+    [fetchAvailableDates]
+  );
 
   const handleDateSelect = useCallback(
     (dateStr: string) => {
@@ -464,6 +532,7 @@ export default function BookingClient({
                       getDateString,
                       goPrevMonth,
                       goNextMonth,
+                      isLoadingDates,
                     }}
                     onPackageChange={handlePackageChange}
                     onAdultsChange={handleAdultsChange}
@@ -494,6 +563,7 @@ export default function BookingClient({
                 getDateString,
                 goPrevMonth,
                 goNextMonth,
+                isLoadingDates,
               }}
               onPackageChange={handlePackageChange}
               onAdultsChange={handleAdultsChange}

@@ -31,6 +31,7 @@ interface CalendarProps {
   getDateString: (day: number) => string;
   goPrevMonth: () => void;
   goNextMonth: () => void;
+  isLoadingDates?: boolean;
 }
 
 interface BookingCardProps {

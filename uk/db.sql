@@ -1,6 +1,6 @@
 -- ============================================================
 -- Devbhoomi Darshan - Database Schema Export
--- Generated: 2026-02-07T11:06:14.630Z
+-- Generated: 2026-02-08T07:35:32.835Z
 -- Database: Neon PostgreSQL
 -- ============================================================
 
@@ -259,7 +259,8 @@ CREATE TABLE IF NOT EXISTS destination_prices (
     join_group_price integer,
     join_group_includes text DEFAULT ''::text,
     hotel_per_person integer DEFAULT 0,
-    additional_costs jsonb DEFAULT '[]'::jsonb
+    additional_costs jsonb DEFAULT '[]'::jsonb,
+    solo_traveler_price integer
 );
 
 -- Foreign Key: destination_id -> destinations(id)
