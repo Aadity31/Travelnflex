@@ -579,7 +579,7 @@ const FeaturedAgencies: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-block bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-semibold mb-4">
-            Trusted Travel Agencies
+            About Us
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Discover Verified

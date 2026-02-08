@@ -84,9 +84,9 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
   return (
     <Link
       href={`/booking/destination/${destination.slug}`}
-      className="block"
+      className="block h-full"
     >
-      <article className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+      <article className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-full flex flex-col">
         {/* Image Container - Balanced heights */}
         <div className="relative h-56 sm:h-64 md:h-72 lg:h-80 overflow-hidden">
           {!imageError ? (
@@ -155,7 +155,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
         </div>
 
         {/* Content - Balanced padding */}
-        <div className="p-5 sm:p-6">
+        <div className="p-5 sm:p-6 flex flex-col flex-grow">
           {/* Location */}
           <div className="flex items-center gap-2 text-gray-600 mb-3">
             <MapPinIcon className="w-4 h-4 flex-shrink-0" />
@@ -170,12 +170,12 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
           </h3>
 
           {/* Description */}
-          <p className="text-sm sm:text-base text-gray-700 mb-4 line-clamp-2 leading-relaxed">
+          <p className="text-sm sm:text-base text-gray-700 mb-4 line-clamp-3 leading-relaxed min-h-[4.5rem]">
             {destination.shortDescription}
           </p>
 
           {/* Activities */}
-          <div className="mb-4">
+          <div className="mb-4 flex-grow">
             <h4 className="text-sm font-semibold text-gray-900 mb-2">
               Popular Activities:
             </h4>

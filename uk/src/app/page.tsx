@@ -5,8 +5,8 @@ import HeroSection from "@/components/sections/Hero/HeroSection";
 import QuickSearchBar from "@/components/search/QuickSearchBar";
 import FeaturedDestinations from "@/components/sections/FeaturedDestinations/FeaturedDestinations.server";
 import TopActivities from "@/components/sections/TopActivities/TopActivities.server";
+import AboutUsPage from "@/app/(marketing)/about-us/page";
 import TestimonialsSection from "@/components/sections/Testimonials/TestimonialsSection";
-import FeaturedGuides from "@/components/sections/Featured/FeaturedGuides";
 import CTASection from "@/components/sections/CTA/CTASection";
 import FooterWithCredits from "@/components/Footer";
 
@@ -60,9 +60,9 @@ export default function HomePage() {
         <QuickSearchBar />
         <FeaturedDestinations />
         <TopActivities />
-        <FeaturedGuides />
+        <AboutUsPage />
         <TestimonialsSection />
-        <CTASection />  
+        <CTASection />
         <FooterWithCredits />
       </main>
     </>
