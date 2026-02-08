@@ -1,17 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
 
-export default function LoginPage() {
+interface LoginFormProps {
+  redirectUrl?: string;
+  action?: string;
+}
+
+export default function LoginForm({ redirectUrl, action }: LoginFormProps) {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const searchParams = useSearchParams();
+  
+  // Use passed redirectUrl or fallback to searchParams
+  const finalRedirect = redirectUrl || searchParams.get("redirect");
+  const finalAction = action || searchParams.get("action");
+
+  // Check for stored booking intent on mount
+  useEffect(() => {
+    const storedIntent = sessionStorage.getItem("bookingIntent");
+    if (storedIntent && finalAction === "book") {
+      // Don't clear - will be used after login
+    }
+  }, [finalAction]);
 
   const handleLogin = async () => {
     setError("");
@@ -32,7 +51,16 @@ export default function LoginPage() {
       return;
     }
 
-    window.location.href = "/";
+    // Handle redirect after successful login
+    const storedIntent = sessionStorage.getItem("bookingIntent");
+    if (storedIntent && finalAction === "book") {
+      sessionStorage.removeItem("bookingIntent");
+      window.location.href = "/booking/" + JSON.parse(storedIntent).destination + "/confirm";
+    } else if (finalRedirect) {
+      window.location.href = finalRedirect;
+    } else {
+      window.location.href = "/";
+    }
   };
 
   const handleGoogleLogin = async () => {
@@ -40,7 +68,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     await signIn("google", {
-      callbackUrl: "/",
+      callbackUrl: finalRedirect || "/",
     });
   };
 
@@ -75,10 +103,12 @@ export default function LoginPage() {
           {/* Header */}
           <div className="text-center mb-5 sm:mb-6">
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-0.5 sm:mb-1">
-              Welcome back
+              {finalAction === "book" ? "Login to complete booking" : "Welcome back"}
             </h1>
             <p className="text-gray-600 text-xs sm:text-sm">
-              Log in to continue your journey
+              {finalAction === "book" 
+                ? "Sign in to continue with your booking" 
+                : "Log in to continue your journey"}
             </p>
           </div>
 

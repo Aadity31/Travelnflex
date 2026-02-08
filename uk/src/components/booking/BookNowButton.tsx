@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Shield, Loader2, AlertCircle, CheckCircle2, Lock, Eye, EyeOff } from "lucide-react";
+import { Shield, Loader2, AlertCircle, CheckCircle2, Lock, LogIn, User } from "lucide-react";
 
 interface BookNowButtonProps {
   destination: string;
@@ -10,12 +10,13 @@ interface BookNowButtonProps {
   endDate: string;
   persons: number;
   amount: number;
+  type?: "activity" | "destination";
 }
 
 // Rate limiting utility
 const RateLimiter = {
   lastRequest: 0,
-  minInterval: 2000, // 2 seconds between requests
+  minInterval: 2000,
   
   canMakeRequest(): boolean {
     const now = Date.now();
@@ -34,66 +35,69 @@ function sanitizeInput(input: string): string {
     .trim();
 }
 
-// Validate amount to prevent price manipulation
-function validateAmount(amount: number, basePrice: number): boolean {
-  const minAmount = basePrice * 0.5; // Allow 50% discount
-  const maxAmount = basePrice * 5; // Allow up to 5x markup
-  return amount >= minAmount && amount <= maxAmount;
-}
-
-// CSRF token generator (simple version - in production, use proper crypto)
-function generateCSRFToken(): string {
-  const array = new Uint8Array(32);
-  crypto.getRandomValues(array);
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
 export default function BookNowButton({
   destination,
   startDate,
   endDate,
   persons,
   amount,
+  type = "destination",
 }: BookNowButtonProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [csrfToken, setCsrfToken] = useState<string>("");
-  const [showSensitive, setShowSensitive] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
-  // Initialize CSRF token on mount
+  // Check authentication status on mount
   useEffect(() => {
-    setCsrfToken(generateCSRFToken());
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/auth/check");
+        const data = await res.json();
+        setIsAuthenticated(data.authenticated);
+      } catch {
+        setIsAuthenticated(false);
+      } finally {
+        setAuthChecked(true);
+      }
+    }
+    checkAuth();
   }, []);
+
+  // Check for stored booking intent after login redirect
+  useEffect(() => {
+    const storedIntent = sessionStorage.getItem("bookingIntent");
+    if (storedIntent && isAuthenticated) {
+      sessionStorage.removeItem("bookingIntent");
+      // Auto-proceed with booking after login
+      handleBookingWithIntent(JSON.parse(storedIntent));
+    }
+  }, [isAuthenticated]);
 
   // Validate booking parameters
   const validateBooking = useCallback((): boolean => {
-    // Sanitize inputs
     const sanitizedDestination = sanitizeInput(destination);
     const sanitizedStartDate = sanitizeInput(startDate);
     const sanitizedEndDate = sanitizeInput(endDate);
 
-    // Check required fields
     if (!sanitizedDestination || !sanitizedStartDate || !sanitizedEndDate) {
       setError("Missing required booking information");
       return false;
     }
 
-    // Validate persons
     if (persons < 1 || persons > 50) {
       setError("Invalid number of persons");
       return false;
     }
 
-    // Validate amount is positive
     if (amount <= 0) {
       setError("Invalid booking amount");
       return false;
     }
 
-    // Validate dates are in the future
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const bookingDate = new Date(sanitizedStartDate);
@@ -102,7 +106,6 @@ export default function BookNowButton({
       return false;
     }
 
-    // Validate date range
     const start = new Date(sanitizedStartDate);
     const end = new Date(sanitizedEndDate);
     if (end < start) {
@@ -113,8 +116,68 @@ export default function BookNowButton({
     return true;
   }, [destination, startDate, endDate, persons, amount]);
 
+  // Handle booking with stored intent (after login)
+  async function handleBookingWithIntent(intent: {
+    destination: string;
+    startDate: string;
+    endDate: string;
+    persons: number;
+    amount: number;
+  }) {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch("/api/bookings/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          destination: sanitizeInput(intent.destination),
+          startDate: sanitizeInput(intent.startDate),
+          endDate: sanitizeInput(intent.endDate),
+          persons: Number(intent.persons),
+          amount: Number(intent.amount),
+          timestamp: Date.now(),
+        }),
+      });
+
+      if (res.status === 429) {
+        throw new Error("Too many requests. Please try again later.");
+      }
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Booking failed. Please try again.");
+      }
+
+      const data = await res.json();
+
+      if (!data?.bookingId || typeof data.bookingId !== "string") {
+        throw new Error("Booking initialization failed");
+      }
+
+      setSuccess(true);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      router.push(`/booking/${encodeURIComponent(intent.destination)}/confirm?bookingId=${encodeURIComponent(data.bookingId)}`);
+    } catch (err) {
+      console.error("Booking error:", err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Handle initial booking click
   async function handleBooking() {
-    // Prevent multiple clicks and check rate limiting
     if (loading || success || !RateLimiter.canMakeRequest()) {
       if (!loading && !success) {
         setError("Please wait before trying again");
@@ -126,20 +189,38 @@ export default function BookNowButton({
       setLoading(true);
       setError(null);
 
+      // First check auth
+      const authRes = await fetch("/api/auth/check");
+      const authData = await authRes.json();
+
+      if (!authData.authenticated) {
+        // Store booking intent for after login
+        const bookingIntent = {
+          destination,
+          startDate,
+          endDate,
+          persons,
+          amount,
+        };
+        sessionStorage.setItem("bookingIntent", JSON.stringify(bookingIntent));
+        
+        // Redirect to login with return URL
+        router.push(`/login?redirect=${encodeURIComponent(pathname)}&action=book`);
+        return;
+      }
+
       // Validate booking parameters
       if (!validateBooking()) {
         setLoading(false);
         return;
       }
 
-      // Create booking with security headers
+      // Create booking
       const res = await fetch("/api/bookings/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken,
           "X-Requested-With": "XMLHttpRequest",
-          "X-Rate-Limit-Policy": "strict",
         },
         credentials: "include",
         body: JSON.stringify({
@@ -148,28 +229,12 @@ export default function BookNowButton({
           endDate: sanitizeInput(endDate),
           persons: Number(persons),
           amount: Number(amount),
-          // Add timestamp to prevent replay attacks
           timestamp: Date.now(),
         }),
       });
 
-      // Handle rate limiting response
       if (res.status === 429) {
         throw new Error("Too many requests. Please try again later.");
-      }
-
-      // Handle unauthorized
-      if (res.status === 401) {
-        // Store booking intent for after login
-        sessionStorage.setItem("bookingIntent", JSON.stringify({
-          destination,
-          startDate,
-          endDate,
-          persons,
-          amount,
-        }));
-        router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
-        return;
       }
 
       if (!res.ok) {
@@ -179,22 +244,18 @@ export default function BookNowButton({
 
       const data = await res.json();
 
-      // Validate response structure
       if (!data?.bookingId || typeof data.bookingId !== "string") {
         console.error("Invalid API response:", data);
         throw new Error("Booking initialization failed");
       }
 
       setSuccess(true);
-
-      // Short delay before redirect for UX
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       router.push(`/booking/${encodeURIComponent(destination)}/confirm?bookingId=${encodeURIComponent(data.bookingId)}`);
 
-    } catch (err: unknown) {
+    } catch (err) {
       console.error("Booking error:", err);
-
       if (err instanceof Error) {
         setError(err.message);
       } else {
@@ -235,13 +296,31 @@ export default function BookNowButton({
             <CheckCircle2 className="w-5 h-5" />
             Booking Confirmed!
           </>
-        ) : (
+        ) : !authChecked ? (
+          <>
+            <Loader2 className="w-5 h-5 animate-spin" />
+            Checking...
+          </>
+        ) : isAuthenticated ? (
           <>
             <Shield className="w-5 h-5" />
             Book Now - ₹{amount.toLocaleString("en-IN")}
           </>
+        ) : (
+          <>
+            <LogIn className="w-5 h-5" />
+            Login to Book - ₹{amount.toLocaleString("en-IN")}
+          </>
         )}
       </button>
+
+      {/* Auth Status Info */}
+      {!authChecked && (
+        <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          Verifying your session...
+        </div>
+      )}
 
       {/* Error Message */}
       {error && (
@@ -281,10 +360,10 @@ export default function BookNowButton({
         </div>
 
         <div className="flex items-center gap-2 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-          <Eye className="w-4 h-4 text-orange-600 flex-shrink-0" />
+          <User className="w-4 h-4 text-orange-600 flex-shrink-0" />
           <div className="text-xs">
-            <span className="font-semibold text-orange-800 block">Transparent</span>
-            <span className="text-orange-600">No hidden fees</span>
+            <span className="font-semibold text-orange-800 block">Best Experience</span>
+            <span className="text-orange-600">Personalized service</span>
           </div>
         </div>
       </div>
