@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 interface CreditsProps {
-  companyName?: string;
+  companyEmail?: string;
   websiteName?: string;
   designerName?: string;
   designerUrl?: string;
@@ -9,7 +9,7 @@ interface CreditsProps {
 }
 
 export default function Credits({
-  companyName = "travelnflex.com",
+  companyEmail = "info@travelnflex.com",
   websiteName = "TravelnFlex",
   designerName = "APS-Groups",
   designerUrl = "https://www.apsgroupco.com",
@@ -21,19 +21,25 @@ export default function Credits({
     <footer
       className={`bg-[var(--color-neutral-darker)] border-t border-gray-800 ${className}`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Credits Section */}
         <div className="py-4">
           {/* Mobile: Single row */}
           <div className="flex flex-row items-center justify-between gap-2 sm:hidden">
             {/* Left - Site Name */}
             <div className="text-gray-400 text-xs">
-              <span className="font-medium text-gray-300">{companyName}</span>
+              <span className="font-medium text-gray-300">Need Help? </span>
+              <a
+                href="mailto:info@travelnflex.com"
+                className="text-orange-400 hover:text-orange-300 transition-colors duration-300"
+              >
+                {companyEmail}
+              </a>
             </div>
 
             {/* Center - Copyright */}
             <div className="text-gray-500 text-xs">
-              <span>© {currentYear}</span>
+              <span>© {currentYear} {websiteName}</span>
             </div>
 
             {/* Right - Designer Credit */}
@@ -67,12 +73,20 @@ export default function Credits({
           <div className="hidden sm:flex flex-row items-center justify-between gap-4">
             {/* Left - Site Name */}
             <div className="text-gray-400 text-sm">
-              <span className="font-medium text-gray-300">{companyName}</span>
+              <span className="font-medium text-gray-300">Need Help? </span>
+              <a
+                href="mailto:info@travelnflex.com"
+                className="text-orange-400 hover:text-orange-300 transition-colors duration-300"
+              >
+                info@travelnflex.com
+              </a>
+
+
             </div>
 
             {/* Center - Copyright */}
             <div className="text-gray-500 text-sm">
-              <span>© {currentYear} All rights reserved</span>
+              <span>© {currentYear} All rights reserved <span className="font-medium text-orange-400">{websiteName}</span></span>
             </div>
 
             {/* Right - Designer Credit */}
