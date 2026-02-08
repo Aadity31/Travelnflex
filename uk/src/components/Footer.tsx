@@ -42,38 +42,38 @@ export default function FooterWithCredits() {
       <div className="h-1 w-full bg-gradient-to-r from-orange-500 via-orange-400 to-orange-600" />
 
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-12 lg:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-10 lg:py-14">
         {/* Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
           {/* Brand Section */}
-          <div className="lg:col-span-4">
-            <div className="flex items-center gap-3 mb-5">
+          <div className="col-span-1 lg:col-span-4">
+            <div className="flex items-center gap-3 mb-4">
               <div className="relative">
                 <Image
                   src="/logo.svg"
                   alt="TravelnFlex"
-                  className="h-10 w-auto object-contain"
-                  width={140}
-                  height={40}
+                  className="h-9 w-auto object-contain"
+                  width={126}
+                  height={36}
                   priority
                 />
               </div>
             </div>
 
-            <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-sm">
+            <p className="text-gray-400 text-sm leading-relaxed mb-5 max-w-sm">
               Your trusted guide to spiritual destinations across India. Explore
               sacred places with ease and create unforgettable journeys.
             </p>
 
             {/* Social Links */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {socialLinks.map((social) => (
                 <a
                   key={social.name}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 bg-[var(--color-neutral-dark)] rounded-xl flex items-center justify-center 
+                  className="w-9 h-9 bg-[var(--color-neutral-dark)] rounded-lg flex items-center justify-center 
                            hover:bg-gradient-to-r hover:from-orange-500 hover:to-orange-600 
                            transition-all duration-300 ease-out
                            hover:shadow-lg hover:shadow-orange-500/25 hover:-translate-y-0.5
@@ -82,7 +82,7 @@ export default function FooterWithCredits() {
                 >
                   {social.type === "stroke" ? (
                     <svg
-                      className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors duration-300"
+                      className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors duration-300"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -96,7 +96,7 @@ export default function FooterWithCredits() {
                     </svg>
                   ) : (
                     <svg
-                      className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors duration-300"
+                      className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors duration-300"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -108,65 +108,72 @@ export default function FooterWithCredits() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="lg:col-span-4">
-            <h3 className="text-white font-semibold text-lg mb-5 flex items-center gap-2">
-              <span className="w-1 h-5 bg-gradient-to-b from-orange-500 to-orange-400 rounded-full" />
-              Quick Links
-            </h3>
-            <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-400 hover:text-orange-400 transition-all duration-300 
-                             inline-flex items-center gap-2 group text-sm"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-gray-600 group-hover:bg-orange-500 
-                                     transition-all duration-300 group-hover:scale-150" />
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">
-                      {link.name}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Quick Links & Legal */}
+          <div className="col-span-1 lg:col-span-8">
+            <div className="grid grid-cols-2 gap-6 md:gap-8">
+              {/* Quick Links */}
+              <div>
+                <h3 className="text-white font-semibold text-base mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-gradient-to-b from-orange-500 to-orange-400 rounded-full" />
+                  Quick Links
+                </h3>
+                <ul className="space-y-2.5">
+                  {quickLinks.map((link) => (
+                    <li key={link.name}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-400 hover:text-orange-400 transition-all duration-300 
+                                 inline-flex items-center gap-2 group text-sm"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-gray-600 group-hover:bg-orange-500 
+                                         transition-all duration-300 group-hover:scale-150" />
+                        <span className="group-hover:translate-x-1 transition-transform duration-300">
+                          {link.name}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-          {/* Legal */}
-          <div className="lg:col-span-4">
-            <h3 className="text-white font-semibold text-lg mb-5 flex items-center gap-2">
-              <span className="w-1 h-5 bg-gradient-to-b from-orange-500 to-orange-400 rounded-full" />
-              Legal
-            </h3>
-            <ul className="space-y-3">
-              {legalLinks.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-400 hover:text-orange-400 transition-all duration-300 
-                             inline-flex items-center gap-2 group text-sm"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-gray-600 group-hover:bg-orange-500 
-                                     transition-all duration-300 group-hover:scale-150" />
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">
-                      {link.name}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            {/* Contact Info */}
-            <div className="mt-8 pt-6 border-t border-gray-800">
-              <h4 className="text-white font-medium text-sm mb-3">Need Help?</h4>
-              <a
-                href="mailto:info@travelnflex.com"
-                className="text-orange-400 hover:text-orange-300 text-sm transition-colors duration-300"
-              >
-                info@travelnflex.com
-              </a>
+              {/* Legal */}
+              <div>
+                <h3 className="text-white font-semibold text-base mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-gradient-to-b from-orange-500 to-orange-400 rounded-full" />
+                  Legal
+                </h3>
+                <ul className="space-y-2.5">
+                  {legalLinks.map((link) => (
+                    <li key={link.name}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-400 hover:text-orange-400 transition-all duration-300 
+                                 inline-flex items-center gap-2 group text-sm"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-gray-600 group-hover:bg-orange-500 
+                                         transition-all duration-300 group-hover:scale-150" />
+                        <span className="group-hover:translate-x-1 transition-transform duration-300">
+                          {link.name}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Need Help Section - Centered */}
+        <div className="mt-8 pt-6 border-t border-gray-800">
+          <div className="flex flex-col items-center justify-center gap-2 text-center">
+            <span className="text-white font-medium text-sm">Need Help?</span>
+            <a
+              href="mailto:info@travelnflex.com"
+              className="text-orange-400 hover:text-orange-300 text-sm transition-colors duration-300"
+            >
+              info@travelnflex.com
+            </a>
           </div>
         </div>
       </div>
