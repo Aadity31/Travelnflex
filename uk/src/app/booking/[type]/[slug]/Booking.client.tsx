@@ -192,6 +192,7 @@ export default function BookingClient({
 }: BookingClientProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [availableDates, setAvailableDates] = useState<Record<string, number>>({});
+  const [isLoadingDates, setIsLoadingDates] = useState(false);
   const [booking, setBooking] = useState<BookingState>({
     packageType: "solo",
     adults: 1,
@@ -207,8 +208,67 @@ export default function BookingClient({
     setIsClient(true);
   }, []);
 
-  // Memoize available dates first (before other hooks that depend on it)
-  const availableDates = useMemo(() => getAvailableDates(), []);
+  // Map internal package type to database package type
+  const getDbPackageType = (pkgType: PackageType): string => {
+    switch (pkgType) {
+      case "solo":
+        return "solo_traveler";
+      case "family":
+        return "family_package";
+      case "group":
+        return "join_group";
+      case "private":
+        return "own_group";
+      default:
+        return "solo_traveler";
+    }
+  };
+
+  // Fetch available dates when package type changes
+  const fetchAvailableDates = useCallback(async (pkgType: PackageType) => {
+    if (!data?.id) return;
+    
+    setIsLoadingDates(true);
+    try {
+      const dbPackageType = getDbPackageType(pkgType);
+      const params = new URLSearchParams({
+        type,
+        id: data.id,
+        packageType: dbPackageType,
+      });
+      
+      const response = await fetch(`/api/available-dates?${params}`);
+      if (response.ok) {
+        const result = await response.json();
+        if (Object.keys(result.availableDates || {}).length > 0) {
+          setAvailableDates(result.availableDates);
+        } else {
+          // Fallback to initial dates if no specific package dates
+          setAvailableDates(initialAvailableDates);
+        }
+      } else {
+        setAvailableDates(initialAvailableDates);
+      }
+    } catch (error) {
+      console.error("Error fetching available dates:", error);
+      setAvailableDates(initialAvailableDates);
+    } finally {
+      setIsLoadingDates(false);
+    }
+  }, [data?.id, type, initialAvailableDates]);
+
+  // Initial fetch of available dates
+  useEffect(() => {
+    if (isClient && data?.id) {
+      // Use initial dates from server first
+      if (Object.keys(initialAvailableDates).length > 0) {
+        setAvailableDates(initialAvailableDates);
+      } else {
+        // Fetch dates for initial package type
+        fetchAvailableDates("solo");
+      }
+    }
+  }, [isClient, data?.id, initialAvailableDates, fetchAvailableDates]);
 
   /* ============ CORRECTED ROOM LOGIC ============ */
 
