@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChatBubbleLeftRightIcon,
-  PlayIcon,
-  PauseIcon,
 } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolidIcon } from "@heroicons/react/24/solid";
 
@@ -31,88 +29,100 @@ const testimonials: Testimonial[] = [
   {
     id: "1",
     name: "Sarah Johnson",
-    avatar: "/images/testimonials/sarah-johnson.jpg",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
     location: "New York, USA",
     designation: "Yoga Instructor",
     rating: 5,
     review:
-      "The Ganga Aarti experience in Haridwar was absolutely divine. Our guide Rajesh made sure we got the best spots and explained every ritual beautifully. The spiritual energy was overwhelming and transformative.",
+      "The Ganga Aarti experience in Haridwar was absolutely divine. Our guide Rajesh made sure we got the best spots and explained every ritual beautifully.",
     activity: "Evening Ganga Aarti",
     date: "2025-09-15",
     verified: true,
     images: [
-      "/images/testimonials/sarah-trip-1.jpg",
-      "/images/testimonials/sarah-trip-2.jpg",
+      "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=400&h=300&fit=crop",
     ],
   },
   {
     id: "2",
     name: "Amit Sharma",
-    avatar: "/images/testimonials/amit-sharma.jpg",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
     location: "Delhi, India",
     designation: "Software Engineer",
     rating: 5,
     review:
-      "River rafting in Rishikesh was thrilling! The platform made booking so easy and the guides were professional and fun. Safety was their top priority and we felt completely secure throughout the adventure.",
+      "River rafting in Rishikesh was thrilling! The platform made booking so easy and the guides were professional and fun. Safety was their top priority.",
     activity: "White Water Rafting",
     date: "2025-09-10",
     verified: true,
+    images: [
+      "https://images.unsplash.com/photo-1534349762230-e0cadf78f5da?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=400&h=300&fit=crop",
+    ],
   },
   {
     id: "3",
     name: "Maria Rodriguez",
-    avatar: "/images/testimonials/maria-rodriguez.jpg",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
     location: "Barcelona, Spain",
     designation: "Travel Blogger",
     rating: 5,
     review:
-      "My yoga retreat in Rishikesh was life-changing. The ashram was peaceful, the teachers were incredibly knowledgeable, and the sunrise sessions by the Ganges were magical. Highly recommended for spiritual seekers.",
+      "My yoga retreat in Rishikesh was life-changing. The ashram was peaceful, the teachers were incredibly knowledgeable, and the sunrise sessions by the Ganges were magical.",
     activity: "Sunrise Yoga Session",
     date: "2025-09-08",
     verified: true,
-    images: ["/images/testimonials/maria-trip-1.jpg"],
+    images: ["https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"],
   },
   {
     id: "4",
     name: "James Wilson",
-    avatar: "/images/testimonials/james-wilson.jpg",
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
     location: "London, UK",
     designation: "Adventure Enthusiast",
-    rating: 4,
+    rating: 5,
     review:
-      "Bungee jumping from 83 meters was the most exhilarating experience of my life! The safety standards were excellent and the staff made sure I felt confident before the jump. An absolute must-do in Rishikesh.",
+      "Bungee jumping from 83 meters was the most exhilarating experience of my life! The safety standards were excellent and the staff made sure I felt confident.",
     activity: "Bungee Jumping",
     date: "2025-09-05",
     verified: true,
+    images: [
+      "https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=400&h=300&fit=crop",
+    ],
   },
   {
     id: "5",
     name: "Priya Patel",
-    avatar: "/images/testimonials/priya-patel.jpg",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
     location: "Mumbai, India",
     designation: "Marketing Manager",
     rating: 5,
     review:
-      "The temple tour in Haridwar was incredibly enlightening. Our local guide shared fascinating stories about each temple's history and significance. The entire experience felt authentic and deeply spiritual.",
+      "The temple tour in Haridwar was incredibly enlightening. Our local guide shared fascinating stories about each temple's history and significance.",
     activity: "Ancient Temples Tour",
     date: "2025-09-03",
     verified: true,
+    images: [
+      "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&h=300&fit=crop",
+    ],
   },
   {
     id: "6",
     name: "David Chen",
-    avatar: "/images/testimonials/david-chen.jpg",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
     location: "Sydney, Australia",
     designation: "Photographer",
     rating: 5,
     review:
-      "The Himalayan trek was breathtaking! Hidden waterfalls, pristine nature trails, and stunning mountain views. Our guide was very knowledgeable about local flora and fauna. Perfect for nature photographers.",
+      "The Himalayan trek was breathtaking! Hidden waterfalls, pristine nature trails, and stunning mountain views. Perfect for nature photographers.",
     activity: "Himalayan Nature Trek",
     date: "2025-08-28",
     verified: true,
     images: [
-      "/images/testimonials/david-trip-1.jpg",
-      "/images/testimonials/david-trip-2.jpg",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=300&fit=crop",
     ],
   },
 ];
@@ -120,28 +130,19 @@ const testimonials: Testimonial[] = [
 // Star Rating Component
 interface StarRatingProps {
   rating: number;
-  maxRating?: number;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md";
 }
 
-const StarRating: React.FC<StarRatingProps> = ({
-  rating,
-  maxRating = 5,
-  size = "md",
-}) => {
-  const sizeClasses = {
-    sm: "w-3 h-3 sm:w-4 sm:h-4",
-    md: "w-4 h-4 sm:w-5 sm:h-5",
-    lg: "w-5 h-5 sm:w-6 sm:h-6",
-  };
+const StarRating: React.FC<StarRatingProps> = ({ rating, size = "md" }) => {
+  const sizeClasses = size === "sm" ? "w-4 h-4" : "w-5 h-5";
 
   return (
     <div className="flex items-center gap-0.5">
-      {[...Array(maxRating)].map((_, i) => (
+      {[...Array(5)].map((_, i) => (
         <StarSolidIcon
           key={i}
-          className={`${sizeClasses[size]} ${
-            i < rating ? "text-yellow-400" : "text-gray-300"
+          className={`${sizeClasses} ${
+            i < rating ? "text-amber-400" : "text-gray-200"
           }`}
         />
       ))}
@@ -149,125 +150,117 @@ const StarRating: React.FC<StarRatingProps> = ({
   );
 };
 
+// Verified Badge Component
+const VerifiedBadge: React.FC = () => (
+  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+      <path
+        fillRule="evenodd"
+        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+        clipRule="evenodd"
+      />
+    </svg>
+    Verified
+  </span>
+);
+
 // Testimonial Card Component
 interface TestimonialCardProps {
   testimonial: Testimonial;
-  isActive: boolean;
 }
 
-const TestimonialCard: React.FC<TestimonialCardProps> = ({
-  testimonial,
-  isActive,
-}) => {
+const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
   const [imageError, setImageError] = useState(false);
 
   return (
-    <div
-      className={`transition-all duration-500 ${
-        isActive ? "opacity-100 scale-100" : "opacity-70 scale-95"
-      }`}
-    >
-      <article className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl hover:shadow-2xl transition-all duration-300 mx-1 sm:mx-2 relative overflow-hidden h-full">
-        <div className="absolute top-0 right-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 opacity-5">
-          <ChatBubbleLeftRightIcon className="w-full h-full text-orange-600" />
-        </div>
-
-        <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6 relative z-10">
-          <div className="relative flex-shrink-0">
-            {!imageError ? (
-              <Image
-                src={testimonial.avatar}
-                alt={`${testimonial.name} - Customer photo`}
-                width={56}
-                height={56}
-                className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full object-cover ring-2 sm:ring-4 ring-orange-100"
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg md:text-xl">
-                {testimonial.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </div>
-            )}
-            {testimonial.verified && (
-              <div className="absolute -bottom-0.5 sm:-bottom-1 -right-0.5 sm:-right-1 bg-green-500 rounded-full p-0.5 sm:p-1">
-                <svg
-                  className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-            )}
-          </div>
-
-          <div className="flex-grow min-w-0">
-            <div className="flex items-center justify-between mb-1 sm:mb-2 gap-2">
-              <h3 className="font-bold text-base sm:text-lg text-gray-900 truncate">
-                {testimonial.name}
-              </h3>
-              <StarRating rating={testimonial.rating} size="sm" />
+    <article className="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-500 h-full flex flex-col">
+      {/* Header - Avatar & Info */}
+      <div className="flex items-start gap-4 mb-4">
+        <div className="relative flex-shrink-0">
+          {!imageError ? (
+            <Image
+              src={testimonial.avatar}
+              alt={`${testimonial.name}`}
+              width={56}
+              height={56}
+              className="w-14 h-14 rounded-full object-cover ring-2 ring-orange-100"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+              {testimonial.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </div>
-            <p className="text-xs sm:text-sm text-gray-600 mb-0.5 sm:mb-1 truncate">
-              {testimonial.location}
-            </p>
-            {testimonial.designation && (
-              <p className="text-xs sm:text-sm text-orange-600 font-medium truncate">
-                {testimonial.designation}
-              </p>
-            )}
-          </div>
+          )}
         </div>
 
-        <blockquote className="text-gray-700 leading-relaxed mb-4 sm:mb-6 relative z-10">
-          <ChatBubbleLeftRightIcon className="w-5 h-5 sm:w-6 sm:h-6 text-orange-300 mb-1 sm:mb-2" />
-          <p className="text-sm sm:text-base md:text-lg italic line-clamp-4 sm:line-clamp-none">{`"${testimonial.review}"`}</p>
-        </blockquote>
+        <div className="flex-grow min-w-0">
+          <h3 className="font-semibold text-gray-900 truncate">
+            {testimonial.name}
+          </h3>
+          <p className="text-sm text-gray-500 truncate">{testimonial.location}</p>
+          {testimonial.designation && (
+            <p className="text-sm text-orange-600 truncate">
+              {testimonial.designation}
+            </p>
+          )}
+        </div>
 
-        <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 gap-2">
-          <span className="bg-orange-50 text-orange-700 px-2 sm:px-3 py-1 rounded-full font-medium truncate">
+        <div className="flex-shrink-0">
+          <StarRating rating={testimonial.rating} size="sm" />
+        </div>
+      </div>
+
+      {/* Review */}
+      <div className="relative flex-grow mb-4">
+        <ChatBubbleLeftRightIcon className="w-8 h-8 text-orange-100 mb-2" />
+        <blockquote className="text-gray-600 leading-relaxed text-sm line-clamp-4">
+          &ldquo;{testimonial.review}&rdquo;
+        </blockquote>
+      </div>
+
+      {/* Activity & Date */}
+      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full">
             {testimonial.activity}
           </span>
-          <span className="flex-shrink-0 text-[10px] sm:text-xs">
-            {new Date(testimonial.date).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
-          </span>
         </div>
+        <span className="text-xs text-gray-400">
+          {new Date(testimonial.date).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </span>
+      </div>
 
-        {testimonial.images && testimonial.images.length > 0 && (
-          <div className="flex gap-1.5 sm:gap-2 mt-3 sm:mt-4">
-            {testimonial.images.slice(0, 3).map((image) => (
-              <div
-                key={image}
-                className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg overflow-hidden"
-              >
-                <Image
-                  src={image}
-                  alt={`${testimonial.name}'s trip photo`}
-                  fill
-                  className="object-cover hover:scale-110 transition-transform duration-300"
-                />
-              </div>
-            ))}
-            {testimonial.images.length > 3 && (
-              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 text-[10px] sm:text-xs font-medium">
-                +{testimonial.images.length - 3}
-              </div>
-            )}
-          </div>
-        )}
-      </article>
-    </div>
+      {/* Trip Images */}
+      {testimonial.images && testimonial.images.length > 0 && (
+        <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
+          {testimonial.images.slice(0, 3).map((image, idx) => (
+            <div
+              key={idx}
+              className="relative w-12 h-12 rounded-lg overflow-hidden"
+            >
+              <Image
+                src={image}
+                alt={`Trip photo ${idx + 1}`}
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-300"
+              />
+            </div>
+          ))}
+          {testimonial.images.length > 3 && (
+            <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 text-xs font-medium">
+              +{testimonial.images.length - 3}
+            </div>
+          )}
+        </div>
+      )}
+    </article>
   );
 };
 
@@ -275,205 +268,153 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
 const TestimonialsSection: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [isPaused, setIsPaused] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [itemsPerView, setItemsPerView] = useState(3);
 
-  const itemsPerView = {
-    mobile: 1,
-    tablet: 2,
-    desktop: 3,
-  };
-
-  const [currentItemsPerView, setCurrentItemsPerView] = useState(
-    itemsPerView.desktop
-  );
-
+  // Responsive items per view
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setCurrentItemsPerView(itemsPerView.mobile);
+        setItemsPerView(1);
       } else if (window.innerWidth < 1024) {
-        setCurrentItemsPerView(itemsPerView.tablet);
+        setItemsPerView(2);
       } else {
-        setCurrentItemsPerView(itemsPerView.desktop);
+        setItemsPerView(3);
       }
     };
 
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [itemsPerView.mobile, itemsPerView.tablet, itemsPerView.desktop]);
+  }, []);
 
-  const maxIndex = Math.max(0, testimonials.length - currentItemsPerView);
+  const maxIndex = Math.max(0, testimonials.length - itemsPerView);
 
+  // Auto-play functionality
   useEffect(() => {
-    if (isAutoPlaying && !isPaused) {
-      intervalRef.current = setInterval(() => {
-        setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-      }, 5000);
-    } else if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
+    if (!isAutoPlaying) return;
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [isAutoPlaying, isPaused, maxIndex]);
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    }, 5000);
 
-  const goToPrevious = () =>
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, maxIndex]);
+
+  const goToPrevious = useCallback(() => {
     setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
-  const goToNext = () =>
+  }, [maxIndex]);
+
+  const goToNext = useCallback(() => {
     setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  const goToSlide = (index: number) =>
-    setCurrentIndex(Math.min(index, maxIndex));
-  const toggleAutoPlay = () => setIsAutoPlaying(!isAutoPlaying);
+  }, [maxIndex]);
 
-  const handleMouseEnter = () => setIsPaused(true);
-  const handleMouseLeave = () => setIsPaused(false);
+  const goToSlide = useCallback(
+    (index: number) => {
+      setCurrentIndex(Math.min(index, maxIndex));
+    },
+    [maxIndex]
+  );
 
+  // Derived values
   const visibleTestimonials = testimonials.slice(
     currentIndex,
-    currentIndex + currentItemsPerView
+    currentIndex + itemsPerView
   );
   const averageRating =
     testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonials.length;
-  const totalReviews = testimonials.length;
-  const verifiedCount = testimonials.filter((t) => t.verified).length;
+
+  // Stats
+  const stats = [
+    { value: `${averageRating.toFixed(1)}`, label: "Average Rating" },
+    { value: `${testimonials.length}+`, label: "Happy Travelers" },
+    { value: `${testimonials.filter((t) => t.verified).length}`, label: "Verified Reviews" },
+  ];
 
   return (
-    <section className="py-8 sm:py-12 md:py-16 bg-gradient-to-br from-orange-50 via-white to-red-50">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-        <div className="text-center mb-8 sm:mb-10 md:mb-12">
-          <div className="inline-block bg-orange-100 text-orange-600 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
+    <section className="py-16 md:py-20 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <span className="inline-block px-4 py-1.5 bg-orange-100 text-orange-600 text-sm font-medium rounded-full mb-4">
             Customer Stories
-          </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 md:mb-6 px-4">
-            What Our Travelers
-            <span className="text-orange-600 block mt-1">Say About Us</span>
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            What Our Travelers{" "}
+            <span className="text-orange-600">Say About Us</span>
           </h2>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8 px-4">
-            Real experiences from real travelers who discovered the magic of
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Real experiences from travelers who discovered the magic of
             Rishikesh and Haridwar with our expert guides.
           </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8 px-4">
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 mb-1 sm:mb-2">
-                <StarRating rating={Math.floor(averageRating)} size="sm" />
-                <span className="font-bold text-lg sm:text-xl md:text-2xl text-gray-900 ml-1 sm:ml-2">
-                  {averageRating.toFixed(1)}
-                </span>
-              </div>
-              <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
-                Average Rating
-              </p>
-            </div>
-            <div className="w-px h-8 sm:h-10 md:h-12 bg-gray-300"></div>
-            <div className="text-center">
-              <div className="font-bold text-lg sm:text-xl md:text-2xl text-gray-900 mb-1 sm:mb-2">
-                {totalReviews}+
-              </div>
-              <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
-                Happy Travelers
-              </p>
-            </div>
-            <div className="w-px h-8 sm:h-10 md:h-12 bg-gray-300"></div>
-            <div className="text-center">
-              <div className="font-bold text-lg sm:text-xl md:text-2xl text-gray-900 mb-1 sm:mb-2">
-                {verifiedCount}
-              </div>
-              <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
-                Verified Reviews
-              </p>
-            </div>
-          </div>
         </div>
 
-        <div
-          className="relative px-8 sm:px-10 md:px-12"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <button
-            onClick={goToPrevious}
-            disabled={currentIndex === 0}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 bg-white shadow-lg rounded-full p-2 sm:p-3 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-            aria-label="Previous testimonials"
-          >
-            <ChevronLeftIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-600" />
-          </button>
+        {/* Stats */}
+        <div className="flex justify-center gap-8 md:gap-16 mb-12">
+          {stats.map((stat, index) => (
+            <div key={index} className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
+                {stat.value}
+              </div>
+              <div className="text-sm text-gray-500">{stat.label}</div>
+            </div>
+          ))}
+        </div>
 
-          <button
-            onClick={goToNext}
-            disabled={currentIndex >= maxIndex}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 bg-white shadow-lg rounded-full p-2 sm:p-3 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-            aria-label="Next testimonials"
-          >
-            <ChevronRightIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-600" />
-          </button>
+        {/* Testimonials Carousel */}
+        <div className="relative">
+          {/* Navigation Buttons */}
+          <div className="flex justify-between items-center mb-8">
+            <button
+              onClick={goToPrevious}
+              disabled={currentIndex === 0}
+              className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-600 hover:bg-orange-50 hover:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+              aria-label="Previous testimonials"
+            >
+              <ChevronLeftIcon className="w-5 h-5" />
+            </button>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="flex gap-2">
+              {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goToSlide(i)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    i === currentIndex
+                      ? "bg-orange-600 w-6"
+                      : "bg-gray-300 hover:bg-gray-400"
+                  }`}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={goToNext}
+              disabled={currentIndex >= maxIndex}
+              className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-600 hover:bg-orange-50 hover:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+              aria-label="Next testimonials"
+            >
+              <ChevronRightIcon className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {visibleTestimonials.map((testimonial) => (
-              <TestimonialCard
-                key={testimonial.id}
-                testimonial={testimonial}
-                isActive={true}
-              />
+              <TestimonialCard key={testimonial.id} testimonial={testimonial} />
             ))}
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-8 sm:mt-10 md:mt-12">
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => goToSlide(i)}
-                className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
-                  i === currentIndex
-                    ? "bg-orange-600 scale-125"
-                    : "bg-gray-300 hover:bg-gray-400"
-                }`}
-                aria-label={`Go to testimonial set ${i + 1}`}
-              />
-            ))}
-          </div>
-
+        {/* CTA */}
+        <div className="text-center mt-12">
           <button
-            onClick={toggleAutoPlay}
-            className="flex items-center gap-2 bg-white border border-gray-300 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full hover:bg-gray-50 transition-colors duration-200"
-            aria-label={isAutoPlaying ? "Pause slideshow" : "Play slideshow"}
+            onClick={() => (window.location.href = "/reviews")}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 text-white font-medium rounded-full hover:bg-orange-700 transition-colors duration-300"
           >
-            {isAutoPlaying ? (
-              <PauseIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600" />
-            ) : (
-              <PlayIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600" />
-            )}
-            <span className="text-xs sm:text-sm text-gray-600">
-              {isAutoPlaying ? "Pause" : "Play"}
-            </span>
+            Read All Reviews
+            <ChevronRightIcon className="w-4 h-4" />
           </button>
-        </div>
-
-        <div className="text-center mt-10 sm:mt-12 md:mt-16 px-4">
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-6 sm:p-8 max-w-2xl mx-auto">
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
-              Ready to Create Your Own Story?
-            </h3>
-            <p className="text-sm sm:text-base text-gray-600 mb-5 sm:mb-6">
-              Join thousands of satisfied travelers and experience the magic of
-              sacred India with our expert local guides.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-              <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-semibold transition-colors duration-200 text-sm sm:text-base">
-                Book Trip Now
-              </button>
-              <button className="bg-transparent border-2 border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-semibold transition-all duration-200 text-sm sm:text-base">
-                Contact Guide
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </section>

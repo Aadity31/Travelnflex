@@ -165,17 +165,20 @@ export default function FooterWithCredits() {
         </div>
 
         {/* Need Help Section - Centered */}
-        <div className="mt-8 pt-6 border-t border-gray-800">
-          <div className="flex flex-col items-center justify-center gap-2 text-center">
-            <span className="text-white font-medium text-sm">Need Help?</span>
-            <a
-              href="mailto:info@travelnflex.com"
-              className="text-orange-400 hover:text-orange-300 text-sm transition-colors duration-300"
-            >
-              info@travelnflex.com
-            </a>
-          </div>
-        </div>
+      
+          <div className="flex justify-center">
+  <div className="flex items-center mr-[920] mt-2 gap-2 text-sm text-white font-medium ml-6">
+    <span>Need Help?</span>
+    <a
+      href="mailto:info@travelnflex.com"
+      className="text-orange-400 hover:text-orange-300 transition-colors duration-300"
+    >
+      info@travelnflex.com
+    </a>
+  </div>
+</div>
+
+      
       </div>
     </footer>
   );
