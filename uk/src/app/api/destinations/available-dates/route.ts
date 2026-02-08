@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAvailableDates } from '@/lib/data/destinations/getAvailableDates';
+import { getAvailableDatesByDestination } from '@/lib/data/destinations/getAvailableDates';
 
 export async function GET(req: Request) {
   try {
@@ -14,7 +14,7 @@ export async function GET(req: Request) {
       );
     }
 
-    const dates = await getAvailableDates(destinationId, packageType || undefined);
+    const dates = await getAvailableDatesByDestination(destinationId, packageType || undefined);
 
     return NextResponse.json({
       success: true,
