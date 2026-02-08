@@ -45,7 +45,7 @@ interface BookingCardProps {
   onChildrenChange: (delta: number) => void;
   onRoomsChange: (delta: number) => void;
   onDateSelect: (dateStr: string) => void;
-  onBookNow: () => void;
+  onBookNow?: () => void; // Optional - handled internally by BookNowButton
 }
 
 export function BookingCard({
@@ -72,7 +72,12 @@ export function BookingCard({
   } = calendar;
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+    <div
+      id="booking-card-scroll"
+      className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+      role="region"
+      aria-label="Booking Card"
+    >
       {/* Price header */}
       <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-orange-500 via-orange-600 to-red-500 p-6 text-white shadow-lg">
         {/* subtle glow */}
@@ -446,16 +451,50 @@ export function BookingCard({
           </div>
         </div>
 
-        {/* CTA Section */}
-        {booking.selectedDate && (
-          <BookNowButton
-            destination={destination}
-            startDate={booking.selectedDate}
-            endDate={booking.selectedDate}
-            persons={booking.adults + booking.children}
-            amount={pricing.total}
-          />
-        )}
+        {/* CTA Section - Always Visible */}
+        <div className="pt-2">
+          {booking.selectedDate ? (
+            <BookNowButton
+              destination={destination}
+              startDate={booking.selectedDate}
+              endDate={booking.selectedDate}
+              persons={booking.adults + booking.children}
+              amount={pricing.total}
+            />
+          ) : (
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+              <p className="text-sm text-amber-800 text-center">
+                Please select a date to continue with your booking
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Sticky Book Now Bar */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg px-4 py-3 safe-area-pb">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">Total</span>
+              <span className="text-lg font-bold text-gray-900">
+                ₹{pricing.total.toLocaleString("en-IN")}
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                const el = document.getElementById("booking-card-scroll");
+                el?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+              className={`py-3 px-6 rounded-xl font-bold text-sm flex items-center gap-2 transition-all ${
+                booking.selectedDate
+                  ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+              disabled={!booking.selectedDate}
+            >
+              {booking.selectedDate ? "Continue Booking" : "Select Date"}
+            </button>
+          </div>
+        </div>
 
         {/* Trust Badges */}
         <div className="grid grid-cols-2 gap-3 pt-2">
