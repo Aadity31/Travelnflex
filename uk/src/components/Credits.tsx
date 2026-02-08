@@ -1,14 +1,16 @@
 import Link from "next/link";
 
 interface CreditsProps {
+  companyName?: string;
+  websiteName?: string;
   designerName?: string;
   designerUrl?: string;
-  showLicense?: boolean;
-  licenseNumber?: string;
   className?: string;
 }
 
 export default function Credits({
+  companyName = "travelnflex.com",
+  websiteName = "TravelnFlex",
   designerName = "APS-Groups",
   designerUrl = "https://www.apsgroupco.com",
   className = "",
@@ -17,41 +19,47 @@ export default function Credits({
 
   return (
     <footer
-      className={`border-t border-[var(--border-medium)] bg-[var(--color-neutral-darker)] ${className}`}
+      className={`bg-[var(--color-neutral-darker)] border-t border-gray-800 ${className}`}
     >
-      <div className="max-w-8xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Credits Section */}
-        <div className="py-2 sm:py-2 md:py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-2 sm:gap-3">
-            {/* Left - Copyright */}
-            <div className="text-[0.625rem] sm:text-xs md:text-sm lg:text-md text-[var(--foreground-muted)] order-2 sm:order-1 text-center sm:text-left leading-relaxed">
-              <span className="inline-block">
-                © {currentYear} Sacred Journey. All rights reserved.
-              </span>
+        <div className="py-5">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Left - Site Name */}
+            <div className="text-gray-400 text-sm text-center sm:text-left order-1 sm:order-1">
+              <span className="font-medium text-gray-300">{companyName}</span>
             </div>
 
-            {/* Center - Separator (Hidden on mobile) */}
-            <div
-              className="hidden lg:block text-[var(--color-neutral)] text-sm order-2"
-              aria-hidden="true"
-            >
-              •
+            {/* Center - Copyright */}
+            <div className="text-gray-500 text-sm text-center order-3 sm:order-2">
+              <span>© {currentYear} All rights reserved</span>
             </div>
 
             {/* Right - Designer Credit */}
-            <div className="text-[0.625rem] sm:text-xs md:text-sm lg:text-md text-[var(--foreground-muted)] order-1 sm:order-3 text-center sm:text-right leading-relaxed">
-              <span className="inline-flex items-center gap-1 flex-wrap justify-center sm:justify-end">
-                <span>Designed by</span>
-
-                <Link
-                  href={designerUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] font-bold transition-all duration-300 underline-offset-2 hover:underline hover:scale-105 inline-block"
+            <div className="text-gray-500 text-sm text-center sm:text-right order-2 sm:order-3">
+              <Link
+                href={designerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-orange-400 hover:text-orange-300 font-medium 
+                         transition-all duration-300 inline-flex items-center gap-1
+                         hover:underline hover:underline-offset-4"
+              >
+                Designed by {designerName}
+                <svg
+                  className="w-3 h-3 transition-transform duration-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
                 >
-                  {designerName}
-                </Link>
-              </span>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </Link>
             </div>
           </div>
         </div>

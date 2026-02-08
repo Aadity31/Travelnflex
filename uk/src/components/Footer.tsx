@@ -7,66 +7,82 @@ export default function FooterWithCredits() {
       name: "Facebook",
       icon: "M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z",
       href: "https://www.facebook.com/siddhu.thapa.35",
-      type: "stroke",
+      type: "stroke" as const,
     },
     {
       name: "Instagram",
       icon: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z",
       href: "https://www.instagram.com/adityadimriaadi",
-      type: "fill",
+      type: "fill" as const,
     },
     {
       name: "X",
       icon: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z",
       href: "https://x.com/AadiDimri",
-      type: "fill",
+      type: "fill" as const,
     },
   ];
 
+  const quickLinks = [
+    { name: "Destinations", href: "/destinations" },
+    { name: "About Us", href: "/about-us" },
+    { name: "Contact", href: "/contact" },
+    { name: "Blog", href: "/blog" },
+  ];
+
+  const legalLinks = [
+    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Terms & Conditions", href: "/terms-and-conditions" },
+    { name: "Refund Policy", href: "/refund-policy" },
+  ];
+
   return (
-    <footer className="bg-[var(--color-neutral-dark)] text-[var(--text-on-dark)]">
+    <footer className="bg-[var(--color-neutral-darker)] text-[var(--text-on-dark)]">
+      {/* Decorative gradient top border */}
+      <div className="h-1 w-full bg-gradient-to-r from-orange-500 via-orange-400 to-orange-600" />
+
       {/* Main Footer */}
-      <div className="max-w-8xl mx-auto px-3 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 py-5 sm:py-6 md:py-7 lg:py-8 xl:py-8">
-        {/* Responsive Grid Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr] gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16 mb-6 sm:mb-8 md:mb-10">
-          {/* Brand Section - Full width on mobile */}
-          <div className="sm:col-span-2 lg:col-span-1">
-            {/* Logo & Brand Name */}
-            <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 mb-3 sm:mb-4">
-                     <div className="mb-2">
-  <div className="h-12 flex items-center">
-    <Image
-              src="/logo.svg"
-              alt="TravelnFlex"
-              className="h-full max-w-[160px] object-contain block"
-              width={160}
-              height={48}
-              priority
-            />
-  </div>
-</div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-12 lg:py-16">
+        {/* Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
+          {/* Brand Section */}
+          <div className="lg:col-span-4">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="relative">
+                <Image
+                  src="/logo.svg"
+                  alt="TravelnFlex"
+                  className="h-10 w-auto object-contain"
+                  width={140}
+                  height={40}
+                  priority
+                />
+              </div>
             </div>
 
-            {/* Description */}
-            <p className="text-[0.625rem] sm:text-xs md:text-sm text-[var(--foreground-secondary)] mb-4 sm:mb-5 md:mb-6 leading-relaxed max-w-sm">
+            <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-sm">
               Your trusted guide to spiritual destinations across India. Explore
-              sacred places with ease.
+              sacred places with ease and create unforgettable journeys.
             </p>
 
             {/* Social Links */}
-            <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3">
+            <div className="flex items-center gap-3">
               {socialLinks.map((social) => (
                 <a
                   key={social.name}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-[var(--color-neutral-dark)] rounded-lg flex items-center justify-center hover:bg-[var(--color-primary)] transition-all duration-[var(--transition-normal)] transform hover:scale-110 group"
+                  className="w-10 h-10 bg-[var(--color-neutral-dark)] rounded-xl flex items-center justify-center 
+                           hover:bg-gradient-to-r hover:from-orange-500 hover:to-orange-600 
+                           transition-all duration-300 ease-out
+                           hover:shadow-lg hover:shadow-orange-500/25 hover:-translate-y-0.5
+                           group border border-gray-700 hover:border-orange-500"
                   aria-label={social.name}
                 >
                   {social.type === "stroke" ? (
                     <svg
-                      className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-[var(--foreground-secondary)] group-hover:text-[var(--background)] transition-colors"
+                      className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors duration-300"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -80,7 +96,7 @@ export default function FooterWithCredits() {
                     </svg>
                   ) : (
                     <svg
-                      className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-[var(--foreground-secondary)] group-hover:text-[var(--background)] transition-colors"
+                      className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors duration-300"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -93,95 +109,64 @@ export default function FooterWithCredits() {
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h3 className="text-[var(--background)] font-bold mb-3 sm:mb-4 text-xs sm:text-sm md:text-base">
+          <div className="lg:col-span-4">
+            <h3 className="text-white font-semibold text-lg mb-5 flex items-center gap-2">
+              <span className="w-1 h-5 bg-gradient-to-b from-orange-500 to-orange-400 rounded-full" />
               Quick Links
             </h3>
-            <ul className="space-y-2 sm:space-y-2.5 md:space-y-3 text-[0.625rem] sm:text-xs md:text-sm">
-              <li>
-                <Link
-                  href="/destinations"
-                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
-                >
-                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
-                    Destinations
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about-us"
-                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
-                >
-                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
-                    About Us
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
-                >
-                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
-                    Contact
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/blog"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
-                >
-                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
-                    Blog
-                  </span>
-                </Link>
-              </li>
+            <ul className="space-y-3">
+              {quickLinks.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-gray-400 hover:text-orange-400 transition-all duration-300 
+                             inline-flex items-center gap-2 group text-sm"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-gray-600 group-hover:bg-orange-500 
+                                     transition-all duration-300 group-hover:scale-150" />
+                    <span className="group-hover:translate-x-1 transition-transform duration-300">
+                      {link.name}
+                    </span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Legal */}
-          <div>
-            <h3 className="text-[var(--background)] font-bold mb-3 sm:mb-4 text-xs sm:text-sm md:text-base">
+          <div className="lg:col-span-4">
+            <h3 className="text-white font-semibold text-lg mb-5 flex items-center gap-2">
+              <span className="w-1 h-5 bg-gradient-to-b from-orange-500 to-orange-400 rounded-full" />
               Legal
             </h3>
-            <ul className="space-y-2 sm:space-y-2.5 md:space-y-3 text-[0.625rem] sm:text-xs md:text-sm">
-              <li>
-                <Link
-                  href="/privacy-policy"
-                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
-                >
-                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
-                    Privacy Policy
-                  </span>
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/terms-and-conditions"
-                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
-                >
-                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
-                    Terms & Conditions
-                  </span>
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/refund-policy"
-                  className="text-[var(--foreground-muted)] hover:text-[var(--color-primary)] transition-colors duration-[var(--transition-fast)] inline-flex items-center group"
-                >
-                  <span className="group-hover:translate-x-1 transition-transform duration-[var(--transition-fast)]">
-                    Refund Policy
-                  </span>
-                </Link>
-              </li>
+            <ul className="space-y-3">
+              {legalLinks.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-gray-400 hover:text-orange-400 transition-all duration-300 
+                             inline-flex items-center gap-2 group text-sm"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-gray-600 group-hover:bg-orange-500 
+                                     transition-all duration-300 group-hover:scale-150" />
+                    <span className="group-hover:translate-x-1 transition-transform duration-300">
+                      {link.name}
+                    </span>
+                  </Link>
+                </li>
+              ))}
             </ul>
+
+            {/* Contact Info */}
+            <div className="mt-8 pt-6 border-t border-gray-800">
+              <h4 className="text-white font-medium text-sm mb-3">Need Help?</h4>
+              <a
+                href="mailto:info@travelnflex.com"
+                className="text-orange-400 hover:text-orange-300 text-sm transition-colors duration-300"
+              >
+                info@travelnflex.com
+              </a>
+            </div>
           </div>
         </div>
       </div>
