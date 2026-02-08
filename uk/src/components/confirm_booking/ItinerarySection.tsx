@@ -179,7 +179,7 @@ export default function ItinerarySection({
         {displayedDays.map((day, index) => (
           <div key={day.day} className="relative">
             {/* Day badge */}
-            <div className="absolute -left-6 sm:-left-12 top-0 z-10">
+            <div className="absolute -left-11 sm:-left-12 top-0 z-10">
               <div className="flex flex-col items-center gap-1">
                 <div
                   className={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-bold shadow-lg ring-4 ring-white transition-all ${
