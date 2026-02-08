@@ -37,9 +37,17 @@ export async function getAvailableDatesByDestination(
   const dates: Record<string, number> = {};
   
   result.rows.forEach((row) => {
-    // Fix timezone issue by parsing the date string directly without conversion
-    // The date is stored as YYYY-MM-DD in the database
-    const dateStr = row.available_date.split("T")[0];
+    // Handle both Date objects and string dates
+    let dateStr: string;
+    if (row.available_date instanceof Date) {
+      // Format Date object to YYYY-MM-DD in local timezone
+      const year = row.available_date.getFullYear();
+      const month = String(row.available_date.getMonth() + 1).padStart(2, '0');
+      const day = String(row.available_date.getDate()).padStart(2, '0');
+      dateStr = `${year}-${month}-${day}`;
+    } else {
+      dateStr = String(row.available_date).split("T")[0];
+    }
     dates[dateStr] = row.available_slots;
   });
   

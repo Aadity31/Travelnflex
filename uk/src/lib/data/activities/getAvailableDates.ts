@@ -30,10 +30,19 @@ export async function getActivityAvailableDates(
     );
 
     // Convert to Record<string, number> format for calendar
-    // Fix timezone issue by parsing the date string directly without conversion
+    // Handle both Date objects and string dates to avoid timezone issues
     const dates: Record<string, number> = {};
     for (const row of rows) {
-      const dateStr = row.date.split("T")[0];
+      let dateStr: string;
+      if (row.date instanceof Date) {
+        // Format Date object to YYYY-MM-DD in local timezone
+        const year = row.date.getFullYear();
+        const month = String(row.date.getMonth() + 1).padStart(2, '0');
+        const day = String(row.date.getDate()).padStart(2, '0');
+        dateStr = `${year}-${month}-${day}`;
+      } else {
+        dateStr = String(row.date).split("T")[0];
+      }
       dates[dateStr] = row.available_slots;
     }
 
