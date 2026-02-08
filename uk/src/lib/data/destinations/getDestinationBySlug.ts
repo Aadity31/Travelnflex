@@ -35,6 +35,7 @@ export async function getDestinationBySlug(slug: string) {
       p.join_group_includes,
       p.own_group_price,
       p.own_group_includes,
+      p.hotel_per_person,
 
       disc.solo_traveler_discount,
       disc.solo_traveler_valid_until,
@@ -99,6 +100,7 @@ export async function getDestinationBySlug(slug: string) {
     familyPackageIncludes: row.family_package_includes ? row.family_package_includes.split('\n').filter(Boolean) : [],
     joinGroupIncludes: row.join_group_includes ? row.join_group_includes.split('\n').filter(Boolean) : [],
     ownGroupIncludes: row.own_group_includes ? row.own_group_includes.split('\n').filter(Boolean) : [],
+    hotelPerPerson: row.hotel_per_person,
     
     // Package-specific discounts
     discount: {

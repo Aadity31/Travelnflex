@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Shield, Loader2, AlertCircle, CheckCircle2, Lock, LogIn, User } from "lucide-react";
+import { Shield, Loader2, AlertCircle, CheckCircle2, LogIn } from "lucide-react";
 
 interface BookNowButtonProps {
   destination: string;
@@ -11,6 +11,7 @@ interface BookNowButtonProps {
   persons: number;
   amount: number;
   type?: "activity" | "destination";
+  disabled?: boolean;
 }
 
 // Rate limiting utility
@@ -42,6 +43,7 @@ export default function BookNowButton({
   persons,
   amount,
   type = "destination",
+  disabled = false,
 }: BookNowButtonProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -50,6 +52,7 @@ export default function BookNowButton({
   const [success, setSuccess] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
+  const [showDateWarning, setShowDateWarning] = useState(false);
 
   // Check authentication status on mount
   useEffect(() => {
@@ -185,6 +188,13 @@ export default function BookNowButton({
       return;
     }
 
+    // Show warning if date not selected
+    if (disabled) {
+      setShowDateWarning(true);
+      setTimeout(() => setShowDateWarning(false), 3000);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -271,7 +281,7 @@ export default function BookNowButton({
       {/* Book Now Button */}
       <button
         onClick={handleBooking}
-        disabled={loading || success}
+        disabled={loading || success || disabled}
         className={`
           w-full py-4 px-6 rounded-xl font-bold text-lg
           flex items-center justify-center gap-2
@@ -279,9 +289,11 @@ export default function BookNowButton({
           ${
             success
               ? "bg-green-500 text-white"
+              : disabled
+              ? "bg-gradient-to-r from-gray-400 to-gray-500 text-white cursor-pointer"
               : "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40"
           }
-          ${loading ? "opacity-70 cursor-wait" : ""}
+          ${loading ? "opacity-70" : ""}
           ${!success && !loading ? "hover:scale-[1.02] active:scale-[0.98]" : ""}
         `}
         aria-label={success ? "Booking confirmed" : `Book now for ₹${amount.toLocaleString("en-IN")}`}
@@ -322,6 +334,17 @@ export default function BookNowButton({
         </div>
       )}
 
+      {/* Warning Message */}
+      {showDateWarning && (
+        <div
+          className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg"
+          role="alert"
+        >
+          <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+          <p className="text-sm text-amber-700">Please select a date first</p>
+        </div>
+      )}
+
       {/* Error Message */}
       {error && (
         <div
@@ -332,65 +355,6 @@ export default function BookNowButton({
           <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
-
-      {/* Trust Badges */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-          <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-          <div className="text-xs">
-            <span className="font-semibold text-green-800 block">Free Cancellation</span>
-            <span className="text-green-600">Up to 24 hours before</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <Lock className="w-4 h-4 text-blue-600 flex-shrink-0" />
-          <div className="text-xs">
-            <span className="font-semibold text-blue-800 block">SSL Encrypted</span>
-            <span className="text-blue-600">256-bit security</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 p-3 bg-purple-50 border border-purple-200 rounded-lg">
-          <Shield className="w-4 h-4 text-purple-600 flex-shrink-0" />
-          <div className="text-xs">
-            <span className="font-semibold text-purple-800 block">Secure Payment</span>
-            <span className="text-purple-600">PCI DSS compliant</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-          <User className="w-4 h-4 text-orange-600 flex-shrink-0" />
-          <div className="text-xs">
-            <span className="font-semibold text-orange-800 block">Best Experience</span>
-            <span className="text-orange-600">Personalized service</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Terms */}
-      <p className="text-xs text-gray-500 text-center">
-        By booking, you agree to our{" "}
-        <a
-          href="/terms-and-conditions"
-          className="text-orange-500 hover:underline focus:outline-none focus:ring-2 focus:ring-orange-500"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Read our terms and conditions"
-        >
-          Terms & Conditions
-        </a>{" "}
-        and{" "}
-        <a
-          href="/privacy-policy"
-          className="text-orange-500 hover:underline focus:outline-none focus:ring-2 focus:ring-orange-500"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Read our privacy policy"
-        >
-          Privacy Policy
-        </a>
-      </p>
     </div>
   );
 }

@@ -127,6 +127,7 @@ interface UnifiedData {
   familyPackagePrice?: number;
   joinGroupPrice?: number;
   ownGroupPrice?: number;
+  hotelPerPerson?: number;
   // Package-specific includes (from destination_prices table)
   soloTravelerIncludes?: string[];
   familyPackageIncludes?: string[];
@@ -377,9 +378,9 @@ export default function BookingClient({
 
   const pricing = useMemo(
     () => {
-      // Pass currentPrice and effectiveDiscount to calculatePricing
+      // Pass currentPrice, effectiveDiscount, and hotelPerPerson to calculatePricing
       // calculatePricing will apply the database discount rate
-      const result = calculatePricing(booking, currentPrice, effectiveDiscount);
+      const result = calculatePricing(booking, currentPrice, effectiveDiscount, data.hotelPerPerson || 0);
       
       // Add discount info to result
       return {
@@ -388,7 +389,7 @@ export default function BookingClient({
         discountPercentage: effectiveDiscount > 0 ? effectiveDiscount * 100 : 0,
       };
     },
-    [booking, currentPrice, effectiveDiscount],
+    [booking, currentPrice, effectiveDiscount, data.hotelPerPerson],
   );
 
   /* ============ HANDLERS ============ */
@@ -644,6 +645,7 @@ export default function BookingClient({
                     roomLimits={roomLimits}
                     pricing={pricing}
                     basePrice={currentPrice}
+                    hotelPerPerson={data.hotelPerPerson}
                     calendar={{
                       currentMonth,
                       daysInMonth,
@@ -677,6 +679,7 @@ export default function BookingClient({
               roomLimits={roomLimits}
               pricing={pricing}
               basePrice={currentPrice}
+              hotelPerPerson={data.hotelPerPerson}
               calendar={{
                 currentMonth,
                 daysInMonth,

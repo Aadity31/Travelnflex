@@ -103,15 +103,26 @@ export function getRoomLimits(
 export function calculatePricing(
   booking: BookingState,
   basePrice: number,
-  discountRate: number = 0 // Use database discount rate instead of hardcoded
+  discountRate: number = 0,
+  hotelPerPerson: number = 0
 ): PricingResult {
+  const isFixedPackage = booking.packageType === 'family' || booking.packageType === 'private';
+  
   const pricePerPersonRaw = basePrice * (1 - discountRate);
-
-  const totalPeople = booking.adults + booking.children * 0.5;
-  const peopleTotal = Math.round(pricePerPersonRaw * totalPeople);
-  const roomCost = booking.rooms * 500;
+  
+  // For Family & Private: fixed package price (not per person × travelers)
+  // For Solo & Group: per person pricing
+  const peopleTotal = isFixedPackage 
+    ? basePrice  // Fixed package price
+    : Math.round(pricePerPersonRaw * (booking.adults + booking.children));
+    
+  const roomCost = booking.rooms * hotelPerPerson;
   const subtotal = peopleTotal + roomCost;
-  const discount = (basePrice - pricePerPersonRaw) * booking.adults;
+  
+  // Discount calculation varies by package type
+  const discount = isFixedPackage
+    ? Math.round(basePrice * discountRate)  // Fixed amount discount
+    : Math.round((basePrice - pricePerPersonRaw) * booking.adults);
 
   return {
     pricePerPerson: Math.round(pricePerPersonRaw),

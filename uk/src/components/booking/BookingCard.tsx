@@ -41,14 +41,14 @@ interface BookingCardProps {
   roomLimits: RoomLimits;
   pricing: PricingResult;
   basePrice: number;
+  hotelPerPerson?: number;
   calendar: CalendarProps;
   onPackageChange: (pkg: PackageType) => void;
   onAdultsChange: (delta: number) => void;
   onChildrenChange: (delta: number) => void;
   onRoomsChange: (delta: number) => void;
   onDateSelect: (dateStr: string) => void;
-  onBookNow?: () => void; // Optional - handled internally by BookNowButton
-  // Database discounts - can be simple (for activities) or package-specific (for destinations)
+  onBookNow?: () => void;
   discounts?: {
     soloTraveler?: { percentage: number; validUntil: string };
     familyPackage?: { percentage: number; validUntil: string };
@@ -103,6 +103,7 @@ export function BookingCard({
   roomLimits,
   pricing,
   basePrice,
+  hotelPerPerson,
   calendar,
   onPackageChange,
   onAdultsChange,
@@ -268,7 +269,7 @@ export function BookingCard({
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-medium text-gray-900">Children</span>
-                  <p className="text-sm text-gray-500 mt-0.5">Age 0-12 • 50% off</p>
+                  <p className="text-sm text-gray-500 mt-0.5">Age 0-12</p>
                 </div>
                 <div className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 px-3 py-1.5">
                   <button
@@ -423,7 +424,7 @@ export function BookingCard({
           </div>
 
           {/* Selected Date Confirmation */}
-          {booking.selectedDate && (
+          {booking.selectedDate ? (
             <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-xl">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -439,6 +440,15 @@ export function BookingCard({
                 {booking.availableSlots} slots left
               </span>
             </div>
+          ) : (
+            <div className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-xl">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-amber-500 rounded-full" />
+                <span className="font-medium text-amber-800">
+                   select a date
+                </span>
+              </div>
+            </div>
           )}
         </div>
 
@@ -452,22 +462,32 @@ export function BookingCard({
           <div className="bg-gray-50 rounded-xl overflow-hidden">
             {/* Line Items */}
             <div className="p-4 space-y-2">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">
-                  {booking.adults} Adult{booking.adults > 1 ? "s" : ""}
-                  {booking.children > 0 &&
-                    ` + ${booking.children} Child${
-                      booking.children > 1 ? "ren" : ""
-                    }`}
-                </span>
-                <span className="font-semibold text-gray-900">
-                  ₹{pricing.peopleTotal.toLocaleString("en-IN")}
-                </span>
-              </div>
+              {(booking.packageType === 'family' || booking.packageType === 'private') ? (
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Package Price</span>
+                  <span className="font-semibold text-gray-900">
+                    ₹{pricing.peopleTotal.toLocaleString("en-IN")}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">
+                    {booking.adults} Adult{booking.adults > 1 ? "s" : ""}
+                    {booking.children > 0 &&
+                      ` + ${booking.children} Child${
+                        booking.children > 1 ? "ren" : ""
+                      }`}
+                  </span>
+                  <span className="font-semibold text-gray-900">
+                    ₹{pricing.peopleTotal.toLocaleString("en-IN")}
+                  </span>
+                </div>
+              )}
 
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-600">
                   {booking.rooms} Room{booking.rooms > 1 ? "s" : ""}
+                  {hotelPerPerson ? ` @ ₹${hotelPerPerson}/room` : ""}
                 </span>
                 <span className="font-semibold text-gray-900">
                   ₹{pricing.roomCost.toLocaleString("en-IN")}
@@ -483,18 +503,11 @@ export function BookingCard({
 
               <div className="pt-2 border-t border-gray-200">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold text-gray-900">
-                    ₹{Math.round(pricing.total / 1.05).toLocaleString("en-IN")}
+                  <span className="font-bold text-gray-900">Total Amount</span>
+                  <span className="font-bold text-gray-900">
+                    ₹{pricing.total.toLocaleString("en-IN")}
                   </span>
                 </div>
-              </div>
-
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">GST (5%)</span>
-                <span className="font-semibold text-gray-900">
-                  ₹{Math.round(pricing.total - pricing.total / 1.05).toLocaleString("en-IN")}
-                </span>
               </div>
             </div>
 
@@ -503,7 +516,6 @@ export function BookingCard({
               <div className="flex justify-between items-center">
                 <div>
                   <div className="font-bold text-gray-900">Total Amount</div>
-                  <div className="text-sm text-gray-600">GST included</div>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-orange-600">
@@ -517,21 +529,14 @@ export function BookingCard({
 
         {/* CTA Section - Always Visible */}
         <div className="pt-2">
-          {booking.selectedDate ? (
-            <BookNowButton
-              destination={destination}
-              startDate={booking.selectedDate}
-              endDate={booking.selectedDate}
-              persons={booking.adults + booking.children}
-              amount={pricing.total}
-            />
-          ) : (
-            <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
-              <p className="text-sm text-amber-800 text-center">
-                Please select a date to continue with your booking
-              </p>
-            </div>
-          )}
+          <BookNowButton
+            destination={destination}
+            startDate={booking.selectedDate || new Date().toISOString().split('T')[0]}
+            endDate={booking.selectedDate || new Date().toISOString().split('T')[0]}
+            persons={booking.adults + booking.children}
+            amount={pricing.total}
+            disabled={!booking.selectedDate}
+          />
         </div>
 
         {/* Mobile Sticky Book Now Bar */}
@@ -545,17 +550,19 @@ export function BookingCard({
             </div>
             <button
               onClick={() => {
+                if (!booking.selectedDate) {
+                  return;
+                }
                 const el = document.getElementById("booking-card-scroll");
                 el?.scrollIntoView({ behavior: "smooth", block: "center" });
               }}
               className={`py-3 px-6 rounded-xl font-bold text-sm flex items-center gap-2 transition-all ${
-                booking.selectedDate
-                  ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                !booking.selectedDate
+                  ? "bg-gradient-to-r from-gray-400 to-gray-500 text-white"
+                  : "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg"
               }`}
-              disabled={!booking.selectedDate}
             >
-              {booking.selectedDate ? "Continue Booking" : "Select Date"}
+              {!booking.selectedDate ? "Select Date" : "Book Now"}
             </button>
           </div>
         </div>
@@ -602,6 +609,27 @@ export function BookingCard({
             </div>
           </div>
         </div>
+
+        {/* Terms */}
+        <p className="text-xs text-gray-500 text-center mt-4">
+          By booking, you agree to our{" "}
+          <a
+            href="/terms-and-conditions"
+            className="text-orange-500 hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Terms & Conditions
+          </a>{" "}and{" "}
+          <a
+            href="/privacy-policy"
+            className="text-orange-500 hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Privacy Policy
+          </a>
+        </p>
       </div>
     </div>
   );
