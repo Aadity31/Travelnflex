@@ -249,6 +249,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
                 src={image}
                 alt={`Trip photo ${idx + 1}`}
                 fill
+                sizes="48px"
                 className="object-cover group-hover:scale-110 transition-transform duration-300"
               />
             </div>
