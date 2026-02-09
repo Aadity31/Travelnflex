@@ -23,6 +23,7 @@ export default function ItinerarySection({
   showAllDays,
   setShowAllDays,
 }: {
+  itinerary?: ItineraryDay[];
   showAllDays: boolean;
   setShowAllDays: (v: boolean) => void;
 }) {

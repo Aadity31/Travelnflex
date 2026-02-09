@@ -5,7 +5,6 @@ import {
   getAllAvailableDatesForDestination,
   bulkAddAvailableDates,
   deleteAllAvailableDatesForDestination,
-  upsertAvailableDate,
   deleteAvailableDate,
 } from '@/lib/data/destinations/getAvailableDates';
 

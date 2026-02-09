@@ -84,7 +84,7 @@ function getDiscountForPackage(
     : pkg === 'group' ? 'joinGroup'
     : 'ownGroup';
   
-  const discount = (discounts as any)[key];
+  const discount = (discounts as Record<string, { percentage: number; validUntil: string } | undefined>)[key];
   if (!discount || !discount.percentage) return 0;
   
   // Check if discount is still valid
@@ -102,7 +102,7 @@ export function BookingCard({
   destination,
   roomLimits,
   pricing,
-  basePrice,
+  basePrice: _basePrice,
   hotelPerPerson,
   calendar,
   onPackageChange,

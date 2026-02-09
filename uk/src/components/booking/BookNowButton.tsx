@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Shield, Loader2, AlertCircle, CheckCircle2, LogIn } from "lucide-react";
+import { Shield, Loader2, AlertCircle, LogIn } from "lucide-react";
 
 interface BookNowButtonProps {
   destination: string;
@@ -69,63 +69,14 @@ export default function BookNowButton({
     checkAuth();
   }, []);
 
-  // Check for stored booking intent after login redirect
-  useEffect(() => {
-    const storedIntent = sessionStorage.getItem("bookingIntent");
-    if (storedIntent && isAuthenticated) {
-      sessionStorage.removeItem("bookingIntent");
-      // Auto-proceed with booking after login
-      handleBookingWithIntent(JSON.parse(storedIntent));
-    }
-  }, [isAuthenticated]);
-
-  // Validate booking parameters
-  const validateBooking = useCallback((): boolean => {
-    const sanitizedDestination = sanitizeInput(destination);
-    const sanitizedStartDate = sanitizeInput(startDate);
-    const sanitizedEndDate = sanitizeInput(endDate);
-
-    if (!sanitizedDestination || !sanitizedStartDate || !sanitizedEndDate) {
-      setError("Missing required booking information");
-      return false;
-    }
-
-    if (persons < 1 || persons > 50) {
-      setError("Invalid number of persons");
-      return false;
-    }
-
-    if (amount <= 0) {
-      setError("Invalid booking amount");
-      return false;
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const bookingDate = new Date(sanitizedStartDate);
-    if (bookingDate < today) {
-      setError("Booking date must be in the future");
-      return false;
-    }
-
-    const start = new Date(sanitizedStartDate);
-    const end = new Date(sanitizedEndDate);
-    if (end < start) {
-      setError("End date cannot be before start date");
-      return false;
-    }
-
-    return true;
-  }, [destination, startDate, endDate, persons, amount]);
-
   // Handle booking with stored intent (after login)
-  async function handleBookingWithIntent(intent: {
+  const handleBookingWithIntent = useCallback(async (intent: {
     destination: string;
     startDate: string;
     endDate: string;
     persons: number;
     amount: number;
-  }) {
+  }) => {
     try {
       setLoading(true);
       setError(null);
@@ -173,7 +124,56 @@ export default function BookNowButton({
     } finally {
       setLoading(false);
     }
-  }
+  }, [router, type]);
+
+  // Check for stored booking intent after login redirect
+  useEffect(() => {
+    const storedIntent = sessionStorage.getItem("bookingIntent");
+    if (storedIntent && isAuthenticated) {
+      sessionStorage.removeItem("bookingIntent");
+      // Auto-proceed with booking after login
+      handleBookingWithIntent(JSON.parse(storedIntent));
+    }
+  }, [isAuthenticated, handleBookingWithIntent]);
+
+  // Validate booking parameters
+  const validateBooking = useCallback((): boolean => {
+    const sanitizedDestination = sanitizeInput(destination);
+    const sanitizedStartDate = sanitizeInput(startDate);
+    const sanitizedEndDate = sanitizeInput(endDate);
+
+    if (!sanitizedDestination || !sanitizedStartDate || !sanitizedEndDate) {
+      setError("Missing required booking information");
+      return false;
+    }
+
+    if (persons < 1 || persons > 50) {
+      setError("Invalid number of persons");
+      return false;
+    }
+
+    if (amount <= 0) {
+      setError("Invalid booking amount");
+      return false;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const bookingDate = new Date(sanitizedStartDate);
+    if (bookingDate < today) {
+      setError("Booking date must be in the future");
+      return false;
+    }
+
+    const start = new Date(sanitizedStartDate);
+    const end = new Date(sanitizedEndDate);
+    if (end < start) {
+      setError("End date cannot be before start date");
+      return false;
+    }
+
+    return true;
+  }, [destination, startDate, endDate, persons, amount]);
 
   // Handle initial booking click
   async function handleBooking() {

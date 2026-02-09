@@ -11,12 +11,6 @@ import {
   BoltIcon,
 } from "@heroicons/react/24/solid";
 
-interface Agency {
-  name: string;
-  logo?: string;
-  description?: string;
-}
-
 interface BookingDetailsProps {
   name: string;
   location: string;
@@ -123,7 +117,7 @@ export function BookingDetails({
       {/* Includes */}
       {(includes && includes.length > 0) && (
         <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">What's Included</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-3">What&apos;s Included</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {includes.map((item, index) => (
               <div key={index} className="flex items-start gap-2">

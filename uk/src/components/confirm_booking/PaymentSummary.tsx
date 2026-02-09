@@ -172,7 +172,7 @@ export default function PaymentSummary({
         {/* What's Included */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-5">
           <h5 className="text-xs font-bold text-blue-900 uppercase tracking-wide mb-2">
-            What's Included
+            What&apos;s Included
           </h5>
           <div className="space-y-1.5">
             {[

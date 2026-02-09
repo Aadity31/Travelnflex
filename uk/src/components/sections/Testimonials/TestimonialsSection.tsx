@@ -151,7 +151,7 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, size = "md" }) => {
 };
 
 // Verified Badge Component
-const VerifiedBadge: React.FC = () => (
+const _VerifiedBadge: React.FC = () => (
   <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
     <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
       <path
@@ -268,7 +268,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
 // Main TestimonialsSection Component
 const TestimonialsSection: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isAutoPlaying, _setIsAutoPlaying] = useState(true);
   const [itemsPerView, setItemsPerView] = useState(3);
 
   // Responsive items per view

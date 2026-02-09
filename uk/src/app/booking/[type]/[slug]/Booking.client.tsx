@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useMemo, useCallback, useEffect, Suspense, lazy } from "react";
+import { useState, useMemo, useCallback, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 import {
   PACKAGE_CONFIG,

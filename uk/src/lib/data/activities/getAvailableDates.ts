@@ -47,7 +47,7 @@ export async function getActivityAvailableDates(
     }
 
     return dates;
-  } catch (error) {
+  } catch (_error) {
     // If table doesn't exist, return empty object
     console.warn('activity_available_dates table not found, using mock dates');
     return {};
