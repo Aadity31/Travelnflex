@@ -277,7 +277,7 @@ export default function BookingConfirmForm({
           {/* Left Column - Itinerary */}
           <div className="lg:col-span-2 space-y-6">
             {/* Map Section */}
-            <MapSection name={bookingData.name} />
+            <MapSection name={bookingData.name} locations={itinerary.map(d => d.location).filter(Boolean) as string[]} />
 
             {/* Detailed Itinerary */}
             <ItinerarySection
