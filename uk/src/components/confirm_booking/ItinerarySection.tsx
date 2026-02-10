@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDownIcon, ChevronUpIcon, ClockIcon, MapPinIcon } from "@heroicons/react/24/solid";
+import { ChevronDownIcon, ClockIcon, MapPinIcon } from "@heroicons/react/24/solid";
 
 interface ItineraryDay {
   day: number;
@@ -19,152 +18,23 @@ interface ItineraryDay {
   duration?: string;
 }
 
-// Complete dummy data for 10 days - Char Dham Yatra
-const itineraryData: ItineraryDay[] = [
-  {
-    day: 1,
-    title: "Arrival at Haridwar",
-    date: "Day 1 - March 12",
-    description: "Arrive at Haridwar railway station. Transfer to hotel and rest. Evening visit to Har Ki Pauri for the famous Ganga Aarti.",
-    activities: [
-      { icon: "🚗", label: "Transfer", name: "Hotel Check-in", time: "02:00 PM" },
-      { icon: "🛕", label: "Visit", name: "Har Ki Pauri", time: "05:00 PM" },
-      { icon: "🕉️", label: "Aarti", name: "Ganga Aarti", time: "06:30 PM" },
-    ],
-  },
-  {
-    day: 2,
-    title: "Haridwar to Yamunotri",
-    date: "Day 2 - March 13",
-    description: "Early morning drive to Yamunotri. Trek to the temple and take a holy dip in Surya Kund. Return to base camp.",
-    distance: "210 km from Haridwar",
-    duration: "7–8 hours drive",
-    activities: [
-      { icon: "🚗", label: "Drive", name: "Haridwar to Janki Chatti", time: "06:00 AM" },
-      { icon: "🥾", label: "Trek", name: "Yamunotri Temple Trek", time: "11:00 AM" },
-      { icon: "♨️", label: "Hot Spring", name: "Surya Kund Dip", time: "12:30 PM" },
-    ],
-    isHighlight: true,
-  },
-  {
-    day: 3,
-    title: "Yamunotri to Uttarkashi",
-    date: "Day 3 - March 14",
-    description: "Trek back to Janki Chatti and drive to Uttarkashi. Visit Vishwanath Temple and explore local markets.",
-    distance: "80 km from Yamunotri",
-    duration: "3–4 hours drive",
-    activities: [
-      { icon: "🥾", label: "Trek Back", name: "Return to Janki Chatti", time: "08:00 AM" },
-      { icon: "🛕", label: "Temple", name: "Vishwanath Temple", time: "03:00 PM" },
-      { icon: "🛍️", label: "Shopping", name: "Local Market Visit", time: "05:00 PM" },
-    ],
-  },
-  {
-    day: 4,
-    title: "Gangotri Darshan",
-    date: "Day 4 - March 15",
-    description: "Visit the sacred Gangotri Temple, source of River Ganga. Optional trek to Gaumukh glacier if weather permits.",
-    distance: "100 km from Uttarkashi",
-    duration: "3–4 hours drive",
-    activities: [
-      { icon: "🛕", label: "Temple Visit", name: "Gangotri Temple", time: "06:00 AM" },
-      { icon: "🥾", label: "Trek", name: "Gaumukh Glacier (Optional)", time: "08:00 AM" },
-      { icon: "📸", label: "Photography", name: "Bhagirathi Peaks View", time: "12:00 PM" },
-    ],
-    isHighlight: true,
-  },
-  {
-    day: 5,
-    title: "Kedarnath Journey Begins",
-    date: "Day 5 - March 16",
-    description: "Drive to Gaurikund and begin trek to Kedarnath. Helicopter option available. Reach Kedarnath by evening.",
-    distance: "30 km trek from Gaurikund",
-    duration: "6–7 hours trek",
-    activities: [
-      { icon: "🚗", label: "Drive", name: "Uttarkashi to Gaurikund", time: "05:00 AM" },
-      { icon: "🚁", label: "Transport", name: "Helicopter Service", time: "07:00 AM" },
-      { icon: "🥾", label: "Trek", name: "Kedarnath Temple Trek", time: "08:00 AM" },
-    ],
-  },
-  {
-    day: 6,
-    title: "Kedarnath to Badrinath",
-    date: "Day 6 - March 17",
-    description: "Morning darshan at Kedarnath. Trek back and drive to Badrinath via Joshimath. Overnight stay at Badrinath.",
-    distance: "220 km from Kedarnath",
-    duration: "10–11 hours total",
-    activities: [
-      { icon: "🕉️", label: "Aarti", name: "Morning Aarti", time: "04:30 AM" },
-      { icon: "🥾", label: "Trek", name: "Return to Gaurikund", time: "07:00 AM" },
-      { icon: "🚗", label: "Drive", name: "Journey to Badrinath", time: "12:00 PM" },
-    ],
-    isHighlight: true,
-  },
-  {
-    day: 7,
-    title: "Badrinath Temple & Surroundings",
-    date: "Day 7 - March 18",
-    description: "Full day exploring Badrinath. Visit temple, Mana village (last Indian village), and nearby waterfalls.",
-    activities: [
-      { icon: "♨️", label: "Hot Spring", name: "Tapt Kund Holy Bath", time: "05:30 AM" },
-      { icon: "🛕", label: "Temple", name: "Badrinath Darshan", time: "06:00 AM" },
-      { icon: "🏘️", label: "Village", name: "Mana Village Visit", time: "10:00 AM" },
-    ],
-  },
-  {
-    day: 8,
-    title: "Explore Badrinath Valley",
-    date: "Day 8 - March 19",
-    description: "Visit Brahma Kapal, Charanpaduka, and other nearby attractions. Evening free for personal exploration.",
-    activities: [
-      { icon: "🙏", label: "Ritual", name: "Brahma Kapal Puja", time: "06:00 AM" },
-      { icon: "🥾", label: "Trek", name: "Charanpaduka", time: "09:00 AM" },
-      { icon: "🏔️", label: "Viewpoint", name: "Neelkanth Peak View", time: "11:00 AM" },
-    ],
-  },
-  {
-    day: 9,
-    title: "Return Journey – Rishikesh",
-    date: "Day 9 - March 20",
-    description: "Start return journey to Rishikesh. Visit Lakshman Jhula, Ram Jhula, and attend evening Ganga Aarti at Triveni Ghat.",
-    distance: "295 km from Badrinath",
-    duration: "9–10 hours drive",
-    activities: [
-      { icon: "🚗", label: "Drive", name: "Badrinath to Rishikesh", time: "06:00 AM" },
-      { icon: "🌉", label: "Bridge", name: "Lakshman Jhula Visit", time: "04:00 PM" },
-      { icon: "🕉️", label: "Aarti", name: "Triveni Ghat Aarti", time: "06:30 PM" },
-    ],
-  },
-  {
-    day: 10,
-    title: "Departure from Haridwar",
-    date: "Day 10 - March 21",
-    description: "Morning leisure time for shopping or temple visit. Check-out and drop to Haridwar railway station or airport.",
-    activities: [
-      { icon: "🛕", label: "Temple", name: "Morning Temple Visit", time: "06:00 AM" },
-      { icon: "☕", label: "Breakfast", name: "Hotel Breakfast", time: "08:00 AM" },
-      { icon: "✈️", label: "Departure", name: "Drop to Station/Airport", time: "11:00 AM" },
-    ],
-  },
-];
+interface ItinerarySectionProps {
+  itinerary: ItineraryDay[];
+  showAllDays: boolean;
+  setShowAllDays: (showAll: boolean) => void;
+}
 
-export default function ItinerarySection() {
-  // First 3 days expanded by default, others collapsed
-  const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([1, 2, 3]));
-
+export default function ItinerarySection({ itinerary, showAllDays, setShowAllDays }: ItinerarySectionProps) {
+  // First 3 days expanded by default when showAllDays is false
   const toggleDay = (dayNumber: number) => {
-    setExpandedDays((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(dayNumber)) {
-        newSet.delete(dayNumber);
-      } else {
-        newSet.add(dayNumber);
-      }
-      return newSet;
-    });
+    setShowAllDays(!showAllDays);
   };
 
-  const isExpanded = (dayNumber: number) => expandedDays.has(dayNumber);
+  const isExpanded = (dayNumber: number) => {
+    if (showAllDays) return true;
+    // First 3 days expanded by default
+    return dayNumber <= 3;
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
@@ -183,14 +53,14 @@ export default function ItinerarySection() {
         {/* Vertical timeline line */}
         <div className="absolute top-3 left-4 sm:left-5 w-0.5 h-full bg-gradient-to-b from-orange-400 via-gray-200 to-transparent" />
 
-        {itineraryData.map((day, index) => (
+        {itinerary.map((day, index) => (
           <DayItem
             key={day.day}
             day={day}
             index={index}
             isExpanded={isExpanded(day.day)}
             onToggle={() => toggleDay(day.day)}
-            isLast={index === itineraryData.length - 1}
+            isLast={index === itinerary.length - 1}
           />
         ))}
       </div>
