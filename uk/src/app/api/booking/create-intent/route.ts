@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import pool from "@/lib/db";
+import type { PoolClient } from "pg";
 
 // ============================================
 // BOOKING INTENT API
@@ -15,7 +16,7 @@ import pool from "@/lib/db";
 async function generateIntentId(
   packageCode: string,
   type: string,
-  client: any
+  client: PoolClient
 ): Promise<string> {
   const prefix = "INT";
   const year = new Date().getFullYear();
@@ -151,8 +152,6 @@ export async function POST(req: NextRequest) {
       );
 
       await client.query("COMMIT");
-
-      const intent = result.rows[0];
 
       /* -------------------------
          6. RETURN SUCCESS RESPONSE

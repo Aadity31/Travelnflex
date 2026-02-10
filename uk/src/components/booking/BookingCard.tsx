@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import {
   Calendar,
@@ -22,7 +22,6 @@ import {
   RoomLimits,
   PricingResult,
   PackageType,
-  calculatePricing,
 } from "@/lib/bookingSection/booking";
 import BookNowButton from "@/components/booking/BookNowButton";
 
@@ -106,7 +105,7 @@ function isValidPackageType(value: unknown): value is PackageType {
   return ["solo", "family", "private", "group"].includes(value);
 }
 
-function secureHandler<T extends (...args: T[]) => void>(
+function _secureHandler<T extends (...args: T[]) => void>(
   handler: T
 ): T {
   return ((...args: Parameters<T>) => {
@@ -143,10 +142,9 @@ function createSecureDeltaHandler(
  * Secure date selection handler
  * Returns a proper React event handler
  */
-function createSecureDateHandler(onDateSelect: (dateStr: string) => void) {
+function _createSecureDateHandler(onDateSelect: (dateStr: string) => void) {
   return (event: React.MouseEvent) => {
     event.preventDefault();
-    // Get date from button text or data attribute
     const target = event.target as HTMLButtonElement;
     const dateStr = target.textContent?.trim() || "";
     try {
@@ -154,8 +152,8 @@ function createSecureDateHandler(onDateSelect: (dateStr: string) => void) {
       if (isValidDateString(sanitized)) {
         onDateSelect(sanitized);
       }
-    } catch (error) {
-      console.error("[SECURITY_ERROR] Date handler blocked:", error);
+    } catch {
+      // Silently handled
     }
   };
 }
@@ -181,7 +179,8 @@ function createRateLimiter(maxRequests: number, windowMs: number) {
   };
 }
 
-const bookingRateLimiter = createRateLimiter(5, 10000); // 5 requests per 10 seconds
+// Rate limiter - available for future rate limiting
+const _bookingRateLimiter = createRateLimiter(5, 10000);
 
 // ============================================
 // PRICE INTEGRITY VALIDATION
@@ -318,8 +317,10 @@ export function BookingCard({
   onDateSelect,
   discounts,
 }: BookingCardProps) {
+  // Unused state variables - available for future rate limiting features
   const [tamperWarning, setTamperWarning] = useState<string | null>(null);
-  const [isRateLimited, setIsRateLimited] = useState(false);
+  // isRateLimited is available for future rate limiting implementation
+  const isRateLimited = false;
   const lastActionRef = useRef<number>(0);
 
   const {
@@ -686,7 +687,7 @@ export function BookingCard({
                 return (
                   <button
                     key={index}
-                    onClick={(e) => {
+                    onClick={(_e) => {
                       if (available && dateStr) {
                         const sanitized = sanitizeString(dateStr, 10);
                         if (isValidDateString(sanitized)) {
@@ -748,55 +749,73 @@ export function BookingCard({
           </div>
 
           <div className="bg-gray-50 rounded-xl overflow-hidden">
-            {/* Line Items */}
-            <div className="p-4 space-y-2">
-              {(booking.packageType === 'family' || booking.packageType === 'private') ? (
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Package Price</span>
-                  <span className="font-semibold text-gray-900">
-                    ₹{pricing.peopleTotal.toLocaleString("en-IN")}
-                  </span>
-                </div>
-              ) : (
+            {/* Price Breakdown Header */}
+            <div className="px-4 py-3 bg-gray-100 border-b border-gray-200">
+              <h4 className="font-bold text-gray-900">Price Breakdown</h4>
+            </div>
+            
+            {/* Line Items - Show original prices */}
+            <div className="p-4 space-y-3">
+              {/* Adults - Original price (before discount) */}
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-600">
+                  {booking.adults} Adult
+                </span>
+                <span className="font-semibold text-gray-900">
+                  ₹{((pricing.originalPrice || pricing.pricePerPerson) * booking.adults).toLocaleString("en-IN")}
+                </span>
+              </div>
+
+              {/* Children - Original price (before discount) */}
+              {booking.children > 0 && (
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-600">
-                    {booking.adults} Adult{booking.adults > 1 ? "s" : ""}
-                    {booking.children > 0 &&
-                      ` + ${booking.children} Child${
-                        booking.children > 1 ? "ren" : ""
-                      }`}
+                    {booking.children} Child
                   </span>
                   <span className="font-semibold text-gray-900">
-                    ₹{pricing.peopleTotal.toLocaleString("en-IN")}
+                    ₹{((pricing.originalPrice || pricing.pricePerPerson) * booking.children * 0.5).toLocaleString("en-IN")}
                   </span>
                 </div>
               )}
 
+              {/* Rooms */}
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">
-                  {booking.rooms} Room{booking.rooms > 1 ? "s" : ""}
-                  {hotelPerPerson ? ` @ ₹${hotelPerPerson}/room` : ""}
-                </span>
+                <div className="flex items-center gap-1 group relative cursor-help">
+                  <span className="text-gray-600">
+                    Hotel Expense
+                  </span>
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                    <path strokeLinecap="round" strokeWidth="2" d="M12 16v-4M12 8h.01" />
+                  </svg>
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                    This is total trip hotel expense for {booking.adults} {booking.adults > 1 ? 'people' : 'person'}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+                  </div>
+                </div>
                 <span className="font-semibold text-gray-900">
-                  ₹{pricing.roomCost.toLocaleString("en-IN")}
+                  ₹{(pricing.roomCost).toLocaleString("en-IN")}
                 </span>
               </div>
 
+              {/* Subtotal - Original prices sum */}
+              <div className="pt-2 border-t border-gray-200">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="font-medium text-gray-700">Subtotal</span>
+                  <span className="font-semibold text-gray-900">
+                    ₹{(((pricing.originalPrice || pricing.pricePerPerson) * (booking.adults + booking.children * 0.5)) + pricing.roomCost).toLocaleString("en-IN")}
+                  </span>
+                </div>
+              </div>
+
+              {/* Discount */}
               {pricing.discount > 0 && (
                 <div className="flex justify-between items-center text-sm text-green-600">
-                  <span className="font-medium">Package Savings</span>
+                  <span className="font-medium">Discount ({pricing.discountPercentage}%)</span>
                   <span className="font-bold">-₹{pricing.discount.toLocaleString("en-IN")}</span>
                 </div>
               )}
-
-              <div className="pt-2 border-t border-gray-200">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="font-bold text-gray-900">Total Amount</span>
-                  <span className="font-bold text-gray-900">
-                    ₹{pricing.total.toLocaleString("en-IN")}
-                  </span>
-                </div>
-              </div>
             </div>
 
             {/* Total Section */}
@@ -804,6 +823,7 @@ export function BookingCard({
               <div className="flex justify-between items-center">
                 <div>
                   <div className="font-bold text-gray-900">Total Amount</div>
+                  <div className="text-xs text-gray-500">All inclusive</div>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-orange-600">
@@ -815,9 +835,7 @@ export function BookingCard({
 
             {/* Security Notice */}
             <div className="mt-2 pt-2 border-t border-gray-200">
-              <p className="text-xs text-gray-500 text-center">
-                Final pricing will be verified by the server before payment processing.
-              </p>
+             
             </div>
           </div>
         </div>
