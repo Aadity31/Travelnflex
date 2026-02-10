@@ -319,11 +319,7 @@ function DayItem({
           </div>
         )}
 
-<<<<<<< HEAD
         {/* Collapsed hint */}
-=======
-        
->>>>>>> 1670035df9dedfb60c1ec80f499faab46a8b9efd
       </div>
     </div>
   );
