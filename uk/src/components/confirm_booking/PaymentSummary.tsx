@@ -17,16 +17,26 @@ interface BookingData {
 export default function PaymentSummary({
   bookingData,
   basePrice,
+  childPrice,
+  hotelPrice,
   gst,
   serviceFee,
 }: {
   bookingData: BookingData;
   basePrice: number;
+  childPrice?: number;
+  hotelPrice?: number;
   gst: number;
   serviceFee: number;
 }) {
+  const adultTotal = basePrice * bookingData.adults;
+  const childTotal = (childPrice || 0) * bookingData.children;
+  const hotelTotal = (hotelPrice || 0) * bookingData.rooms;
+  const subtotal = adultTotal + childTotal + hotelTotal;
+  const discount = subtotal * 0.05;
+  const totalAmount = subtotal - discount + gst + serviceFee;
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden sticky top-6">
+    <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden top-6">
       {/* Header with gradient */}
       <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-5">
         <div className="flex items-center gap-3">
@@ -114,46 +124,52 @@ export default function PaymentSummary({
           <div className="space-y-2.5 mb-3">
             {/* Adult Price */}
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Adult X {bookingData.adults}</span>
+              <span className="text-sm text-gray-600">{bookingData.adults} Adult{bookingData.adults > 1 ? "s" : ""}</span>
               <span className="text-sm font-semibold text-gray-900">
-                ₹{basePrice.toLocaleString("en-IN")}
+                ₹{adultTotal.toLocaleString("en-IN")}
               </span>
             </div>
             
             {/* Child Price */}
             {bookingData.children > 0 && (
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Child X {bookingData.children}</span>
+                <span className="text-sm text-gray-600">{bookingData.children} Child{bookingData.children > 1 ? "ren" : ""}</span>
                 <span className="text-sm font-semibold text-gray-900">
-                  ₹{basePrice.toLocaleString("en-IN")}
+                  ₹{childTotal.toLocaleString("en-IN")}
                 </span>
               </div>
             )}
             
             {/* Hotel Price */}
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Hotel X {bookingData.rooms}</span>
+              <span className="text-sm text-gray-600 flex items-center gap-1">
+                Hotel X {bookingData.rooms}
+                <button className="w-4 h-4 rounded-full bg-gray-300 text-gray-600 text-xs flex items-center justify-center hover:bg-gray-400" title="Total trip hotel expense">
+                  i
+                </button>
+              </span>
               <span className="text-sm font-semibold text-gray-900">
-                ₹{basePrice.toLocaleString("en-IN")}
+                ₹{hotelTotal.toLocaleString("en-IN")}
               </span>
             </div>
             
-            {gst > 0 && (
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Taxes & GST (5%)</span>
-                <span className="text-sm font-semibold text-gray-900">
-                  ₹{gst.toLocaleString("en-IN")}
-                </span>
-              </div>
-            )}
-            {serviceFee > 0 && (
-              <div className="flex justify-between items-center pb-3 border-b-2 border-dashed border-gray-300">
-                <span className="text-sm text-gray-600">Service Fee</span>
-                <span className="text-sm font-semibold text-gray-900">
-                  ₹{serviceFee.toLocaleString("en-IN")}
-                </span>
-              </div>
-            )}
+            {/* Subtotal */}
+            <div className="flex justify-between items-center pt-2 border-t border-gray-300">
+              <span className="text-sm font-semibold text-gray-700">Subtotal</span>
+              <span className="text-sm font-semibold text-gray-900">
+                ₹{subtotal.toLocaleString("en-IN")}
+              </span>
+            </div>
+            
+            {/* Discount */}
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 flex items-center gap-1">
+                Discount (5%)
+              </span>
+              <span className="text-sm font-semibold text-green-600">
+                -₹{discount.toLocaleString("en-IN")}
+              </span>
+            </div>
           </div>
 
           <div className="flex justify-between items-center bg-white rounded-lg p-3 border-2 border-green-200">
@@ -163,7 +179,7 @@ export default function PaymentSummary({
             </div>
             <div className="text-right">
               <div className="font-bold text-2xl text-green-600">
-                ₹{bookingData.pricing.total.toLocaleString("en-IN")}
+                ₹{totalAmount.toLocaleString("en-IN")}
               </div>
             </div>
           </div>
