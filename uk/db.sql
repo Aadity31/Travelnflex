@@ -1,6 +1,6 @@
 -- ============================================================
 -- Devbhoomi Darshan - Database Schema Export
--- Generated: 2026-02-08T09:26:40.434Z
+-- Generated: 2026-02-10T08:11:55.699Z
 -- Database: Neon PostgreSQL
 -- ============================================================
 
@@ -32,6 +32,20 @@ CREATE TABLE IF NOT EXISTS activities (
 );
 
 -- Foreign Key: agency_code -> agencies(code)
+
+-- ACTIVITIES_TAXONOMY TABLE
+-- ============================================================
+CREATE TABLE IF NOT EXISTS activities_taxonomy (
+    id uuid DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
+    name character varying NOT NULL,
+    category character varying NOT NULL,
+    subcategory character varying,
+    trait_key character varying,
+    trait_value character varying,
+    is_active boolean DEFAULT true,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone DEFAULT now()
+);
 
 -- ACTIVITY_DISCOUNTS TABLE
 -- ============================================================
@@ -221,7 +235,7 @@ CREATE TABLE IF NOT EXISTS destination_day_places (
 CREATE TABLE IF NOT EXISTS destination_discounts (
     destination_id text NOT NULL PRIMARY KEY,
     percentage integer,
-    valid_until date NOT NULL,
+    valid_until date,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone,
     solo_traveler_discount integer DEFAULT 0,
@@ -255,7 +269,7 @@ CREATE TABLE IF NOT EXISTS destination_itinerary_days (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS destination_prices (
     destination_id text NOT NULL PRIMARY KEY,
-    price_per_person integer NOT NULL,
+    price_per_person integer,
     currency text DEFAULT 'INR'::text,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
@@ -439,6 +453,25 @@ CREATE TABLE IF NOT EXISTS payments (
 
 -- Foreign Key: user_id -> users(id)
 -- Foreign Key: booking_id -> bookings(id)
+
+-- PLACES_TAXONOMY TABLE
+-- ============================================================
+CREATE TABLE IF NOT EXISTS places_taxonomy (
+    id uuid DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
+    name character varying NOT NULL,
+    place_type character varying NOT NULL,
+    category character varying,
+    subcategory character varying,
+    state character varying,
+    country character varying DEFAULT 'India'::character varying,
+    latitude numeric,
+    longitude numeric,
+    trait_key character varying,
+    trait_value character varying,
+    is_active boolean DEFAULT true,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone DEFAULT now()
+);
 
 -- PROFILES TABLE
 -- ============================================================
