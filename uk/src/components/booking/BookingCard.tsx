@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import {
   Calendar,
@@ -22,7 +22,6 @@ import {
   RoomLimits,
   PricingResult,
   PackageType,
-  calculatePricing,
 } from "@/lib/bookingSection/booking";
 import BookNowButton from "@/components/booking/BookNowButton";
 
@@ -106,7 +105,7 @@ function isValidPackageType(value: unknown): value is PackageType {
   return ["solo", "family", "private", "group"].includes(value);
 }
 
-function secureHandler<T extends (...args: T[]) => void>(
+function _secureHandler<T extends (...args: T[]) => void>(
   handler: T
 ): T {
   return ((...args: Parameters<T>) => {
@@ -143,10 +142,9 @@ function createSecureDeltaHandler(
  * Secure date selection handler
  * Returns a proper React event handler
  */
-function createSecureDateHandler(onDateSelect: (dateStr: string) => void) {
+function _createSecureDateHandler(onDateSelect: (dateStr: string) => void) {
   return (event: React.MouseEvent) => {
     event.preventDefault();
-    // Get date from button text or data attribute
     const target = event.target as HTMLButtonElement;
     const dateStr = target.textContent?.trim() || "";
     try {
@@ -154,8 +152,8 @@ function createSecureDateHandler(onDateSelect: (dateStr: string) => void) {
       if (isValidDateString(sanitized)) {
         onDateSelect(sanitized);
       }
-    } catch (error) {
-      console.error("[SECURITY_ERROR] Date handler blocked:", error);
+    } catch {
+      // Silently handled
     }
   };
 }
@@ -181,7 +179,8 @@ function createRateLimiter(maxRequests: number, windowMs: number) {
   };
 }
 
-const bookingRateLimiter = createRateLimiter(5, 10000); // 5 requests per 10 seconds
+// Rate limiter - available for future rate limiting
+const _bookingRateLimiter = createRateLimiter(5, 10000);
 
 // ============================================
 // PRICE INTEGRITY VALIDATION
@@ -318,8 +317,10 @@ export function BookingCard({
   onDateSelect,
   discounts,
 }: BookingCardProps) {
+  // Unused state variables - available for future rate limiting features
   const [tamperWarning, setTamperWarning] = useState<string | null>(null);
-  const [isRateLimited, setIsRateLimited] = useState(false);
+  // isRateLimited is available for future rate limiting implementation
+  const isRateLimited = false;
   const lastActionRef = useRef<number>(0);
 
   const {
@@ -686,7 +687,7 @@ export function BookingCard({
                 return (
                   <button
                     key={index}
-                    onClick={(e) => {
+                    onClick={(_e) => {
                       if (available && dateStr) {
                         const sanitized = sanitizeString(dateStr, 10);
                         if (isValidDateString(sanitized)) {

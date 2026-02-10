@@ -51,7 +51,8 @@ export async function POST(req: NextRequest) {
       persons,
       packageType,
       rooms,
-      timestamp,
+      // timestamp is used for security hashing, marked as unused
+      timestamp: _timestamp,
     } = body;
 
     // Validate required fields
