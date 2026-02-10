@@ -35,6 +35,7 @@ interface BookingData {
 interface ItineraryDay {
   day: number;
   title: string;
+  location?: string;
   date: string;
   description: string;
   hotel?: {
@@ -70,6 +71,7 @@ export default function BookingConfirmForm({
   {
     day: 1,
     title: "Arrival in Haridwar",
+    location: "Haridwar",
     date: "15 Jan 2026",
     description:
       "Arrive at Haridwar. Check-in to your hotel. In the evening, witness the Ganga Aarti at Har Ki Pauri.",
@@ -83,6 +85,7 @@ export default function BookingConfirmForm({
   {
     day: 2,
     title: "Haridwar to Barkot",
+    location: "Barkot",
     date: "16 Jan 2026",
     description:
       "Drive to Barkot via Mussoorie. En route visit Kempty Falls. Overnight stay at Barkot.",
@@ -100,6 +103,7 @@ export default function BookingConfirmForm({
   {
     day: 3,
     title: "Yamunotri Trek",
+    location: "Yamunotri",
     date: "17 Jan 2026",
     description:
       "Early morning drive to Jankichatti. Start 6 km trek to Yamunotri. Temple darshan and Surya Kund bath.",
@@ -108,6 +112,7 @@ export default function BookingConfirmForm({
   {
     day: 4,
     title: "Barkot to Uttarkashi",
+    location: "Uttarkashi",
     date: "18 Jan 2026",
     description:
       "Drive to Uttarkashi. Visit Vishwanath Temple and relax near Bhagirathi River.",
@@ -121,6 +126,7 @@ export default function BookingConfirmForm({
   {
     day: 5,
     title: "Gangotri Excursion",
+    location: "Gangotri",
     date: "19 Jan 2026",
     description:
       "Early morning drive to Gangotri. Perform pooja and enjoy scenic Himalayan views. Return to Uttarkashi.",
@@ -129,6 +135,7 @@ export default function BookingConfirmForm({
   {
     day: 6,
     title: "Uttarkashi to Guptkashi",
+    location: "Guptkashi",
     date: "20 Jan 2026",
     description:
       "Long scenic drive to Guptkashi via Tehri Dam and Rudraprayag. Overnight stay.",
@@ -142,6 +149,7 @@ export default function BookingConfirmForm({
   {
     day: 7,
     title: "Kedarnath Trek",
+    location: "Kedarnath",
     date: "21 Jan 2026",
     description:
       "Drive to Sonprayag, then trek 16 km to Kedarnath. Evening aarti at Kedarnath Temple.",
@@ -150,6 +158,7 @@ export default function BookingConfirmForm({
   {
     day: 8,
     title: "Kedarnath to Guptkashi",
+    location: "Guptkashi",
     date: "22 Jan 2026",
     description:
       "Morning darshan at Kedarnath Temple. Trek back to Sonprayag and drive to Guptkashi.",
@@ -157,6 +166,7 @@ export default function BookingConfirmForm({
   {
     day: 9,
     title: "Guptkashi to Badrinath",
+    location: "Badrinath",
     date: "23 Jan 2026",
     description:
       "Drive to Badrinath via Joshimath. Visit Tapt Kund and attend evening aarti.",
@@ -170,6 +180,7 @@ export default function BookingConfirmForm({
   {
     day: 10,
     title: "Badrinath to Haridwar (Departure)",
+    location: "Haridwar",
     date: "24 Jan 2026",
     description:
       "Morning darshan at Badrinath Temple. Drive back to Haridwar with memorable experiences.",
