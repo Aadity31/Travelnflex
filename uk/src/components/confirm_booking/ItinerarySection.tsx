@@ -328,17 +328,7 @@ function DayItem({
           </div>
         )}
 
-        {/* Collapsed hint */}
-        {!isExpanded && (
-          <button
-            type="button"
-            onClick={onToggle}
-            className="mt-2 text-xs font-medium text-orange-600 hover:text-orange-700 flex items-center gap-1 transition-colors"
-          >
-            View details
-            <ChevronDownIcon className="w-3.5 h-3.5" />
-          </button>
-        )}
+        
       </div>
     </div>
   );
