@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { Shield, Loader2, AlertCircle, LogIn } from "lucide-react";
 
 interface BookNowButtonProps {
-  destination: string;
+  destination: string; // This is the packageCode/slug (e.g., "4-dham-yatra-uttarakhand")
   startDate: string;
   endDate: string;
   persons: number;
@@ -94,7 +94,8 @@ export default function BookNowButton({
       setLoading(true);
       setError(null);
 
-      const res = await fetch("/api/bookings/create", {
+      // Call the booking intent API
+      const intentRes = await fetch("/api/booking/create-intent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,36 +103,37 @@ export default function BookNowButton({
         },
         credentials: "include",
         body: JSON.stringify({
-          destination: sanitizeInput(intent.destination),
-          startDate: sanitizeInput(intent.startDate),
-          endDate: sanitizeInput(intent.endDate),
-          persons: sanitizeNumber(intent.persons, 1, 50, 1),
-          packageType: sanitizeInput(intent.packageType || "solo", 20),
+          packageCode: sanitizeInput(intent.destination, 20),
+          type: type || "destination", // Pass the booking type for agency lookup
+          startDate: sanitizeInput(intent.startDate, 10),
+          endDate: sanitizeInput(intent.endDate, 10),
+          adults: sanitizeNumber(intent.persons, 1, 50, 1),
+          children: 0,
           rooms: sanitizeNumber(intent.rooms, 1, 20, 1),
+          packageType: sanitizeInput(intent.packageType || "solo", 20),
           timestamp: Date.now(),
-          // SECURITY: amount is NOT sent - server calculates price from database
         }),
       });
 
-      if (res.status === 429) {
+      if (intentRes.status === 429) {
         throw new Error("Too many requests. Please try again later.");
       }
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || "Booking failed. Please try again.");
+      if (!intentRes.ok) {
+        const errorData = await intentRes.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to create booking intent.");
       }
 
-      const data = await res.json();
+      const intentData = await intentRes.json();
 
-      if (!data?.bookingId || typeof data.bookingId !== "string") {
-        throw new Error("Booking initialization failed");
+      if (!intentData.intent_id || typeof intentData.intent_id !== "string") {
+        throw new Error("Invalid response from booking intent API");
       }
 
-      // Redirect to confirm page with booking ID
+      // Redirect to confirm page with intent_id as ref parameter
       const encodedDestination = encodeURIComponent(intent.destination);
-      const encodedBookingId = encodeURIComponent(data.bookingId);
-      router.push(`/booking/${type || 'destination'}/${encodedDestination}/confirm?bookingId=${encodedBookingId}`);
+      const encodedIntentId = encodeURIComponent(intentData.intent_id);
+      router.push(`/booking/${type || 'destination'}/${encodedDestination}/confirm?ref=${encodedIntentId}`);
     } catch (err) {
       console.error("Booking error:", err);
       if (err instanceof Error) {
@@ -218,7 +220,7 @@ export default function BookNowButton({
       if (!authData.authenticated) {
         // Store booking intent for after login (WITHOUT amount)
         const bookingIntent = {
-          destination,
+          destination, // This is the packageCode
           startDate,
           endDate,
           persons,
@@ -239,9 +241,46 @@ export default function BookNowButton({
         return;
       }
 
-      // Navigate to confirm page - server will calculate price
+      // Step 1: Create booking intent by calling the API
+      const intentRes = await fetch("/api/booking/create-intent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          packageCode: sanitizeInput(destination, 20), // Use destination as packageCode
+          type: type || "destination", // Pass the booking type for agency lookup
+          startDate: sanitizeInput(startDate, 10),
+          endDate: sanitizeInput(endDate, 10),
+          adults: sanitizeNumber(persons, 1, 50, 1),
+          children: 0,
+          rooms: sanitizeNumber(rooms, 1, 20, 1),
+          packageType: sanitizeInput(packageType || "solo", 20),
+          timestamp: Date.now(),
+        }),
+      });
+
+      if (intentRes.status === 429) {
+        throw new Error("Too many requests. Please try again later.");
+      }
+
+      if (!intentRes.ok) {
+        const errorData = await intentRes.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to create booking intent.");
+      }
+
+      const intentData = await intentRes.json();
+
+      if (!intentData.intent_id || typeof intentData.intent_id !== "string") {
+        throw new Error("Invalid response from booking intent API");
+      }
+
+      // Step 2: Redirect to confirm page with intent_id as ref parameter
       const encodedDestination = encodeURIComponent(destination);
-      router.push(`/booking/${type || 'destination'}/${encodedDestination}/confirm`);
+      const encodedIntentId = encodeURIComponent(intentData.intent_id);
+      router.push(`/booking/${type || 'destination'}/${encodedDestination}/confirm?ref=${encodedIntentId}`);
     } catch (err) {
       console.error("Booking error:", err);
       if (err instanceof Error) {

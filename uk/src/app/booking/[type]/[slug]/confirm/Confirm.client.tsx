@@ -55,53 +55,127 @@ interface ItineraryDay {
 
 export default function BookingConfirmForm({
   bookingData,
+  intentId,
+  isIntentValid = true,
 }: {
   bookingData: BookingData;
+  intentId?: string;
+  isIntentValid?: boolean;
 }) {
   const router = useRouter();
   const [showAllDays, setShowAllDays] = useState(false);
 
   // Dummy itinerary data (same as before)
-  const itinerary: ItineraryDay[] = [
-    {
-      day: 1,
-      title: "Arrival in Haridwar",
-      date: "15 Jan 2026",
-      description:
-        "Arrive at Haridwar. Check-in to your hotel. In the evening, witness the mesmerizing Ganga Aarti at Har Ki Pauri ghat.",
-      hotel: {
-        name: "Haveli Hari Ganga",
-        image: "/images/hotel-1.jpg",
-        rating: 4.5,
-        features: ["River View", "Breakfast"],
-      },
+ const itinerary: ItineraryDay[] = [
+  {
+    day: 1,
+    title: "Arrival in Haridwar",
+    date: "15 Jan 2026",
+    description:
+      "Arrive at Haridwar. Check-in to your hotel. In the evening, witness the Ganga Aarti at Har Ki Pauri.",
+    hotel: {
+      name: "Haveli Hari Ganga",
+      image: "/images/hotel-1.jpg",
+      rating: 4.5,
+      features: ["River View", "Breakfast"],
     },
-    {
-      day: 2,
-      title: "Transfer to Barkot",
-      date: "16 Jan 2026",
-      description:
-        "Drive to Barkot via Mussoorie. En route visit Kempty Fall. This is the base for the trek to Yamunotri.",
-      hotel: {
-        name: "Barkot Camp Resort",
-        image: "/images/hotel-2.jpg",
-        rating: 4.0,
-        features: ["Tent Stay", "Dinner"],
-      },
-      activities: [
-        { icon: "💧", label: "Sightseeing", name: "Kempty Falls" },
-        { icon: "🏔️", label: "Stopover", name: "Mussoorie" },
-      ],
+  },
+  {
+    day: 2,
+    title: "Haridwar to Barkot",
+    date: "16 Jan 2026",
+    description:
+      "Drive to Barkot via Mussoorie. En route visit Kempty Falls. Overnight stay at Barkot.",
+    hotel: {
+      name: "Barkot Camp Resort",
+      image: "/images/hotel-2.jpg",
+      rating: 4.0,
+      features: ["Tent Stay", "Dinner"],
     },
-    {
-      day: 3,
-      title: "Yamunotri Trek",
-      date: "17 Jan 2026",
-      description:
-        "Early morning drive to Jankichatti. Start 6km trek to Yamunotri. Darshan at the temple and take a holy dip in the hot springs.",
-      isHighlight: true,
+    activities: [
+      { icon: "💧", label: "Sightseeing", name: "Kempty Falls" },
+      { icon: "🏔️", label: "Hill Town", name: "Mussoorie" },
+    ],
+  },
+  {
+    day: 3,
+    title: "Yamunotri Trek",
+    date: "17 Jan 2026",
+    description:
+      "Early morning drive to Jankichatti. Start 6 km trek to Yamunotri. Temple darshan and Surya Kund bath.",
+    isHighlight: true,
+  },
+  {
+    day: 4,
+    title: "Barkot to Uttarkashi",
+    date: "18 Jan 2026",
+    description:
+      "Drive to Uttarkashi. Visit Vishwanath Temple and relax near Bhagirathi River.",
+    hotel: {
+      name: "Hotel Shiv Ganga",
+      image: "/images/hotel-3.jpg",
+      rating: 4.1,
+      features: ["River Side", "WiFi"],
     },
-  ];
+  },
+  {
+    day: 5,
+    title: "Gangotri Excursion",
+    date: "19 Jan 2026",
+    description:
+      "Early morning drive to Gangotri. Perform pooja and enjoy scenic Himalayan views. Return to Uttarkashi.",
+    isHighlight: true,
+  },
+  {
+    day: 6,
+    title: "Uttarkashi to Guptkashi",
+    date: "20 Jan 2026",
+    description:
+      "Long scenic drive to Guptkashi via Tehri Dam and Rudraprayag. Overnight stay.",
+    hotel: {
+      name: "Guptkashi Heights",
+      image: "/images/hotel-4.jpg",
+      rating: 4.0,
+      features: ["Mountain View", "Dinner"],
+    },
+  },
+  {
+    day: 7,
+    title: "Kedarnath Trek",
+    date: "21 Jan 2026",
+    description:
+      "Drive to Sonprayag, then trek 16 km to Kedarnath. Evening aarti at Kedarnath Temple.",
+    isHighlight: true,
+  },
+  {
+    day: 8,
+    title: "Kedarnath to Guptkashi",
+    date: "22 Jan 2026",
+    description:
+      "Morning darshan at Kedarnath Temple. Trek back to Sonprayag and drive to Guptkashi.",
+  },
+  {
+    day: 9,
+    title: "Guptkashi to Badrinath",
+    date: "23 Jan 2026",
+    description:
+      "Drive to Badrinath via Joshimath. Visit Tapt Kund and attend evening aarti.",
+    hotel: {
+      name: "Hotel Snow Crest",
+      image: "/images/hotel-5.jpg",
+      rating: 4.3,
+      features: ["Heater", "Hot Water"],
+    },
+  },
+  {
+    day: 10,
+    title: "Badrinath to Haridwar (Departure)",
+    date: "24 Jan 2026",
+    description:
+      "Morning darshan at Badrinath Temple. Drive back to Haridwar with memorable experiences.",
+    isHighlight: true,
+  },
+];
 
   const basePrice = Math.round(bookingData.pricing.total / 1.05);
   const gst = Math.round(bookingData.pricing.total - basePrice);
@@ -125,11 +199,17 @@ export default function BookingConfirmForm({
               Planned Trip Itinerary
             </h1>
             <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded font-bold text-xs">
-                CONFIRMED
+              <span className={`px-2 py-0.5 rounded font-bold text-xs ${
+                !isIntentValid 
+                  ? "bg-red-100 text-red-600" 
+                  : intentId 
+                    ? "bg-amber-100 text-amber-600" 
+                    : "bg-blue-100 text-blue-600"
+              }`}>
+                {!isIntentValid ? 'EXPIRED' : intentId ? 'PENDING' : 'CONFIRMED'}
               </span>
               <span>•</span>
-              <span>Booking ID: #TRP-88219</span>
+              <span>Booking ID: {intentId || 'TRP-' + Date.now().toString().slice(-8)}</span>
               <span>•</span>
               <span>
                 {new Date(bookingData.selectedDate).toLocaleDateString(

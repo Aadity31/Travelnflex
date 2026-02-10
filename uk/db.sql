@@ -532,3 +532,31 @@ CREATE TABLE IF NOT EXISTS wishlist (
 
 -- Foreign Key: user_id -> users(id)
 
+-- BOOKING_INTENTS TABLE
+-- ============================================================
+-- Stores temporary booking intents that expire after a certain time
+-- Used to create booking reservations before final payment
+CREATE TABLE booking_intents (
+    id BIGSERIAL PRIMARY KEY,
+
+    intent_id VARCHAR(40) UNIQUE NOT NULL,
+    user_id BIGINT NOT NULL,
+    package_code VARCHAR(20) NOT NULL,
+
+    status VARCHAR(15) NOT NULL CHECK (
+        status IN ('DRAFT', 'HELD', 'EXPIRED', 'CONVERTED')
+    ),
+
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_booking_intents_expires
+ON booking_intents (expires_at);
+
+CREATE INDEX idx_booking_intents_user
+ON booking_intents (user_id);
+
+
+-- Foreign Key: user_id -> users(id)
+
