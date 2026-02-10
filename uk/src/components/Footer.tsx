@@ -65,6 +65,19 @@ export default function FooterWithCredits() {
               sacred places with ease and create unforgettable journeys.
             </p>
 
+            {/* Email Section - Company Contact */}
+            <div className="mb-5">
+              <span className="text-gray-400 text-xs">
+                <span className="font-medium text-gray-300">Need Help? </span>
+                <a
+                  href="mailto:info@travelnflex.com"
+                  className="text-orange-400 hover:text-orange-300 transition-colors duration-300"
+                >
+                  info@travelnflex.com
+                </a>
+              </span>
+            </div>
+
             {/* Social Links */}
             <div className="flex items-center gap-2">
               {socialLinks.map((social) => (
@@ -135,6 +148,7 @@ export default function FooterWithCredits() {
                   ))}
                 </ul>
               </div>
+           
 
               {/* Legal */}
               <div>

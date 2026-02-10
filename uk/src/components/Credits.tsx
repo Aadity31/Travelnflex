@@ -9,7 +9,6 @@ interface CreditsProps {
 }
 
 export default function Credits({
-  companyEmail = "info@travelnflex.com",
   websiteName = "TravelnFlex",
   designerName = "APS-Groups",
   designerUrl = "https://www.apsgroupco.com",
@@ -27,19 +26,15 @@ export default function Credits({
           {/* Mobile: Single row */}
           <div className="flex flex-row items-center justify-between gap-2 sm:hidden">
             {/* Left - Site Name */}
-            <div className="text-gray-400 text-xs">
-              <span className="font-medium text-gray-300">Need Help? </span>
-              <a
-                href="mailto:info@travelnflex.com"
-                className="text-orange-400 hover:text-orange-300 transition-colors duration-300"
-              >
-                {companyEmail}
-              </a>
+            <div className="text-gray-400 text-sm">
+              <p className="text-orange-400 hover:text-orange-300 transition-colors duration-300">
+                travelnflex.com
+              </p>
             </div>
 
             {/* Center - Copyright */}
             <div className="text-gray-500 text-xs">
-              <span>© {currentYear} {websiteName}</span>
+              <span>© {currentYear} <span className="font-medium text-orange-400">{websiteName}</span></span>
             </div>
 
             {/* Right - Designer Credit */}
@@ -73,20 +68,14 @@ export default function Credits({
           <div className="hidden sm:flex flex-row items-center justify-between gap-4">
             {/* Left - Site Name */}
             <div className="text-gray-400 text-sm">
-              <span className="font-medium text-gray-300">Need Help? </span>
-              <a
-                href="mailto:info@travelnflex.com"
-                className="text-orange-400 hover:text-orange-300 transition-colors duration-300"
-              >
-                info@travelnflex.com
-              </a>
-
-
+              <p className="text-orange-400 hover:text-orange-300 transition-colors duration-300">
+                travelnflex.com
+              </p>
             </div>
 
             {/* Center - Copyright */}
             <div className="text-gray-500 text-sm">
-              <span>© {currentYear} All rights reserved <span className="font-medium text-orange-400">{websiteName}</span></span>
+              <span>© {currentYear} All rights reserved by<span className="font-medium text-orange-400">{websiteName}</span></span>
             </div>
 
             {/* Right - Designer Credit */}
