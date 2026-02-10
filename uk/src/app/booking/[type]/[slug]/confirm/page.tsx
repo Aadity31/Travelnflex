@@ -1,5 +1,6 @@
 import { getActivityBySlug } from "@/lib/data/activities/getActivityBySlug";
 import { getDestinationBySlug } from "@/lib/data/destinations/getDestinationBySlug";
+import { getItineraryByDestinationSlug, type ItineraryDay } from "@/lib/db/getItineraryWithActivities";
 import { notFound } from "next/navigation";
 import BookingConfirmForm from "./Confirm.client";
 
@@ -115,7 +116,23 @@ export default async function BookingConfirmPage({
     },
   };
 
-  return <BookingConfirmForm bookingData={bookingData} intentId={intentId} isIntentValid={isIntentValid} />;
+  // Fetch itinerary data for destinations
+  let itineraryDays: ItineraryDay[] = [];
+  if (type === "destination" && data.id) {
+    const itineraryData = await getItineraryByDestinationSlug(slug);
+    if (itineraryData?.days) {
+      itineraryDays = itineraryData.days;
+    }
+  }
+
+  return (
+    <BookingConfirmForm 
+      bookingData={bookingData} 
+      intentId={intentId} 
+      isIntentValid={isIntentValid}
+      itineraryDays={itineraryDays}
+    />
+  );
 }
 
 // Generate metadata for the page

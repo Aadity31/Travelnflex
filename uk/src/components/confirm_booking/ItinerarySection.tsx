@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import { ChevronDownIcon, ClockIcon, MapPinIcon } from "@heroicons/react/24/solid";
 
 interface ActivityItem {
@@ -27,30 +27,21 @@ interface ItineraryDay {
 
 interface ItinerarySectionProps {
   itinerary: ItineraryDay[];
-  showAllDays: boolean;
-  setShowAllDays: (showAll: boolean) => void;
 }
-
-const INITIAL_VISIBLE_DAYS = 3;
 
 export default function ItinerarySection({
   itinerary,
-  showAllDays,
-  setShowAllDays,
 }: ItinerarySectionProps) {
-  const [expandedDays, setExpandedDays] = useState<Set<number>>(
-    () => new Set(itinerary.filter((d) => d.day <= 3).map((d) => d.day))
-  );
-
-  useEffect(() => {
-    if (showAllDays) {
-      setExpandedDays(new Set(itinerary.map((d) => d.day)));
-    } else {
-      setExpandedDays(new Set(itinerary.filter((d) => d.day <= 3).map((d) => d.day)));
+  // Track which days are expanded (all expanded by default)
+  const [expandedDays, setExpandedDays] = useState<Set<number>>(() => {
+    try {
+      return new Set(itinerary.map((d) => d.day));
+    } catch {
+      return new Set([1, 2, 3]);
     }
-  }, [showAllDays, itinerary]);
+  });
 
-  const toggleDay = (dayNumber: number) => {
+  const toggleDay = useCallback((dayNumber: number) => {
     setExpandedDays((prev) => {
       const next = new Set(prev);
       if (next.has(dayNumber)) {
@@ -58,20 +49,22 @@ export default function ItinerarySection({
       } else {
         next.add(dayNumber);
       }
-      const allDayNumbers = itinerary.map((d) => d.day);
-      const allExpanded = allDayNumbers.every((d) => next.has(d));
-      setShowAllDays(allExpanded);
       return next;
     });
-  };
+  }, []);
 
-  const isExpanded = (dayNumber: number) => expandedDays.has(dayNumber);
-
-  const visibleDays = showAllDays 
-    ? itinerary 
-    : itinerary.slice(0, INITIAL_VISIBLE_DAYS);
-
-  const hasMoreDays = itinerary.length > INITIAL_VISIBLE_DAYS;
+  // Toggle all days at once
+  const allExpanded = expandedDays.size === itinerary.length;
+  const toggleAll = useCallback(() => {
+    if (allExpanded) {
+      // Collapse all - keep first 3 expanded for better UX
+      const firstThree = itinerary.slice(0, 3).map((d) => d.day);
+      setExpandedDays(new Set(firstThree));
+    } else {
+      // Expand all
+      setExpandedDays(new Set(itinerary.map((d) => d.day)));
+    }
+  }, [allExpanded, itinerary]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
@@ -84,44 +77,41 @@ export default function ItinerarySection({
         </p>
       </div>
 
+      {/* Single button to expand/collapse all */}
+      <div className="mb-4 flex justify-end">
+        <button
+          type="button"
+          onClick={toggleAll}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+        >
+          {allExpanded ? (
+            <>
+              <span>Show less</span>
+              <ChevronDownIcon className="w-4 h-4 rotate-180" />
+            </>
+          ) : (
+            <>
+              <span>View all {itinerary.length} days</span>
+              <ChevronDownIcon className="w-4 h-4" />
+            </>
+          )}
+        </button>
+      </div>
+
       <div className="relative pl-10 sm:pl-12">
         <div className="absolute top-3 left-4 sm:left-5 w-0.5 h-full bg-gradient-to-b from-orange-400 via-gray-200 to-transparent" />
 
-        {visibleDays.map((day, index) => (
+        {itinerary.map((day, index) => (
           <DayItem
             key={day.day}
             day={day}
             index={index}
-            isExpanded={isExpanded(day.day)}
-            onToggle={() => toggleDay(day.day)}
-            isLast={index === visibleDays.length - 1}
+            isExpanded={expandedDays.has(day.day)}
+            onToggle={toggleDay}
+            isLast={index === itinerary.length - 1}
           />
         ))}
       </div>
-
-      {hasMoreDays && (
-        <div className="mt-6 flex justify-center">
-          {!showAllDays ? (
-            <button
-              type="button"
-              onClick={() => setShowAllDays(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors shadow-sm"
-            >
-              <span>View all {itinerary.length} days</span>
-              <ChevronDownIcon className="w-4 h-4" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowAllDays(false)}
-              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-orange-200 hover:bg-orange-50 text-orange-700 font-medium rounded-lg transition-colors"
-            >
-              <span>Show less</span>
-              <ChevronDownIcon className="w-4 h-4 rotate-180" />
-            </button>
-          )}
-        </div>
-      )}
 
       <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
         <div className="flex items-start gap-3">
@@ -177,13 +167,14 @@ function DayItem({
   day: ItineraryDay;
   index: number;
   isExpanded: boolean;
-  onToggle: () => void;
+  onToggle: (dayNumber: number) => void;
   isLast: boolean;
 }) {
+  const handleDayToggle = () => onToggle(day.day);
   const displayTitle = day.dayTitle || day.title || `Day ${day.day}`;
   const timeRange = getTimeRange(day.activities);
   
-  // DEFAULT TIMES agar data mein nahi hai
+  // Use database times first, then fall back to derived times or defaults
   const finalStartTime = day.startTime || timeRange.start || "06:00 AM";
   const finalEndTime = day.endTime || timeRange.end || "08:00 PM";
 
@@ -193,7 +184,7 @@ function DayItem({
       <div className="absolute -left-10 sm:-left-12 top-0 z-10">
         <button
           type="button"
-          onClick={onToggle}
+          onClick={handleDayToggle}
           className="group flex flex-col items-center gap-1"
           aria-expanded={isExpanded}
         >
@@ -214,7 +205,7 @@ function DayItem({
 
       <div className="pl-2 sm:pl-4">
         {/* Header - Always Visible */}
-        <button type="button" onClick={onToggle} className="w-full text-left group">
+        <button type="button" onClick={handleDayToggle} className="w-full text-left group">
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="flex-1 min-w-0">
               <h4 className="text-base sm:text-lg font-bold text-gray-900 leading-tight">
@@ -329,16 +320,6 @@ function DayItem({
         )}
 
         {/* Collapsed hint */}
-        {!isExpanded && (
-          <button
-            type="button"
-            onClick={onToggle}
-            className="mt-2 text-xs font-medium text-orange-600 hover:text-orange-700 flex items-center gap-1 transition-colors"
-          >
-            View details
-            <ChevronDownIcon className="w-3.5 h-3.5" />
-          </button>
-        )}
       </div>
     </div>
   );

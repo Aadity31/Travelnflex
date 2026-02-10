@@ -208,12 +208,13 @@ CREATE TABLE IF NOT EXISTS destination_available_dates (
 -- DESTINATION_DAY_ACTIVITIES TABLE
 -- ============================================================
 CREATE TABLE IF NOT EXISTS destination_day_activities (
-    id uuid DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
-    day_id uuid NOT NULL,
-    activity_name text NOT NULL,
-    activity_order integer DEFAULT 0,
-    created_at timestamp with time zone DEFAULT now()
-);
+        id uuid DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
+            day_id uuid NOT NULL,
+                activity_name text NOT NULL,
+                    activity_order integer DEFAULT 0,
+                        created_at timestamp with time zone DEFAULT now()
+                        );
+)
 
 -- Foreign Key: day_id -> destination_itinerary_days(id)
 

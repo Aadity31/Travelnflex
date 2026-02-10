@@ -130,10 +130,11 @@ export default function BookNowButton({
         throw new Error("Invalid response from booking intent API");
       }
 
-      // Redirect to confirm page with intent_id as ref parameter
+      // Redirect to confirm page with intent_id and selectedDate as parameters
       const encodedDestination = encodeURIComponent(intent.destination);
       const encodedIntentId = encodeURIComponent(intentData.intent_id);
-      router.push(`/booking/${type || 'destination'}/${encodedDestination}/confirm?ref=${encodedIntentId}`);
+      const encodedStartDate = encodeURIComponent(intent.startDate);
+      router.push(`/booking/${type || 'destination'}/${encodedDestination}/confirm?ref=${encodedIntentId}&selectedDate=${encodedStartDate}`);
     } catch (err) {
       console.error("Booking error:", err);
       if (err instanceof Error) {
@@ -277,10 +278,11 @@ export default function BookNowButton({
         throw new Error("Invalid response from booking intent API");
       }
 
-      // Step 2: Redirect to confirm page with intent_id as ref parameter
+      // Step 2: Redirect to confirm page with intent_id and selectedDate as parameters
       const encodedDestination = encodeURIComponent(destination);
       const encodedIntentId = encodeURIComponent(intentData.intent_id);
-      router.push(`/booking/${type || 'destination'}/${encodedDestination}/confirm?ref=${encodedIntentId}`);
+      const encodedStartDate = encodeURIComponent(startDate);
+      router.push(`/booking/${type || 'destination'}/${encodedDestination}/confirm?ref=${encodedIntentId}&selectedDate=${encodedStartDate}`);
     } catch (err) {
       console.error("Booking error:", err);
       if (err instanceof Error) {

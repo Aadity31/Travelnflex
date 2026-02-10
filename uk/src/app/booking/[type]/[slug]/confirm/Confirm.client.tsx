@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeftIcon,
@@ -12,6 +11,7 @@ import MapSection from "@/components/confirm_booking/MapSection";
 import ItinerarySection from "@/components/confirm_booking/ItinerarySection";
 import EnhanceTrip from "@/components/confirm_booking/EnhanceTrip";
 import PaymentSummary from "@/components/confirm_booking/PaymentSummary";
+import type { ItineraryDay as DBItineraryDay } from "@/lib/db/getItineraryWithActivities";
 
 /* ---------------- TYPES ---------------- */
 
@@ -50,24 +50,13 @@ interface ItineraryDay {
     name: string;
   }[];
   isHighlight?: boolean;
+  startTime?: string;
+  endTime?: string;
 }
 
-/* ---------------- COMPONENT ---------------- */
+/* ---------------- DEFAULT ITINERARY DATA ---------------- */
 
-export default function BookingConfirmForm({
-  bookingData,
-  intentId,
-  isIntentValid = true,
-}: {
-  bookingData: BookingData;
-  intentId?: string;
-  isIntentValid?: boolean;
-}) {
-  const router = useRouter();
-  const [showAllDays, setShowAllDays] = useState(false);
-
-  // Dummy itinerary data (same as before)
- const itinerary: ItineraryDay[] = [
+const defaultItinerary: ItineraryDay[] = [
   {
     day: 1,
     title: "Arrival in Haridwar",
@@ -188,6 +177,48 @@ export default function BookingConfirmForm({
   },
 ];
 
+/* ---------------- COMPONENT ---------------- */
+
+interface BookingConfirmFormProps {
+  bookingData: BookingData;
+  intentId?: string;
+  isIntentValid?: boolean;
+  itineraryDays?: DBItineraryDay[];
+}
+
+export default function BookingConfirmForm({
+  bookingData,
+  intentId,
+  isIntentValid = true,
+  itineraryDays = [],
+}: BookingConfirmFormProps) {
+  const router = useRouter();
+
+  // Transform database itinerary data to UI format
+  const itinerary: ItineraryDay[] = itineraryDays.length > 0
+    ? itineraryDays.map((day, index) => {
+        // Calculate date based on start date from booking data
+        const startDate = new Date(bookingData.selectedDate);
+        const dayDate = new Date(startDate);
+        dayDate.setDate(startDate.getDate() + index);
+        
+        return {
+          day: day.dayNumber,
+          title: day.title,
+          location: day.location || undefined,
+          date: dayDate.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+          description: day.description || "",
+          activities: day.activities.map((act) => ({
+            icon: "",
+            label: "Activity",
+            name: act.activityName,
+          })),
+          startTime: day.startTime || undefined,
+          endTime: day.endTime || undefined,
+        };
+      })
+    : defaultItinerary;
+
   const basePrice = Math.round(bookingData.pricing.total / 1.05);
   const gst = Math.round(bookingData.pricing.total - basePrice);
   const serviceFee = 2000;
@@ -251,8 +282,6 @@ export default function BookingConfirmForm({
             {/* Detailed Itinerary */}
             <ItinerarySection
               itinerary={itinerary}
-              showAllDays={showAllDays}
-              setShowAllDays={setShowAllDays}
             />
 
             {/* Enhance Your Trip */}
