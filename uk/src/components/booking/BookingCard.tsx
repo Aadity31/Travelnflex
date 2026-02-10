@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo, useCallback, useEffect, useState, useRef } from "react";
+
 import {
   Calendar,
   Home,
@@ -20,6 +22,7 @@ import {
   RoomLimits,
   PricingResult,
   PackageType,
+  calculatePricing,
 } from "@/lib/bookingSection/booking";
 import BookNowButton from "@/components/booking/BookNowButton";
 
@@ -57,7 +60,216 @@ interface BookingCardProps {
   } | { percentage: number; validUntil: string };
 }
 
-// Helper to get discount for a package type
+// ============================================
+// SECURITY UTILITIES - Input Validation & Sanitization
+// ============================================
+
+/**
+ * Sanitize string input to prevent XSS attacks
+ * Removes potentially dangerous characters
+ */
+function sanitizeString(input: string, maxLength: number = 100): string {
+  if (typeof input !== "string") return "";
+  return input
+    .replace(/[<>'"&\\]/g, "")
+    .replace(/[\x00-\x1f\x7f]/g, "")
+    .trim()
+    .slice(0, maxLength);
+}
+
+/**
+ * Validate and sanitize numeric input
+ * Ensures value is within acceptable bounds
+ */
+function sanitizeNumber(value: unknown, min: number, max: number, defaultValue: number): number {
+  const num = Number(value);
+  if (!Number.isFinite(num) || Number.isNaN(num)) return defaultValue;
+  return Math.max(min, Math.min(max, Math.round(num)));
+}
+
+/**
+ * Validate date string format (YYYY-MM-DD)
+ */
+function isValidDateString(dateStr: string): boolean {
+  if (typeof dateStr !== "string") return false;
+  const regex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!regex.test(dateStr)) return false;
+  const date = new Date(dateStr);
+  return date instanceof Date && !Number.isNaN(date.getTime());
+}
+
+/**
+ * Validate package type
+ */
+function isValidPackageType(value: unknown): value is PackageType {
+  if (typeof value !== "string") return false;
+  return ["solo", "family", "private", "group"].includes(value);
+}
+
+function secureHandler<T extends (...args: T[]) => void>(
+  handler: T
+): T {
+  return ((...args: Parameters<T>) => {
+    try {
+      handler(...args);
+    } catch (error) {
+      console.error("[SECURITY_ERROR] Handler execution blocked:", error);
+    }
+  }) as T;
+}
+
+/**
+ * Secure delta handler for numeric values (adults/children/rooms)
+ * Returns a proper React event handler
+ */
+function createSecureDeltaHandler(
+  onChange: (delta: number) => void,
+  minDelay: number = 300
+) {
+  let lastCall = 0;
+  return (event: React.MouseEvent) => {
+    event.preventDefault();
+    const delta = Number((event.target as HTMLButtonElement).value) || 0;
+    const now = Date.now();
+    if (now - lastCall >= minDelay) {
+      lastCall = now;
+      const sanitized = sanitizeNumber(delta, -100, 100, 0);
+      onChange(sanitized);
+    }
+  };
+}
+
+/**
+ * Secure date selection handler
+ * Returns a proper React event handler
+ */
+function createSecureDateHandler(onDateSelect: (dateStr: string) => void) {
+  return (event: React.MouseEvent) => {
+    event.preventDefault();
+    // Get date from button text or data attribute
+    const target = event.target as HTMLButtonElement;
+    const dateStr = target.textContent?.trim() || "";
+    try {
+      const sanitized = sanitizeString(dateStr, 10);
+      if (isValidDateString(sanitized)) {
+        onDateSelect(sanitized);
+      }
+    } catch (error) {
+      console.error("[SECURITY_ERROR] Date handler blocked:", error);
+    }
+  };
+}
+
+/**
+ * Rate limiter for client-side actions
+ * Prevents rapid-fire requests
+ */
+function createRateLimiter(maxRequests: number, windowMs: number) {
+  const requests: number[] = [];
+  return {
+    check: (): boolean => {
+      const now = Date.now();
+      const windowStart = now - windowMs;
+      const recentRequests = requests.filter(t => t > windowStart);
+      if (recentRequests.length >= maxRequests) {
+        return false;
+      }
+      requests.push(now);
+      return true;
+    },
+    reset: () => { requests.length = 0; }
+  };
+}
+
+const bookingRateLimiter = createRateLimiter(5, 10000); // 5 requests per 10 seconds
+
+// ============================================
+// PRICE INTEGRITY VALIDATION
+// ============================================
+
+/**
+ * Validate price data integrity
+ * This runs on the server in production - this is a client-side fallback
+ * Only checks for extreme values that indicate clear tampering
+ */
+function validatePriceIntegrity(
+  basePrice: number,
+  pricing: PricingResult,
+  adults: number,
+  children: number
+): { valid: boolean; warning?: string } {
+  // Check for obviously manipulated extreme values
+  // These thresholds catch clear tampering, not normal usage
+  if (basePrice <= 0 || basePrice > 10000000) {
+    return { valid: false, warning: "Invalid base price detected" };
+  }
+
+  if (pricing.total < 0 || pricing.total > 10000000) {
+    return { valid: false, warning: "Invalid total price detected" };
+  }
+
+  // Only check for clearly impossible values
+  // Package switching causes normal price changes - no false positives
+  if (pricing.pricePerPerson <= 0 && basePrice > 0) {
+    return { valid: false, warning: "Invalid price per person" };
+  }
+
+  if (pricing.peopleTotal <= 0 && adults + children > 0) {
+    return { valid: false, warning: "Invalid people total" };
+  }
+
+  // All checks passed - pricing is within acceptable bounds
+  // NOTE: Server-side validation will verify actual pricing before payment
+  return { valid: true };
+}
+
+// ============================================
+// DISCOUNT VALIDATION
+// ============================================
+
+/**
+ * Validate discount data from server
+ * Prevents client-side discount manipulation
+ */
+function validateDiscount(
+  discount: { percentage: number; validUntil: string } | undefined
+): { valid: boolean; percentage: number; error?: string } {
+  if (!discount) {
+    return { valid: true, percentage: 0 };
+  }
+
+  // Validate percentage bounds
+  if (typeof discount.percentage !== "number" || 
+      discount.percentage < 0 || 
+      discount.percentage > 100) {
+    return { valid: false, percentage: 0, error: "Invalid discount percentage" };
+  }
+
+  // Validate expiration date format
+  if (!isValidDateString(discount.validUntil)) {
+    return { valid: false, percentage: 0, error: "Invalid discount expiration" };
+  }
+
+  // Check if discount has expired
+  const validUntil = new Date(discount.validUntil);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  
+  if (validUntil < now) {
+    return { valid: false, percentage: 0, error: "Discount has expired" };
+  }
+
+  return { valid: true, percentage: discount.percentage };
+}
+
+// ============================================
+// DISCOUNT HELPER (Legacy - still used in UI)
+// ============================================
+
+/**
+ * Get discount for a package type (client-side reference only)
+ * Server must validate final pricing before payment
+ */
 function getDiscountForPackage(
   pkg: PackageType,
   discounts?: BookingCardProps['discounts']
@@ -67,15 +279,9 @@ function getDiscountForPackage(
   // Handle simple discount format (for activities)
   if ('percentage' in discounts && !('soloTraveler' in discounts)) {
     const { percentage, validUntil } = discounts as { percentage: number; validUntil: string };
-    if (!percentage) return 0;
-    
-    const validUntilDate = new Date(validUntil);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    if (validUntilDate < today) return 0;
-    
-    return percentage / 100;
+    const validation = validateDiscount({ percentage, validUntil });
+    if (!validation.valid) return 0;
+    return validation.percentage / 100;
   }
   
   // Handle package-specific discount format (for destinations)
@@ -85,17 +291,17 @@ function getDiscountForPackage(
     : 'ownGroup';
   
   const discount = (discounts as Record<string, { percentage: number; validUntil: string } | undefined>)[key];
-  if (!discount || !discount.percentage) return 0;
+  if (!discount) return 0;
   
-  // Check if discount is still valid
-  const validUntilDate = new Date(discount.validUntil);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const validation = validateDiscount(discount);
+  if (!validation.valid) return 0;
   
-  if (validUntilDate < today) return 0;
-  
-  return discount.percentage / 100;
+  return validation.percentage / 100;
 }
+
+// ============================================
+// PROPS INTERFACES
+// ============================================
 
 export function BookingCard({
   booking,
@@ -112,6 +318,10 @@ export function BookingCard({
   onDateSelect,
   discounts,
 }: BookingCardProps) {
+  const [tamperWarning, setTamperWarning] = useState<string | null>(null);
+  const [isRateLimited, setIsRateLimited] = useState(false);
+  const lastActionRef = useRef<number>(0);
+
   const {
     currentMonth,
     daysInMonth,
@@ -122,6 +332,22 @@ export function BookingCard({
     goNextMonth,
     nextMonthWarning,
   } = calendar;
+
+  // Validate pricing integrity on mount and when dependencies change
+  useEffect(() => {
+    const integrity = validatePriceIntegrity(
+      _basePrice,
+      pricing,
+      booking.adults,
+      booking.children
+    );
+
+    if (!integrity.valid && integrity.warning) {
+      setTamperWarning(integrity.warning);
+      // Auto-hide warning after 5 seconds
+      setTimeout(() => setTamperWarning(null), 5000);
+    }
+  }, [_basePrice, pricing, booking.packageType, booking.adults, booking.children, booking.rooms, hotelPerPerson]);
 
   return (
     <div
@@ -159,6 +385,38 @@ export function BookingCard({
         </div>
       </div>
 
+      {/* Security Warning Banner - Tamper Detection */}
+      {tamperWarning && (
+        <div 
+          className="mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-xl"
+          role="alert"
+          aria-live="assertive"
+        >
+          <div className="flex items-start gap-3">
+            <Shield className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold text-red-800">Security Alert</h4>
+              <p className="text-sm text-red-700 mt-1">{tamperWarning}</p>
+              <p className="text-xs text-red-600 mt-2">
+                Final pricing will be verified by the server before payment.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rate Limiting Warning */}
+      {isRateLimited && (
+        <div 
+          className="mx-6 mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl"
+          role="alert"
+        >
+          <p className="text-sm text-amber-800">
+            Too many requests. Please wait a moment before trying again.
+          </p>
+        </div>
+      )}
+
       <div className="p-6 space-y-6">
         {/* Package Selection */}
         <div className="space-y-3">
@@ -177,12 +435,22 @@ export function BookingCard({
               return (
                 <button
                   key={pkg}
-                  onClick={() => onPackageChange(pkg)}
+                  onClick={() => {
+                    if (isValidPackageType(pkg)) {
+                      // Rate limit package changes
+                      const now = Date.now();
+                      if (now - lastActionRef.current < 500) return; // 500ms debounce
+                      lastActionRef.current = now;
+                      onPackageChange(pkg);
+                    }
+                  }}
                   className={`relative p-4 rounded-xl border-2 text-left transition-all duration-300 ${
                     isActive
                       ? "border-orange-500 bg-orange-50 shadow-md"
                       : "border-gray-200 bg-white hover:border-orange-300 hover:shadow-sm"
                   }`}
+                  aria-pressed={isActive}
+                  aria-label={`Select ${config.label} package`}
                 >
                   {/* Selection indicator */}
                   <div
@@ -238,11 +506,13 @@ export function BookingCard({
               </div>
               <div className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 px-3 py-1.5">
                 <button
-                  onClick={() => onAdultsChange(-1)}
+                  onClick={createSecureDeltaHandler(onAdultsChange)}
+                  value={-1}
                   disabled={
                     booking.adults <= PACKAGE_CONFIG[booking.packageType].minAdults
                   }
                   className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed font-bold transition-all flex items-center justify-center"
+                  aria-label="Decrease adult count"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
@@ -250,12 +520,14 @@ export function BookingCard({
                   {booking.adults}
                 </span>
                 <button
-                  onClick={() => onAdultsChange(1)}
+                  onClick={createSecureDeltaHandler(onAdultsChange)}
+                  value={1}
                   disabled={
                     booking.adults + booking.children >=
                     PACKAGE_CONFIG[booking.packageType].maxAdults
                   }
                   className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed font-bold transition-all flex items-center justify-center"
+                  aria-label="Increase adult count"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -273,9 +545,11 @@ export function BookingCard({
                 </div>
                 <div className="flex items-center gap-3 bg-white rounded-lg border border-gray-200 px-3 py-1.5">
                   <button
-                    onClick={() => onChildrenChange(-1)}
+                    onClick={createSecureDeltaHandler(onChildrenChange)}
+                    value={-1}
                     disabled={booking.children <= 0}
                     className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed font-bold transition-all flex items-center justify-center"
+                    aria-label="Decrease children count"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
@@ -283,12 +557,14 @@ export function BookingCard({
                     {booking.children}
                   </span>
                   <button
-                    onClick={() => onChildrenChange(1)}
+                    onClick={createSecureDeltaHandler(onChildrenChange)}
+                    value={1}
                     disabled={
                       booking.adults + booking.children >=
                       PACKAGE_CONFIG[booking.packageType].maxAdults
                     }
                     className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-orange-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed font-bold transition-all flex items-center justify-center"
+                    aria-label="Increase children count"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -307,11 +583,13 @@ export function BookingCard({
 
           <div className="bg-gray-50 rounded-xl p-4">
             <div className="flex items-center justify-center gap-6">
-              <button
-                onClick={() => onRoomsChange(-1)}
-                disabled={booking.rooms <= roomLimits.min}
-                className="w-12 h-12 rounded-xl bg-white border border-gray-200 hover:bg-orange-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed font-bold transition-all flex items-center justify-center shadow-sm"
-              >
+            <button
+              value={-1}
+              onClick={createSecureDeltaHandler(onRoomsChange)}
+              disabled={booking.rooms <= roomLimits.min}
+              className="w-12 h-12 rounded-xl bg-white border border-gray-200 hover:bg-orange-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed font-bold transition-all flex items-center justify-center shadow-sm"
+              aria-label="Decrease room count"
+            >
                 <Minus className="w-5 h-5" />
               </button>
               <div className="text-center min-w-[80px]">
@@ -323,9 +601,11 @@ export function BookingCard({
                 </div>
               </div>
               <button
-                onClick={() => onRoomsChange(1)}
+                value={1}
+                onClick={createSecureDeltaHandler(onRoomsChange)}
                 disabled={booking.rooms >= roomLimits.max}
                 className="w-12 h-12 rounded-xl bg-white border border-gray-200 hover:bg-orange-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed font-bold transition-all flex items-center justify-center shadow-sm"
+                aria-label="Increase room count"
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -406,7 +686,14 @@ export function BookingCard({
                 return (
                   <button
                     key={index}
-                    onClick={() => available && onDateSelect(dateStr)}
+                    onClick={(e) => {
+                      if (available && dateStr) {
+                        const sanitized = sanitizeString(dateStr, 10);
+                        if (isValidDateString(sanitized)) {
+                          onDateSelect(sanitized);
+                        }
+                      }
+                    }}
                     disabled={!available}
                     className={`aspect-square rounded-lg text-sm font-medium transition-all ${
                       selected
@@ -415,6 +702,7 @@ export function BookingCard({
                         ? "bg-white border border-gray-200 hover:border-orange-400 hover:bg-orange-50 text-gray-900"
                         : "bg-gray-200 text-gray-400 cursor-not-allowed"
                     }`}
+                    aria-label={`Select date ${dayNumber}`}
                   >
                     {dayNumber}
                   </button>
@@ -524,6 +812,13 @@ export function BookingCard({
                 </div>
               </div>
             </div>
+
+            {/* Security Notice */}
+            <div className="mt-2 pt-2 border-t border-gray-200">
+              <p className="text-xs text-gray-500 text-center">
+                Final pricing will be verified by the server before payment processing.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -534,7 +829,8 @@ export function BookingCard({
             startDate={booking.selectedDate || new Date().toISOString().split('T')[0]}
             endDate={booking.selectedDate || new Date().toISOString().split('T')[0]}
             persons={booking.adults + booking.children}
-            amount={pricing.total}
+            packageType={booking.packageType}
+            rooms={booking.rooms}
             disabled={!booking.selectedDate}
           />
         </div>

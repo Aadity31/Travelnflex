@@ -9,9 +9,10 @@ interface BookNowButtonProps {
   startDate: string;
   endDate: string;
   persons: number;
-  amount: number;
   type?: "activity" | "destination";
   disabled?: boolean;
+  packageType?: "solo" | "family" | "group" | "private";
+  rooms?: number;
 }
 
 // Rate limiting utility
@@ -29,11 +30,21 @@ const RateLimiter = {
   },
 };
 
-// Sanitize input to prevent XSS
-function sanitizeInput(input: string): string {
+// Sanitize string input to prevent XSS
+function sanitizeInput(input: string, maxLength: number = 100): string {
+  if (typeof input !== "string") return "";
   return input
-    .replace(/[<>]/g, "")
-    .trim();
+    .replace(/[<>'"&\\]/g, "")
+    .replace(/[\x00-\x1f\x7f]/g, "")
+    .trim()
+    .slice(0, maxLength);
+}
+
+// Sanitize and validate numeric input
+function sanitizeNumber(value: unknown, min: number, max: number, defaultValue: number): number {
+  const num = Number(value);
+  if (!Number.isFinite(num) || Number.isNaN(num)) return defaultValue;
+  return Math.max(min, Math.min(max, Math.round(num)));
 }
 
 export default function BookNowButton({
@@ -41,9 +52,10 @@ export default function BookNowButton({
   startDate,
   endDate,
   persons,
-  amount,
   type = "destination",
   disabled = false,
+  packageType = "solo",
+  rooms = 1,
 }: BookNowButtonProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -75,7 +87,8 @@ export default function BookNowButton({
     startDate: string;
     endDate: string;
     persons: number;
-    amount: number;
+    packageType?: string;
+    rooms?: number;
   }) => {
     try {
       setLoading(true);
@@ -92,9 +105,11 @@ export default function BookNowButton({
           destination: sanitizeInput(intent.destination),
           startDate: sanitizeInput(intent.startDate),
           endDate: sanitizeInput(intent.endDate),
-          persons: Number(intent.persons),
-          amount: Number(intent.amount),
+          persons: sanitizeNumber(intent.persons, 1, 50, 1),
+          packageType: sanitizeInput(intent.packageType || "solo", 20),
+          rooms: sanitizeNumber(intent.rooms, 1, 20, 1),
           timestamp: Date.now(),
+          // SECURITY: amount is NOT sent - server calculates price from database
         }),
       });
 
@@ -113,7 +128,10 @@ export default function BookNowButton({
         throw new Error("Booking initialization failed");
       }
 
-      router.push(`/booking/${type || 'destination'}/${encodeURIComponent(intent.destination)}/confirm?bookingId=${encodeURIComponent(data.bookingId)}`);
+      // Redirect to confirm page with booking ID
+      const encodedDestination = encodeURIComponent(intent.destination);
+      const encodedBookingId = encodeURIComponent(data.bookingId);
+      router.push(`/booking/${type || 'destination'}/${encodedDestination}/confirm?bookingId=${encodedBookingId}`);
     } catch (err) {
       console.error("Booking error:", err);
       if (err instanceof Error) {
@@ -152,10 +170,8 @@ export default function BookNowButton({
       return false;
     }
 
-    if (amount <= 0) {
-      setError("Invalid booking amount");
-      return false;
-    }
+    // Note: We don't validate amount because server calculates it
+    // Security: Client cannot manipulate final price
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -173,7 +189,7 @@ export default function BookNowButton({
     }
 
     return true;
-  }, [destination, startDate, endDate, persons, amount]);
+  }, [destination, startDate, endDate, persons]);
 
   // Handle initial booking click
   async function handleBooking() {
@@ -200,13 +216,15 @@ export default function BookNowButton({
       const authData = await authRes.json();
 
       if (!authData.authenticated) {
-        // Store booking intent for after login
+        // Store booking intent for after login (WITHOUT amount)
         const bookingIntent = {
           destination,
           startDate,
           endDate,
           persons,
-          amount,
+          packageType,
+          rooms,
+          // SECURITY: amount NOT stored - server will calculate
         };
         sessionStorage.setItem("bookingIntent", JSON.stringify(bookingIntent));
         
@@ -221,11 +239,9 @@ export default function BookNowButton({
         return;
       }
 
-      // Navigate directly to confirm page without creating booking
-      // Navigate directly to confirm page
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      router.push(`/booking/${type || 'destination'}/${encodeURIComponent(destination)}/confirm`);
-
+      // Navigate to confirm page - server will calculate price
+      const encodedDestination = encodeURIComponent(destination);
+      router.push(`/booking/${type || 'destination'}/${encodedDestination}/confirm`);
     } catch (err) {
       console.error("Booking error:", err);
       if (err instanceof Error) {
@@ -255,7 +271,7 @@ export default function BookNowButton({
           }
           ${!loading ? "hover:scale-[1.02] active:scale-[0.98]" : ""}
         `}
-        aria-label={`Book now for ₹${amount.toLocaleString("en-IN")}`}
+        aria-label="Book now - price will be calculated by server"
       >
         {loading ? (
           <>
@@ -270,12 +286,12 @@ export default function BookNowButton({
         ) : isAuthenticated ? (
           <>
             <Shield className="w-5 h-5" />
-            Book Now - ₹{amount.toLocaleString("en-IN")}
+            Book Now
           </>
         ) : (
           <>
             <LogIn className="w-5 h-5" />
-            Login to Book - ₹{amount.toLocaleString("en-IN")}
+            Login to Book
           </>
         )}
       </button>
@@ -287,6 +303,11 @@ export default function BookNowButton({
           Verifying your session...
         </div>
       )}
+
+      {/* Security Notice */}
+      <p className="text-xs text-gray-500 text-center">
+        Price will be calculated securely by the server
+      </p>
 
       {/* Warning Message */}
       {showDateWarning && (
