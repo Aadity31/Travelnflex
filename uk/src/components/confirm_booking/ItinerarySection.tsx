@@ -221,17 +221,19 @@ function DayItem({
                 {displayTitle}
               </h4>
               <div className="flex items-center gap-2 mt-1 text-xs sm:text-sm text-gray-500">
-                <span>{day.date}</span>
-                <span>•</span>
-                <ClockIcon className="w-3.5 h-3.5" />
-                <span>{finalStartTime} - {finalEndTime}</span>
                 {day.location && (
                   <>
-                    <span>•</span>
+                    
                     <MapPinIcon className="w-3.5 h-3.5 text-orange-500" />
                     <span className="text-orange-600 font-medium">{day.location}</span>
                   </>
                 )}
+                <span>•</span>
+                <span>{day.date}</span>
+                <span>•</span>
+                <ClockIcon className="w-3.5 h-3.5" />
+                <span>{finalStartTime} - {finalEndTime}</span>
+                
               </div>
             </div>
             <ChevronDownIcon
