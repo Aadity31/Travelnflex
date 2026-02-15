@@ -9,12 +9,14 @@ import {
   MapPinIcon,
   FunnelIcon,
   XMarkIcon,
+  ShoppingCartIcon,
 } from "@heroicons/react/24/solid";
 import type { Activity, SearchFilters } from "@/types";
 import ActivityFilters from "@/components/filters/FilterSidebar";
 import MobileActivityFilters from "@/components/filters/MobileFilterSidebar";
 import WishlistButton from "@/components/wishlist/WishlistButton";
 import { useWishlistStore } from "@/lib/wishlist/store";
+import { useCartStore } from "@/lib/cart/store";
 import LoginPrompt from "@/components/auth/LoginPrompt";
 
 export default function ActivitiesClient({
@@ -23,6 +25,7 @@ export default function ActivitiesClient({
   initialActivities: Activity[];
 }) {
   const wishlist = useWishlistStore();
+  const cart = useCartStore();
   // repeated bulk calls
   const fetchedRef = useRef(false);
 
@@ -141,6 +144,76 @@ export default function ActivitiesClient({
     <>
       <main className="min-h-screen bg-gray-50">
         <LoginPrompt open={wishlist.showLogin} onClose={wishlist.closeLogin} />
+        <LoginPrompt open={cart.showLogin} onClose={cart.closeLogin} />
+
+        {/* Toast Notification */}
+        {cart.toasts && cart.toasts.length > 0 && (
+  <div className="fixed top-20 right-4 sm:top-24 sm:right-6 z-50 pointer-events-none flex flex-col-reverse gap-3 max-w-sm">
+    {cart.toasts.map((toast) => (
+      <div
+        key={toast.id}
+        className={`
+          px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 min-w-[260px] 
+          backdrop-blur-md pointer-events-auto relative overflow-hidden
+          ${toast.isExiting ? 'animate-toast-out' : 'animate-toast-in'}
+          ${toast.type === "success" 
+            ? "bg-white/75 border border-orange-200/60"
+            : "bg-white/75 border border-red-200/60"
+          }
+        `}
+      >
+        {/* Progress Bar */}
+        <div 
+          className={`
+            absolute bottom-0 left-0 h-1 animate-toast-progress
+            ${toast.type === "success" 
+              ? "bg-orange-500"
+              : "bg-red-500"
+            }
+          `}
+        />
+
+        {/* Icon */}
+        <div className={`p-1.5 rounded-full flex-shrink-0 ${
+          toast.type === "success"
+            ? "bg-orange-100"
+            : "bg-red-100"
+        }`}>
+          {toast.type === "success" ? (
+            <svg className="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          )}
+        </div>
+
+        {/* Message */}
+        <span className={`text-sm font-medium flex-1 ${
+          toast.type === "success"
+            ? "text-orange-700"
+            : "text-red-700"
+        }`}>
+          {toast.message}
+        </span>
+
+        {/* Close Button */}
+        <button 
+          onClick={() => cart.hideToast(toast.id)}
+          className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+          aria-label="Close notification"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    ))}
+  </div>
+)}
+
        
 
         <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
@@ -471,8 +544,43 @@ export default function ActivitiesClient({
                             </div>
                           </div>
 
-                          <div className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap">
-                            View Details
+                          <div className="flex items-center gap-2">
+                            {/* Add to Cart / Remove from Cart Button */}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (cart.isInCart(activity.id)) {
+                                  cart.removeFromCart(activity.id);
+                                } else {
+                                  cart.addToCart(activity);
+                                }
+                              }}
+                              className={`py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1.5 text-xs whitespace-nowrap transform hover:scale-105 active:scale-95 ${
+                                cart.isInCart(activity.id)
+                                  ? "bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 shadow-sm hover:shadow-md"
+                                  : "bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg"
+                              }`}
+                            >
+                              {cart.isInCart(activity.id) ? (
+                                <>
+                                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                  <span className="hidden sm:inline">Remove</span>
+                                </>
+                              ) : (
+                                <>
+                                  <ShoppingCartIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                  <span className="hidden sm:inline">Add to Cart</span>
+                                </>
+                              )}
+                            </button>
+
+                            {/* View Details Button */}
+                            <div className="bg-orange-600 hover:bg-orange-700 text-white py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold transition-colors duration-200 text-xs whitespace-nowrap">
+                              View Details
+                            </div>
                           </div>
                         </div>
                       </div>
