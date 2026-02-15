@@ -32,14 +32,11 @@ interface ItinerarySectionProps {
 export default function ItinerarySection({
   itinerary,
 }: ItinerarySectionProps) {
-  // Track which days are expanded (all expanded by default)
+  // Track which days are expanded (NONE expanded by default - all minimized)
   const [expandedDays, setExpandedDays] = useState<Set<number>>(() => {
-    try {
-      return new Set(itinerary.map((d) => d.day));
-    } catch {
-      return new Set([1, 2, 3]);
-    }
+    return new Set(); // sab collapsed by default
   });
+
 
   const toggleDay = useCallback((dayNumber: number) => {
     setExpandedDays((prev) => {
@@ -57,9 +54,8 @@ export default function ItinerarySection({
   const allExpanded = expandedDays.size === itinerary.length;
   const toggleAll = useCallback(() => {
     if (allExpanded) {
-      // Collapse all - keep first 3 expanded for better UX
-      const firstThree = itinerary.slice(0, 3).map((d) => d.day);
-      setExpandedDays(new Set(firstThree));
+      // Collapse all
+      setExpandedDays(new Set());
     } else {
       // Expand all
       setExpandedDays(new Set(itinerary.map((d) => d.day)));
