@@ -46,7 +46,7 @@ function ToastItem({ toast, onHideToast }: ToastItemProps) {
           toast.type === "success"
             ? "bg-white/75 border border-orange-200/60"
             : toast.type === "removed"
-            ? "bg-white/75 border border-gray-200/60"
+            ? "bg-white/75 border border-red-200/60"
             : "bg-white/75 border border-red-200/60"
         }
       `}
@@ -59,7 +59,7 @@ function ToastItem({ toast, onHideToast }: ToastItemProps) {
             toast.type === "success"
               ? "bg-orange-500"
               : toast.type === "removed"
-              ? "bg-gray-500"
+              ? "bg-red-500"
               : "bg-red-500"
           }
         `}
@@ -72,14 +72,14 @@ function ToastItem({ toast, onHideToast }: ToastItemProps) {
           toast.type === "success"
             ? "bg-orange-100"
             : toast.type === "removed"
-            ? "bg-gray-100"
+            ? "bg-red-100"
             : "bg-red-100"
         }`}
       >
         {toast.type === "success" ? (
           <CheckIcon className="w-4 h-4 text-orange-600" />
         ) : toast.type === "removed" ? (
-          <RemoveIcon className="w-4 h-4 text-gray-600" />
+          <RemoveIcon className="w-4 h-4 text-red-600" />
         ) : (
           <ErrorIcon className="w-4 h-4 text-red-600" />
         )}
@@ -91,7 +91,7 @@ function ToastItem({ toast, onHideToast }: ToastItemProps) {
           toast.type === "success"
             ? "text-orange-700"
             : toast.type === "removed"
-            ? "text-gray-700"
+            ? "text-red-700"
             : "text-red-700"
         }`}
       >
@@ -101,7 +101,7 @@ function ToastItem({ toast, onHideToast }: ToastItemProps) {
       {/* Close Button */}
       <button
         onClick={() => onHideToast(toast.id)}
-        className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+        className="text-red-400 hover:text-red-600 transition-colors flex-shrink-0"
         aria-label="Close notification"
       >
         <CloseIcon className="w-4 h-4" />
