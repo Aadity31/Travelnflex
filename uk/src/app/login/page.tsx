@@ -6,24 +6,25 @@ import LoginForm from "./LoginForm";
 import { authOptions } from "@/lib/auth";
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     redirect?: string;
     action?: string;
-  };
+  }>;
 }
 
 export default async function LoginPage({
   searchParams,
 }: PageProps) {
   const session = await getServerSession(authOptions);
+  const resolvedSearchParams = await searchParams;
 
   // already login → redirect to intended page
   if (session) {
-    if (searchParams.redirect) {
-      redirect(searchParams.redirect);
+    if (resolvedSearchParams.redirect) {
+      redirect(resolvedSearchParams.redirect);
     }
     redirect("/");
   }
 
-  return <LoginForm redirectUrl={searchParams.redirect} action={searchParams.action} />;
+  return <LoginForm redirectUrl={resolvedSearchParams.redirect} action={resolvedSearchParams.action} />;
 }

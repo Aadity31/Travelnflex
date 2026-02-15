@@ -228,6 +228,7 @@ export default function WishlistPage() {
               <div className="h-48 relative overflow-hidden">
                 <Image
                   alt={item.name}
+                  fill
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   src={item.image}
                 />
