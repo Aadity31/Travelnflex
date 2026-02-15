@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import type { Activity } from "@/types";
+
+const CART_STORAGE_KEY = "devbhoomi_cart";
 
 export interface CartItem {
   activity: Activity;
@@ -19,14 +21,60 @@ interface ToastData {
   isExiting: boolean;
 }
 
+// Minimal activity data for adding to cart from booking pages
+interface MinimalActivityData {
+  id: string;
+  name: string;
+  slug: string;
+  location: string;
+  price: number;
+  image?: string;
+}
+
+// Helper to load cart from localStorage
+function loadCartFromStorage(): CartMap {
+  if (typeof window === "undefined") return {};
+  try {
+    const stored = localStorage.getItem(CART_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+}
+
+// Helper to save cart to localStorage
+function saveCartToStorage(items: CartMap): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  } catch {
+    // Storage full or unavailable
+  }
+}
+
 export function useCartStore() {
   const { status } = useSession();
 
   const [items, setItems] = useState<CartMap>({});
   const [showLogin, setShowLogin] = useState(false);
   const [toasts, setToasts] = useState<ToastData[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
   
   const timeoutRefs = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const storedCart = loadCartFromStorage();
+    setItems(storedCart);
+    setIsHydrated(true);
+  }, []);
+
+  // Save cart to localStorage when items change
+  useEffect(() => {
+    if (isHydrated) {
+      saveCartToStorage(items);
+    }
+  }, [items, isHydrated]);
 
   /* ---------------- TOAST MANAGEMENT ---------------- */
   const hideToastWithAnimation = useCallback((toastId: string) => {
@@ -124,6 +172,57 @@ export function useCartStore() {
     [status, showToastMessage]
   );
 
+  /* ---------------- ADD TO CART FROM DETAILS PAGE ---------------- */
+  const addToCartFromDetails = useCallback(
+    async (activityData: MinimalActivityData, quantity: number = 1) => {
+      if (status !== "authenticated") {
+        setShowLogin(true);
+        return false;
+      }
+
+      // Construct a minimal Activity-like object
+      const activity: Activity = {
+        id: activityData.id,
+        name: activityData.name,
+        slug: activityData.slug,
+        type: "adventure", // default type
+        description: "",
+        shortDescription: "",
+        duration: "",
+        location: activityData.location,
+        difficulty: "moderate",
+        rating: 0,
+        reviewCount: 0,
+        maxGroupSize: 20,
+        images: activityData.image ? [activityData.image] : [],
+        highlights: [],
+        includes: [],
+        isPopular: false,
+        isTrending: false,
+        price: {
+          min: activityData.price,
+          max: activityData.price,
+          currency: "INR",
+        },
+        createdAt: new Date().toISOString(),
+      };
+
+      setItems((prev) => ({
+        ...prev,
+        [activity.id]: {
+          activity,
+          quantity: (prev[activity.id]?.quantity || 0) + quantity,
+          addedAt: new Date().toISOString(),
+        },
+      }));
+
+      showToastMessage(`${activity.name} added to cart!`, "success");
+
+      return true;
+    },
+    [status, showToastMessage]
+  );
+
   /* ---------------- REMOVE FROM CART ---------------- */
   const removeFromCart = useCallback(
     async (id: string) => {
@@ -176,6 +275,9 @@ export function useCartStore() {
   /* ---------------- CLEAR CART ---------------- */
   const clearCart = useCallback(async () => {
     setItems({});
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(CART_STORAGE_KEY);
+    }
   }, []);
 
   return {
@@ -183,6 +285,7 @@ export function useCartStore() {
     get,
     isInCart,
     addToCart,
+    addToCartFromDetails,
     removeFromCart,
     updateQuantity,
     clearCart,
@@ -193,5 +296,6 @@ export function useCartStore() {
     toasts,
     showToast: showToastMessage,
     hideToast: hideToastWithAnimation,
+    isHydrated,
   };
 }

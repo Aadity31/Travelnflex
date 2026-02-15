@@ -18,6 +18,7 @@ import WishlistButton from "@/components/wishlist/WishlistButton";
 import { useWishlistStore } from "@/lib/wishlist/store";
 import { useCartStore } from "@/lib/cart/store";
 import LoginPrompt from "@/components/auth/LoginPrompt";
+import ToastContainer from "@/components/toast/Toast";
 
 export default function ActivitiesClient({
   initialActivities,
@@ -147,72 +148,10 @@ export default function ActivitiesClient({
         <LoginPrompt open={cart.showLogin} onClose={cart.closeLogin} />
 
         {/* Toast Notification */}
-        {cart.toasts && cart.toasts.length > 0 && (
-  <div className="fixed top-20 right-4 sm:top-24 sm:right-6 z-50 pointer-events-none flex flex-col-reverse gap-3 max-w-sm">
-    {cart.toasts.map((toast) => (
-      <div
-        key={toast.id}
-        className={`
-          px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 min-w-[260px] 
-          backdrop-blur-md pointer-events-auto relative overflow-hidden
-          ${toast.isExiting ? 'animate-toast-out' : 'animate-toast-in'}
-          ${toast.type === "success" 
-            ? "bg-white/75 border border-orange-200/60"
-            : "bg-white/75 border border-red-200/60"
-          }
-        `}
-      >
-        {/* Progress Bar */}
-        <div 
-          className={`
-            absolute bottom-0 left-0 h-1 animate-toast-progress
-            ${toast.type === "success" 
-              ? "bg-orange-500"
-              : "bg-red-500"
-            }
-          `}
+        <ToastContainer 
+          toasts={cart.toasts} 
+          onHideToast={cart.hideToast} 
         />
-
-        {/* Icon */}
-        <div className={`p-1.5 rounded-full flex-shrink-0 ${
-          toast.type === "success"
-            ? "bg-orange-100"
-            : "bg-red-100"
-        }`}>
-          {toast.type === "success" ? (
-            <svg className="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          ) : (
-            <svg className="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          )}
-        </div>
-
-        {/* Message */}
-        <span className={`text-sm font-medium flex-1 ${
-          toast.type === "success"
-            ? "text-orange-700"
-            : "text-red-700"
-        }`}>
-          {toast.message}
-        </span>
-
-        {/* Close Button */}
-        <button 
-          onClick={() => cart.hideToast(toast.id)}
-          className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
-          aria-label="Close notification"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-    ))}
-  </div>
-)}
 
        
 
