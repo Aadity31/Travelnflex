@@ -199,6 +199,8 @@ class BookingErrorBoundary extends React.Component<
 }
 
 import React from "react";
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { ActivityMobileBar } from "@/components/booking/ActivityMobileBar";
 
 /* ============ COMPONENT ============ */
 
@@ -221,6 +223,15 @@ export default function BookingClient({
     availableSlots: 0,
   });
   const [isClient, setIsClient] = useState(false);
+
+  const ActivityBookingCard = dynamic(
+  () => import("@/components/booking/ActivityBookingCard").then((mod) => mod.ActivityBookingCard),
+  { 
+    loading: () => <BookingCardSkeleton />,
+    ssr: false 
+  }
+);
+
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -593,113 +604,163 @@ export default function BookingClient({
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* ============ LEFT COLUMN ============ */}
-            <div className="lg:col-span-8 space-y-8">
-              {/* IMAGE GALLERY */}
-              <Suspense fallback={<GallerySkeleton />}>
-                <BookingGallery
-                  images={displayData.images}
-                  hotelImages={displayData.hotelImages}
-                  name={data.name}
-                  type={type}
-                  activityType={data.type}
-                  rating={data.rating}
-                  reviewCount={data.reviewCount}
-                />
-              </Suspense>
+<div className="lg:col-span-8 space-y-8">
+  {/* IMAGE GALLERY */}
+  <Suspense fallback={<GallerySkeleton />}>
+    <BookingGallery
+      images={displayData.images}
+      hotelImages={displayData.hotelImages}
+      name={data.name}
+      type={type}
+      activityType={data.type}
+      rating={data.rating}
+      reviewCount={data.reviewCount}
+    />
+  </Suspense>
 
-              {/* Details Sections */}
-              <BookingDetails
-                name={data.name}
-                location={data.location}
-                duration={data.duration}
-                bestTimeToVisit={data.bestTimeToVisit}
-                difficulty={data.difficulty}
-                description={displayData.description}
-                highlights={displayData.highlights}
-                includes={displayData.includes}
-                type={type}
-              />
+  {/* Details Sections */}
+  {type === "destination" ? (
+    // Show BookingDetails for destinations only on desktop
+    <div className="hidden lg:block">
+      <BookingDetails
+        name={data.name}
+        location={data.location}
+        duration={data.duration}
+        bestTimeToVisit={data.bestTimeToVisit}
+        difficulty={data.difficulty}
+        description={displayData.description}
+        highlights={displayData.highlights}
+        includes={displayData.includes}
+        type={type}
+      />
+    </div>
+  ) : (
+    // Show full details for activities on mobile in main content area
+    <div className="lg:hidden">
+      <BookingDetails
+        name={data.name}
+        location={data.location}
+        duration={data.duration}
+        bestTimeToVisit={data.bestTimeToVisit}
+        difficulty={data.difficulty}
+        description={displayData.description}
+        highlights={displayData.highlights}
+        includes={displayData.includes}
+        type={type}
+      />
+    </div>
+  )}
 
-              {/* Recommended Activities */}
-              <Suspense fallback={<RecommendationsSkeleton />}>
-                <RecommendedActivities items={dummyRecommendedItems} />
-              </Suspense>
+  {/* Recommended Activities */}
+  <Suspense fallback={<RecommendationsSkeleton />}>
+    <RecommendedActivities items={dummyRecommendedItems} />
+  </Suspense>
 
-              {/* Reviews */}
-              <Suspense fallback={<ReviewsSkeleton />}>
-                <ReviewsSection
-                  reviews={reviews}
-                  fallbackRating={data.rating}
-                  fallbackReviewCount={data.reviewCount}
-                />
-              </Suspense>
-            </div>
+  {/* Reviews */}
+  <Suspense fallback={<ReviewsSkeleton />}>
+    <ReviewsSection
+      reviews={reviews}
+      fallbackRating={data.rating}
+      fallbackReviewCount={data.reviewCount}
+    />
+  </Suspense>
+</div>
 
-            {/* ============ DESKTOP BOOKING CARD (STICKY) ============ */}
-            <div className="hidden lg:block lg:col-span-4">
-              <div className="sticky top-8">
-                <Suspense fallback={<BookingCardSkeleton />}>
-                  <BookingCard
-                    booking={booking}
-                    destination={data.slug}
-                    roomLimits={roomLimits}
-                    pricing={pricing}
-                    basePrice={currentPrice}
-                    hotelPerPerson={data.hotelPerPerson}
-                    calendar={{
-                      currentMonth,
-                      daysInMonth,
-                      startingDayOfWeek,
-                      isDateAvailable,
-                      getDateString,
-                      goPrevMonth,
-                      goNextMonth,
-                      isLoadingDates,
-                      nextMonthWarning,
-                    }}
-                    onPackageChange={handlePackageChange}
-                    onAdultsChange={handleAdultsChange}
-                    onChildrenChange={handleChildrenChange}
-                    onRoomsChange={handleRoomsChange}
-                    onDateSelect={handleDateSelect}
-                    discounts={data.discount}
-                  />
-                </Suspense>
-              </div>
-            </div>
+
+
+            {/* ============ RIGHT COLUMN - CONDITIONAL RENDERING ============ */}
+<div className="hidden lg:block lg:col-span-4">
+  <div className="sticky top-8">
+    {type === "destination" ? (
+      // Existing destination booking card
+      <Suspense fallback={<BookingCardSkeleton />}>
+        <BookingCard
+          booking={booking}
+          destination={data.slug}
+          roomLimits={roomLimits}
+          pricing={pricing}
+          basePrice={currentPrice}
+          hotelPerPerson={data.hotelPerPerson}
+          calendar={{
+            currentMonth,
+            daysInMonth,
+            startingDayOfWeek,
+            isDateAvailable,
+            getDateString,
+            goPrevMonth,
+            goNextMonth,
+            isLoadingDates,
+            nextMonthWarning,
+          }}
+          onPackageChange={handlePackageChange}
+          onAdultsChange={handleAdultsChange}
+          onChildrenChange={handleChildrenChange}
+          onRoomsChange={handleRoomsChange}
+          onDateSelect={handleDateSelect}
+          discounts={data.discount}
+        />
+      </Suspense>
+    ) : (
+      // New activity booking card with details
+      <ActivityBookingCard
+        data={data}
+        displayData={displayData}
+        currentPrice={currentPrice}
+        effectiveDiscount={effectiveDiscount}
+      />
+    )}
+  </div>
+</div>
+
           </div>
         </div>
 
-        {/* ============ MOBILE BOOKING CARD ============ */}
-        <div className="lg:hidden">
-          <Suspense fallback={<BookingCardSkeleton />}>
-            <BookingCard
-              booking={booking}
-              destination={data.slug}
-              roomLimits={roomLimits}
-              pricing={pricing}
-              basePrice={currentPrice}
-              hotelPerPerson={data.hotelPerPerson}
-              calendar={{
-                currentMonth,
-                daysInMonth,
-                startingDayOfWeek,
-                isDateAvailable,
-                getDateString,
-                goPrevMonth,
-                goNextMonth,
-                isLoadingDates,
-                nextMonthWarning,
-              }}
-              onPackageChange={handlePackageChange}
-              onAdultsChange={handleAdultsChange}
-              onChildrenChange={handleChildrenChange}
-              onRoomsChange={handleRoomsChange}
-              onDateSelect={handleDateSelect}
-              discounts={data.discount}
-            />
-          </Suspense>
-        </div>
+        {/* ============ MOBILE BOOKING CARD / STICKY BAR ============ */}
+<div className="lg:hidden">
+  {type === "destination" ? (
+    // Existing destination booking card
+    <Suspense fallback={<BookingCardSkeleton />}>
+      <BookingCard
+        booking={booking}
+        destination={data.slug}
+        roomLimits={roomLimits}
+        pricing={pricing}
+        basePrice={currentPrice}
+        hotelPerPerson={data.hotelPerPerson}
+        calendar={{
+          currentMonth,
+          daysInMonth,
+          startingDayOfWeek,
+          isDateAvailable,
+          getDateString,
+          goPrevMonth,
+          goNextMonth,
+          isLoadingDates,
+          nextMonthWarning,
+        }}
+        onPackageChange={handlePackageChange}
+        onAdultsChange={handleAdultsChange}
+        onChildrenChange={handleChildrenChange}
+        onRoomsChange={handleRoomsChange}
+        onDateSelect={handleDateSelect}
+        discounts={data.discount}
+      />
+    </Suspense>
+  ) : (
+    // New sticky bottom bar for activities
+    <ActivityMobileBar
+      currentPrice={currentPrice}
+      effectiveDiscount={effectiveDiscount}
+      activityId={data.id}
+      activitySlug={data.slug}
+      activityName={data.name}
+      activityLocation={data.location}
+      activityImage={data.images?.[0]}
+    />
+  )}
+</div>
+
+
       </main>
     </BookingErrorBoundary>
   );
