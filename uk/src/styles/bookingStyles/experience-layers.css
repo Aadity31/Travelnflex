@@ -1,0 +1,80 @@
+/* ============================================================
+   TravelSaaS Experience Component - Tailwind Layers
+   Use this file to add custom utilities and components
+   ============================================================ */
+
+@layer utilities {
+  .text-primary {
+    color: #ec5b13;
+  }
+
+  .bg-primary {
+    background-color: #ec5b13;
+  }
+
+  .border-primary {
+    border-color: #ec5b13;
+  }
+
+  .bg-background-light {
+    background-color: #f8f6f6;
+  }
+
+  .bg-background-dark {
+    background-color: #0a0a0a;
+  }
+
+  .bg-surface-dark {
+    background-color: #141414;
+  }
+
+  .border-border-dark {
+    border-color: #262626;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-[#ec5b13] text-white font-semibold rounded-lg transition-all;
+    @apply hover:brightness-110 active:scale-[0.98];
+  }
+
+  .card {
+    @apply p-8 rounded-xl bg-white dark:bg-[#141414];
+    @apply border border-slate-200 dark:border-[#262626] shadow-sm;
+  }
+
+  .badge {
+    @apply px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider;
+  }
+
+  .badge-primary {
+    @apply px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-[#ec5b13]/10 border border-[#ec5b13]/20 text-[#ec5b13];
+  }
+
+  .badge-success {
+    @apply px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400;
+  }
+
+  .badge-info {
+    @apply px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400;
+  }
+
+  .input-field {
+    @apply px-4 py-2 text-sm rounded-lg transition-all;
+    @apply bg-slate-100 dark:bg-[#141414];
+    @apply border-none focus:ring-2 focus:ring-[#ec5b13];
+  }
+
+  .link-primary {
+    @apply text-[#ec5b13] font-semibold hover:underline transition-colors;
+  }
+
+  .text-muted {
+    @apply text-slate-600 dark:text-slate-400;
+  }
+
+  .text-subtle {
+    @apply text-slate-500 dark:text-slate-500;
+  }
+}

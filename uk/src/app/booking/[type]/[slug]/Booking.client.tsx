@@ -199,7 +199,6 @@ class BookingErrorBoundary extends React.Component<
 }
 
 import React from "react";
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { ActivityMobileBar } from "@/components/booking/ActivityMobileBar";
 
 /* ============ COMPONENT ============ */

@@ -24,6 +24,7 @@ import {
   PackageType,
 } from "@/lib/bookingSection/booking";
 import BookNowButton from "@/components/booking/BookNowButton";
+import { TrustBadges } from "./TrustBadges";
 
 interface CalendarProps {
   currentMonth: Date;
@@ -882,47 +883,7 @@ export function BookingCard({
         </div>
 
         {/* Trust Badges */}
-        <div className="grid grid-cols-2 gap-3 pt-2">
-          <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-xl">
-            <Shield className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-            <div className="text-xs">
-              <span className="font-semibold text-green-800 block">
-                Free Cancellation
-              </span>
-              <span className="text-green-600">Up to 24 hours before</span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-xl">
-            <CreditCard className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-            <div className="text-xs">
-              <span className="font-semibold text-blue-800 block">
-                Secure Booking
-              </span>
-              <span className="text-blue-600">Your data is safe</span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2 p-3 bg-purple-50 border border-purple-200 rounded-xl">
-            <Star className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-            <div className="text-xs">
-              <span className="font-semibold text-purple-800 block">
-                Best Price
-              </span>
-              <span className="text-purple-600">Lowest rates guaranteed</span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2 p-3 bg-orange-50 border border-orange-200 rounded-xl">
-            <Headphones className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
-            <div className="text-xs">
-              <span className="font-semibold text-orange-800 block">
-                24/7 Support
-              </span>
-              <span className="text-orange-600">Round-the-clock help</span>
-            </div>
-          </div>
-        </div>
+        <TrustBadges />
 
         {/* Terms */}
         <p className="text-xs text-gray-500 text-center mt-4">
