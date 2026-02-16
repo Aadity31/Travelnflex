@@ -199,7 +199,13 @@ class BookingErrorBoundary extends React.Component<
 }
 
 import React from "react";
-import { ActivityMobileBar } from "@/components/booking/ActivityMobileBar";
+
+// New activity components imports
+import AboutSection from "@/components/booking/activityComp/AboutSection";
+import BookingSidebar from "@/components/booking/activityComp/BookingSidebar";
+import HighlightsSection from "@/components/booking/activityComp/HighlightsSection";
+import IncludedSection from "@/components/booking/activityComp/IncludedSection";
+import HeroWithGallery from "@/components/booking/activityComp/HeroGallerySection";
 
 /* ============ COMPONENT ============ */
 
@@ -222,14 +228,6 @@ export default function BookingClient({
     availableSlots: 0,
   });
   const [isClient, setIsClient] = useState(false);
-
-  const ActivityBookingCard = dynamic(
-  () => import("@/components/booking/ActivityBookingCard").then((mod) => mod.ActivityBookingCard),
-  { 
-    loading: () => <BookingCardSkeleton />,
-    ssr: false 
-  }
-);
 
 
   // Prevent hydration mismatch
@@ -603,59 +601,87 @@ export default function BookingClient({
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* ============ LEFT COLUMN ============ */}
-<div className="lg:col-span-8 space-y-8">
-  {/* IMAGE GALLERY */}
-  <Suspense fallback={<GallerySkeleton />}>
-    <BookingGallery
-      images={displayData.images}
-      hotelImages={displayData.hotelImages}
-      name={data.name}
-      type={type}
-      activityType={data.type}
-      rating={data.rating}
-      reviewCount={data.reviewCount}
-    />
-  </Suspense>
+<div className="lg:col-span-8 flex flex-col gap-[1rem]">
+  {type === "activity" ? (
+    /* ============ NEW ACTIVITY LAYOUT ============ */
+    <>
+      {/* Hero Gallery */}
+      <HeroWithGallery
+        title={data.name}
+        location={data.location}
+        duration={data.duration || ""}
+        category={data.type || "Activity"}
+        rating={data.rating}
+        reviewCount={data.reviewCount}
+        images={displayData.images.map((url, index) => ({
+          url,
+          alt: `${data.name} - Image ${index + 1}`,
+          caption: `${data.name} - Image ${index + 1}`,
+        }))}
+      />
 
-  {/* Details Sections */}
-  {type === "destination" ? (
-    // Show BookingDetails for destinations only on desktop
-    <div className="hidden lg:block">
-      <BookingDetails
-        name={data.name}
-        location={data.location}
-        duration={data.duration}
-        bestTimeToVisit={data.bestTimeToVisit}
-        difficulty={data.difficulty}
-        description={displayData.description}
-        highlights={displayData.highlights}
-        includes={displayData.includes}
-        type={type}
+      {/* About Section */}
+      <AboutSection
+        title="About this experience"
+        paragraphs={[displayData.description]}
       />
-    </div>
+
+      {/* Highlights Section */}
+      <HighlightsSection
+        title="Highlights"
+        highlights={displayData.highlights.map((h) => ({ title: h }))}
+      />
+
+      {/* Included Section */}
+      <IncludedSection
+        title="What's included"
+        items={displayData.includes}
+      />
+
+      {/* Recommended Activities */}
+      <div className="w-full overflow-hidden">
+        <RecommendedActivities items={dummyRecommendedItems} />
+      </div>
+    </>
   ) : (
-    // Show full details for activities on mobile in main content area
-    <div className="lg:hidden">
-      <BookingDetails
-        name={data.name}
-        location={data.location}
-        duration={data.duration}
-        bestTimeToVisit={data.bestTimeToVisit}
-        difficulty={data.difficulty}
-        description={displayData.description}
-        highlights={displayData.highlights}
-        includes={displayData.includes}
-        type={type}
-      />
-    </div>
+    /* ============ DESTINATION LAYOUT ============ */
+    <>
+      {/* IMAGE GALLERY */}
+      <Suspense fallback={<GallerySkeleton />}>
+        <BookingGallery
+          images={displayData.images}
+          hotelImages={displayData.hotelImages}
+          name={data.name}
+          type={type}
+          activityType={data.type}
+          rating={data.rating}
+          reviewCount={data.reviewCount}
+        />
+      </Suspense>
+
+      {/* Details Sections */}
+      <div className="hidden lg:block">
+        <BookingDetails
+          name={data.name}
+          location={data.location}
+          duration={data.duration}
+          bestTimeToVisit={data.bestTimeToVisit}
+          difficulty={data.difficulty}
+          description={displayData.description}
+          highlights={displayData.highlights}
+          includes={displayData.includes}
+          type={type}
+        />
+      </div>
+
+      {/* Recommended Activities */}
+      <Suspense fallback={<RecommendationsSkeleton />}>
+        <RecommendedActivities items={dummyRecommendedItems} />
+      </Suspense>
+    </>
   )}
 
-  {/* Recommended Activities */}
-  <Suspense fallback={<RecommendationsSkeleton />}>
-    <RecommendedActivities items={dummyRecommendedItems} />
-  </Suspense>
-
-  {/* Reviews */}
+  {/* Reviews - Always show for both types */}
   <Suspense fallback={<ReviewsSkeleton />}>
     <ReviewsSection
       reviews={reviews}
@@ -700,12 +726,24 @@ export default function BookingClient({
         />
       </Suspense>
     ) : (
-      // New activity booking card with details
-      <ActivityBookingCard
-        data={data}
-        displayData={displayData}
-        currentPrice={currentPrice}
-        effectiveDiscount={effectiveDiscount}
+      /* ============ NEW ACTIVITY BOOKING SIDEBAR ============ */
+      <BookingSidebar
+        price={currentPrice}
+        originalPrice={pricing.originalPrice || currentPrice}
+        nextDate={data.discount && 'percentage' in data.discount ? new Date(data.discount.validUntil).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Available Now'}
+        remainingSeats={10}
+        cancellationPolicy="Free cancellation up to 48 hours before the start of the experience. Full refund within 5 business days."
+        title={data.name}
+        category={data.type || 'Activity'}
+        rating={data.rating}
+        reviewCount={data.reviewCount}
+        duration={data.duration || ''}
+        location={data.location}
+        difficulty={data.difficulty || ''}
+        activityId={data.id}
+        activitySlug={data.slug}
+        currency={data.currency || 'INR'}
+        onAddToCart={() => console.log('Added to cart')}
       />
     )}
   </div>
@@ -746,15 +784,24 @@ export default function BookingClient({
       />
     </Suspense>
   ) : (
-    // New sticky bottom bar for activities
-    <ActivityMobileBar
-      currentPrice={currentPrice}
-      effectiveDiscount={effectiveDiscount}
+    /* ============ NEW ACTIVITY BOOKING SIDEBAR (MOBILE) ============ */
+    <BookingSidebar
+      price={currentPrice}
+      originalPrice={pricing.originalPrice || currentPrice}
+      nextDate={data.discount && 'percentage' in data.discount ? new Date(data.discount.validUntil).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Available Now'}
+      remainingSeats={10}
+      cancellationPolicy="Free cancellation up to 48 hours before the start of the experience. Full refund within 5 business days."
+      title={data.name}
+      category={data.type || 'Activity'}
+      rating={data.rating}
+      reviewCount={data.reviewCount}
+      duration={data.duration || ''}
+      location={data.location}
+      difficulty={data.difficulty || ''}
       activityId={data.id}
       activitySlug={data.slug}
-      activityName={data.name}
-      activityLocation={data.location}
-      activityImage={data.images?.[0]}
+      currency={data.currency || 'INR'}
+      onAddToCart={() => console.log('Added to cart')}
     />
   )}
 </div>
