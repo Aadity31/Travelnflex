@@ -98,7 +98,7 @@ export function ReviewsSection({
                   className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold flex-shrink-0 text-sm">
+                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold flex-shrink-0 text-sm">
                       {review.userName.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
