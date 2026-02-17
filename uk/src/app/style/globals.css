@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 /* Order matters */
-@import "../styles/theme.css";
-@import "../styles/animations.css";
-@import "../styles/scrollbar.css";
-@import "../styles/utilities.css";
-@import "../styles/blog.css";
+@import "./theme.css";
+@import "../../styles/animations.css";
+@import "../../styles/scrollbar.css";
+@import "../../styles/utilities.css";
+@import "../../styles/blog.css";
 
-@import "../styles/bookingStyles/experience-layers.css";
+@import "../../styles/bookingStyles/experience-layers.css";
 
 
 /* =======================
