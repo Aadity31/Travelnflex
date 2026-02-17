@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 
@@ -16,7 +16,6 @@ export default function WishlistButton({
   size = "md",
 }: WishlistButtonProps) {
   const [isPending, startTransition] = useTransition();
-  const [localLiked, setLocalLiked] = useState(liked);
 
   const iconSize =
     size === "sm"
@@ -24,22 +23,19 @@ export default function WishlistButton({
       : "w-5 h-5 sm:w-6 sm:h-6";
 
   function handleClick(e: React.MouseEvent) {
-    e.preventDefault();
-    if (isPending) return;
+  e.preventDefault();
+  if (isPending) return;
 
-    // Optimistic UI
-    const prev = localLiked;
-    setLocalLiked(!prev);
+  startTransition(async () => {
+    try {
+      await onToggle();
+    } catch {
+      // do nothing
+      // store already opened login modal
+    }
+  });
+}
 
-    startTransition(async () => {
-      try {
-        await onToggle();
-      } catch {
-        // rollback on failure
-        setLocalLiked(prev);
-      }
-    });
-  }
 
   return (
     <button
@@ -48,9 +44,9 @@ export default function WishlistButton({
       className={`bg-white/90 backdrop-blur-sm rounded-full p-1.5 sm:p-2 
       transition-colors duration-200
       ${isPending ? "opacity-60 cursor-not-allowed" : "hover:bg-white"}`}
-      aria-label={localLiked ? "Remove from wishlist" : "Add to wishlist"}
+      aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
     >
-      {localLiked ? (
+      {liked ? (
         <HeartSolid className={`${iconSize} text-red-500`} />
       ) : (
         <HeartOutline

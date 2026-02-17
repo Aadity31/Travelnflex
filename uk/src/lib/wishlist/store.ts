@@ -53,9 +53,10 @@ if (!missing.length) return;
     async (id: string) => {
       // 🔹 FAST UX GATE (no API call if not logged in)
       if (status !== "authenticated") {
-        setShowLogin(true);
-        return;
-      }
+  setShowLogin(true);
+  throw new Error("Not authenticated");
+}
+
 
       // 🔹 Optimistic UI update
       setMap((prev) => ({

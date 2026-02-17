@@ -25,7 +25,7 @@ export function ReviewsSection({
   const ratingDistribution = getRatingDistribution(reviews);
 
   return (
-    <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+    <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-200 mt-8">
       <h2 className="text-lg font-bold text-gray-900 mb-4">
         Customer Reviews
       </h2>

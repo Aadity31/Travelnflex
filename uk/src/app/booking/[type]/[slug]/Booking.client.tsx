@@ -681,14 +681,6 @@ export default function BookingClient({
     </>
   )}
 
-  {/* Reviews - Always show for both types */}
-  <Suspense fallback={<ReviewsSkeleton />}>
-    <ReviewsSection
-      reviews={reviews}
-      fallbackRating={data.rating}
-      fallbackReviewCount={data.reviewCount}
-    />
-  </Suspense>
 </div>
 
 
@@ -750,6 +742,15 @@ export default function BookingClient({
 </div>
 
           </div>
+
+  {/* Reviews - Always show for both types */}
+  <Suspense fallback={<ReviewsSkeleton />}>
+    <ReviewsSection
+      reviews={reviews}
+      fallbackRating={data.rating}
+      fallbackReviewCount={data.reviewCount}
+    />
+  </Suspense>
         </div>
 
         {/* ============ MOBILE BOOKING CARD / STICKY BAR ============ */}

@@ -110,12 +110,12 @@ export default function Navbar({
       icon: Calendar,
     },
     {
-      href: "/profile/favorites",
+      href: "/profile/wishlist",
       label: "Favorites",
       icon: Heart,
     },
     {
-      href: "/profile/saved",
+      href: "#",
       label: "Saved Places",
       icon: BookMarked,
     },

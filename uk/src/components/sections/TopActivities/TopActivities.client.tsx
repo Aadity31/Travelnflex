@@ -112,7 +112,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, wishlist }) => {
 
   return (
     <Link href={`/booking/activity/${activity.slug}`} className="block">
-      <article className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+      <article className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col h-full">
+
+
         {/* Image Container - Responsive heights */}
         <div className="relative h-56 sm:h-64 md:h-72 overflow-hidden">
           <Image
@@ -212,7 +214,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, wishlist }) => {
         </div>
 
         {/* Content - Responsive padding */}
-        <div className="p-4 sm:p-5">
+        <div className="p-4 sm:p-5 flex flex-col flex-grow">
+          <div className="flex flex-col flex-grow">
+
           {/* Location and Duration */}
           <div className="flex items-center justify-between mb-3 text-sm text-gray-600">
             <div className="flex items-center gap-1.5">
@@ -226,22 +230,24 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, wishlist }) => {
           </div>
 
           {/* Title */}
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors duration-300 leading-tight">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors duration-300 leading-tight line-clamp-2 min-h-[56px]">
             {activity.name}
           </h3>
 
           {/* Description */}
-          <p className="text-gray-700 mb-4 text-sm leading-relaxed line-clamp-2">
+              <p className="text-gray-700 mb-4 text-sm leading-relaxed line-clamp-2 min-h-[40px]">
+
+
             {activity.shortDescription}
           </p>
 
           {/* Highlights */}
-          <div className="mb-4">
+            <div className="mb-4 min-h-[48px]">
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {activity.highlights.slice(0, 3).map((highlight, index) => (
                 <span
-                  key={index}
-                  className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
+                key={index}
+                className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
                 >
                   {highlight}
                 </span>
@@ -256,6 +262,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, wishlist }) => {
 
           {/* Details Row */}
           <div className="flex items-center justify-between mb-4">
+
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="flex items-center gap-1 text-sm text-gray-600">
                 <UserGroupIcon className="w-4 h-4 flex-shrink-0" />
@@ -265,15 +272,16 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, wishlist }) => {
                 className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(
                   activity.difficulty
                 )}`}
-              >
+                >
                 {activity.difficulty.charAt(0).toUpperCase() +
                   activity.difficulty.slice(1)}
               </span>
             </div>
           </div>
+        </div>
 
           {/* Price and CTA */}
-          <div className="flex items-center justify-between gap-3">
+           <div className="flex items-center justify-between gap-3 mt-auto pt-4 border-t border-gray-100">
             <div className="flex items-center gap-1">
               <CurrencyRupeeIcon className="w-5 h-5 text-gray-900 flex-shrink-0" />
               <div>
@@ -383,7 +391,8 @@ const TopActivities: React.FC<{
         </div>
 
         {/* Activities Grid - 3 columns on large screens */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-4 mb-12 auto-rows-fr">
+
           {filteredActivities.map((activity) => (
             <ActivityCard key={activity.id} activity={activity} wishlist={wishlist} />
           ))}
