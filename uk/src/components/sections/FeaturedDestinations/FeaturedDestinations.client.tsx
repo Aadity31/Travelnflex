@@ -52,9 +52,9 @@ const Badge: React.FC<BadgeProps> = ({ text, type }) => {
       case "trending":
         return "bg-purple-500 text-white";
       case "new":
-        return "bg-(--color-success)] text-white";
+        return "bg-success text-white";
       default:
-        return "bg-(--color-neutral)] text-white";
+        return "bg-neutral text-white";
     }
   };
 
@@ -183,7 +183,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
               {destination.popularActivities.slice(0, 3).map((activity, index) => (
                 <span
                   key={index}
-                  className="bg-(--color-primary-lightest)] text-primary-dark)] px-2.5 py-1 rounded-full text-xs font-medium border border-primary-light"
+                  className="bg-primary-lighter text-primary-dark px-2.5 py-1 rounded-full text-xs font-medium border border-primary-light"
                 >
                   {activity}
                 </span>
@@ -243,12 +243,12 @@ const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header - Readable sizes */}
         <div className="text-center mb-12">
-          <div className="inline-block bg-(--color-primary-lightest)] text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+          <div className="inline-block bg-primary-lighter text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
             Sacred Destinations
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 px-4">
             Discover Your Perfect
-            <span className="text-primary-dark)] block mt-2">
+            <span className="text-primary-dark block mt-2">
               Spiritual Journey
             </span>
           </h2>
@@ -277,7 +277,7 @@ const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
         <div className="text-center px-4">
           <Link
             href="/destinations"
-            className="inline-flex items-center gap-3 bg-white text-primary-dark)] px-8 py-4 rounded-xl font-semibold border-2 border-primary-dark hover:bg-(--color-primary-dark)] hover:text-white transition-all duration-300 hover:shadow-lg text-base"
+            className="inline-flex items-center gap-3 bg-white text-primary-dark px-8 py-4 rounded-xl font-semibold border-2 border-primary-dark hover:bg-primary-dark hover:text-white transition-all duration-300 hover:shadow-lg text-base"
           >
             View All Destinations
             <ArrowRightIcon className="w-5 h-5" />
