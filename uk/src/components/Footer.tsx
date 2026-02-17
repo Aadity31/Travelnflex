@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import Credits from "./Credits";
 
 export default function FooterWithCredits() {
   const socialLinks = [
@@ -178,6 +179,7 @@ export default function FooterWithCredits() {
           </div>
         </div>
       </div>
+      <Credits variant="footer" />
     </footer>
   );
 }

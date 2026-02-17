@@ -6,6 +6,8 @@ interface CreditsProps {
   designerName?: string;
   designerUrl?: string;
   className?: string;
+  /** Variant determines the color scheme: 'footer' for dark colors (when with Footer), 'standalone' for light colors (without Footer) */
+  variant?: "footer" | "standalone";
 }
 
 export default function Credits({
@@ -13,12 +15,19 @@ export default function Credits({
   designerName = "APS-Groups",
   designerUrl = "https://www.apsgroupco.com",
   className = "",
+  variant = "standalone",
 }: CreditsProps) {
   const currentYear = new Date().getFullYear();
 
+  // Determine styles based on variant
+  const isFooterVariant = variant === "footer";
+  const bgColor = isFooterVariant ? "bg-neutral-darker" : "bg-transparent";
+  const textColor = isFooterVariant ? "text-(--text-muted-on-dark)" : "!text-foreground-secondary";
+  const borderColor = isFooterVariant ? "border-primary" : "border-border-light";
+
   return (
-    <footer
-      className={`bg-neutral-darker border-t border-primary ${className}`}
+    <div
+      className={`${bgColor} border-t ${borderColor} ${className}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Credits Section */}
@@ -26,19 +35,19 @@ export default function Credits({
           {/* Mobile: Single row */}
           <div className="flex flex-row items-center justify-between gap-2 sm:hidden">
             {/* Left - Site Name */}
-            <div className="text-(--text-muted-on-dark) text-sm">
+            <div className={`${textColor} text-sm`}>
               <p className="text-primary hover:text-primary-light transition-colors duration-300">
                 travelnflex.com
               </p>
             </div>
 
             {/* Center - Copyright */}
-            <div className="text-(--text-muted-on-dark) text-xs">
+            <div className={`${textColor} text-xs`}>
               <span>© {currentYear} <span className="font-medium text-primary">{websiteName}</span></span>
             </div>
 
             {/* Right - Designer Credit */}
-            <div className="text-(--text-muted-on-dark) text-xs">
+            <div className={`${textColor} text-xs`}>
               <Link
                 href={designerUrl}
                 target="_blank"
@@ -67,19 +76,19 @@ export default function Credits({
           {/* Desktop: 3-column layout */}
           <div className="hidden sm:flex flex-row items-center justify-between gap-4">
             {/* Left - Site Name */}
-            <div className="text-(--text-muted-on-dark) text-sm">
+            <div className={`${textColor} text-sm`}>
               <p className="text-primary hover:text-primary-light transition-colors duration-300">
                 travelnflex.com
               </p>
             </div>
 
             {/* Center - Copyright */}
-            <div className="text-(--text-muted-on-dark) text-sm">
+            <div className={`${textColor} text-sm`}>
               <span>© {currentYear} All rights reserved by <span className="font-medium text-primary">{websiteName}</span></span>
             </div>
 
             {/* Right - Designer Credit */}
-            <div className="text-(--text-muted-on-dark) text-sm">
+            <div className={`${textColor} text-sm`}>
               <Link
                 href={designerUrl}
                 target="_blank"
@@ -107,6 +116,6 @@ export default function Credits({
           </div>
         </div>
       </div>
-    </footer>
+    </div>
   );
 }

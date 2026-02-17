@@ -3,7 +3,6 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./style/globals.css";
 
-import Credits from "../components/Credits";
 import NavbarServer from "../components/navbar/Navbar.server";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./providers";
@@ -112,7 +111,7 @@ export const metadata: Metadata = {
 };
 
 /* ---------------- Root Layout ---------------- */
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -153,11 +152,8 @@ export default function RootLayout({
           {/* ✅ Navbar ALWAYS mounted */}
           <NavbarServer />
 
-          {/* ✅ Only page / route content swaps (loading.tsx here) */}
           {children}
-
-          <Credits />
-
+          
           <Toaster
             position="top-right"
             containerClassName="!top-16 sm:!top-20"

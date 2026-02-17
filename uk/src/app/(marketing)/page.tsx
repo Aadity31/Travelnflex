@@ -63,7 +63,6 @@ export default function HomePage() {
         <AboutUsPage />
         <TestimonialsSection />
         <CTASection />
-        <FooterWithCredits />
       </main>
     </>
   );

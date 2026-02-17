@@ -1,4 +1,4 @@
-import FooterWithCredits from "@/components/Footer";
+import Credits from "@/components/Credits";
 import { ReactNode } from "react";
 
 export const metadata = {
@@ -12,7 +12,7 @@ export default function LegalLayout({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
-      <FooterWithCredits />
+      <Credits />
     </>
   );
 }
