@@ -13,7 +13,7 @@ agency id = AG001
 activities
 
 # activities Table id formate =
-AGENCYCODE_ACTIVITYCODE_SEQ
+AGENCYCODE_ACTIVITYCODE_SEQ 
 
 
 # TO DO 
