@@ -18,7 +18,7 @@ export default function Credits({
 
   return (
     <footer
-      className={`bg-[var(--color-neutral-darker)] border-t border-gray-800 ${className}`}
+      className={`bg-[var(--color-neutral-darker)] border-t border-[var(--color-primary)] ${className}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Credits Section */}
@@ -26,24 +26,24 @@ export default function Credits({
           {/* Mobile: Single row */}
           <div className="flex flex-row items-center justify-between gap-2 sm:hidden">
             {/* Left - Site Name */}
-            <div className="text-gray-400 text-sm">
-              <p className="text-orange-400 hover:text-orange-300 transition-colors duration-300">
+            <div className="text-[var(--text-muted-on-dark)] text-sm">
+              <p className="text-[var(--color-primary)] hover:text-[var(--color-primary-light)] transition-colors duration-300">
                 travelnflex.com
               </p>
             </div>
 
             {/* Center - Copyright */}
-            <div className="text-gray-500 text-xs">
-              <span>© {currentYear} <span className="font-medium text-orange-400">{websiteName}</span></span>
+            <div className="text-[var(--text-muted-on-dark)] text-xs">
+              <span>© {currentYear} <span className="font-medium text-[var(--color-primary)]">{websiteName}</span></span>
             </div>
 
             {/* Right - Designer Credit */}
-            <div className="text-gray-500 text-xs">
+            <div className="text-[var(--text-muted-on-dark)] text-xs">
               <Link
                 href={designerUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-orange-400 hover:text-orange-300 font-medium 
+                className="text-[var(--color-primary)] hover:text-[var(--color-primary-light)] font-medium 
                          transition-all duration-300 inline-flex items-center gap-1"
               >
                 {designerName}
@@ -67,24 +67,24 @@ export default function Credits({
           {/* Desktop: 3-column layout */}
           <div className="hidden sm:flex flex-row items-center justify-between gap-4">
             {/* Left - Site Name */}
-            <div className="text-gray-400 text-sm">
-              <p className="text-orange-400 hover:text-orange-300 transition-colors duration-300">
+            <div className="text-[var(--text-muted-on-dark)] text-sm">
+              <p className="text-[var(--color-primary)] hover:text-[var(--color-primary-light)] transition-colors duration-300">
                 travelnflex.com
               </p>
             </div>
 
             {/* Center - Copyright */}
-            <div className="text-gray-500 text-sm">
-              <span>© {currentYear} All rights reserved by<span className="font-medium text-orange-400">{websiteName}</span></span>
+            <div className="text-[var(--text-muted-on-dark)] text-sm">
+              <span>© {currentYear} All rights reserved by<span className="font-medium text-[var(--color-primary)]">{websiteName}</span></span>
             </div>
 
             {/* Right - Designer Credit */}
-            <div className="text-gray-500 text-sm">
+            <div className="text-[var(--text-muted-on-dark)] text-sm">
               <Link
                 href={designerUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-orange-400 hover:text-orange-300 font-medium 
+                className="text-[var(--color-primary)] hover:text-[var(--color-primary-light)] font-medium 
                          transition-all duration-300 inline-flex items-center gap-1
                          hover:underline hover:underline-offset-4"
               >

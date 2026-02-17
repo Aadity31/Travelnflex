@@ -16,6 +16,13 @@
   --foreground-secondary: #4b5563;
   --foreground-muted: #6b7280;
 
+  /* Footer Colors - Dark Theme */
+  --color-neutral-darker: #0f172a;
+  --color-neutral-dark: #1e293b;
+  --color-neutral: #334155;
+  --text-on-dark: #f8fafc;
+  --text-muted-on-dark: #94a3b8;
+
   /* Borders */
   --border-light: #e5e7eb;
   --border-medium: #d1d5db;
