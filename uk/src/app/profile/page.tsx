@@ -338,7 +338,7 @@ export default function ProfilePage() {
           <div className="lg:col-span-4 space-y-4 sm:space-y-6">
             {/* Profile Card */}
             <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="h-16 sm:h-20 lg:h-24 bg-gradient-to-r from-orange-500 to-red-500 relative" />
+              <div className="h-16 sm:h-20 lg:h-24 bg-linear-to-r from-orange-500 to-red-500 relative" />
 
               <div className="px-4 sm:px-6 pb-4 sm:pb-6 -mt-8 sm:-mt-10 lg:-mt-12 text-center">
                 <div className="relative inline-block group mb-3 sm:mb-4">
@@ -372,7 +372,7 @@ export default function ProfilePage() {
                   onClick={() => {
                     router.push("/profile/edit");
                   }}
-                  className="w-full px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg text-xs sm:text-sm font-medium transition flex items-center justify-center gap-1.5 sm:gap-2"
+                  className="w-full px-3 sm:px-4 py-1.5 sm:py-2 bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg text-xs sm:text-sm font-medium transition flex items-center justify-center gap-1.5 sm:gap-2"
                 >
                   <Edit2 size={12} className="sm:w-3.5 sm:h-3.5" />
                   Edit Profile
@@ -460,7 +460,7 @@ export default function ProfilePage() {
           {/* MAIN CONTENT */}
           <div className="lg:col-span-8 space-y-4 sm:space-y-6">
             {/* Welcome Banner */}
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white">
+            <div className="bg-linear-to-r from-orange-500 to-red-500 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white">
               <h2 className="text-lg sm:text-xl lg:text-2xl font-bold mb-1 sm:mb-2">
                 Welcome back, {user.name?.split(" ")[0]}! 🙏
               </h2>

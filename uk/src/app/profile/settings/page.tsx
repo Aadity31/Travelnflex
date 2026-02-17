@@ -213,7 +213,7 @@ export default function SettingsPage() {
                       onClick={() => setActiveTab(tab.id)}
                       className={`w-full flex items-center gap-2 xl:gap-3 px-3 xl:px-4 py-2 xl:py-3 rounded-lg xl:rounded-xl text-left transition text-xs xl:text-sm font-semibold ${
                         isActive
-                          ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30"
+                          ? "bg-linear-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30"
                           : "text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -261,7 +261,7 @@ export default function SettingsPage() {
                       onClick={() => setActiveTab(tab.id)}
                       className={`flex flex-col items-center gap-1 xs:gap-1.5 px-2 xs:px-2.5 sm:px-3 py-2 xs:py-2.5 rounded-lg sm:rounded-xl text-left transition ${
                         isActive
-                          ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30"
+                          ? "bg-linear-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30"
                           : "text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -370,7 +370,7 @@ export default function SettingsPage() {
                     onClick={() => {
                       router.push("/profile/edit");
                     }}
-                    className="mt-3 xs:mt-3.5 sm:mt-4 md:mt-5 w-full px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 sm:py-2.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-[10px] xs:text-[11px] sm:text-xs md:text-sm flex items-center justify-center gap-1.5"
+                    className="mt-3 xs:mt-3.5 sm:mt-4 md:mt-5 w-full px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 sm:py-2.5 bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-[10px] xs:text-[11px] sm:text-xs md:text-sm flex items-center justify-center gap-1.5"
                   >
                     <User
                       size={14}
@@ -447,7 +447,7 @@ export default function SettingsPage() {
 
                   <button
                     onClick={handleSaveNotifications}
-                    className="mt-4 xs:mt-5 sm:mt-5 md:mt-6 w-full sm:w-auto px-4 xs:px-5 sm:px-5 md:px-6 py-2 xs:py-2.5 sm:py-2.5 md:py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-xs xs:text-xs sm:text-sm md:text-sm flex items-center justify-center gap-1.5 xs:gap-2"
+                    className="mt-4 xs:mt-5 sm:mt-5 md:mt-6 w-full sm:w-auto px-4 xs:px-5 sm:px-5 md:px-6 py-2 xs:py-2.5 sm:py-2.5 md:py-3 bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-xs xs:text-xs sm:text-sm md:text-sm flex items-center justify-center gap-1.5 xs:gap-2"
                   >
                     <CheckCircle2
                       size={16}
@@ -600,7 +600,7 @@ export default function SettingsPage() {
 
                   <button
                     onClick={handleChangePassword}
-                    className="mt-6 w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-sm flex items-center justify-center gap-2"
+                    className="mt-6 w-full sm:w-auto px-6 py-3 bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-sm flex items-center justify-center gap-2"
                   >
                     <Lock size={18} />
                     <span>Change Password</span>
@@ -666,7 +666,7 @@ export default function SettingsPage() {
 
                   <button
                     onClick={handleSavePreferences}
-                    className="mt-6 w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-sm flex items-center justify-center gap-2"
+                    className="mt-6 w-full sm:w-auto px-6 py-3 bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all text-sm flex items-center justify-center gap-2"
                   >
                     <CheckCircle2 size={18} />
                     <span>Save Preferences</span>

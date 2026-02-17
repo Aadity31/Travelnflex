@@ -358,7 +358,7 @@ export default function SignupPage() {
 
               <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl shadow-orange-500/10 p-4 sm:p-6 border border-gray-100">
                 <div className="mb-4 sm:mb-5">
-                  <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-0.5 sm:mb-1">
+                  <h2 className="text-xl sm:text-2xl font-bold bg-linear-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-0.5 sm:mb-1">
                     Create Account
                   </h2>
                   <p className="text-gray-600 text-xs sm:text-sm">
@@ -400,11 +400,11 @@ export default function SignupPage() {
 
                 {/* Divider */}
                 <div className="flex items-center gap-2 sm:gap-3 my-3 sm:my-4">
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+                  <div className="flex-1 h-px bg-linear-to-r from-transparent via-gray-300 to-transparent" />
                   <span className="text-[10px] sm:text-xs text-gray-500 font-medium">
                     OR
                   </span>
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+                  <div className="flex-1 h-px bg-linear-to-r from-transparent via-gray-300 to-transparent" />
                 </div>
 
                 {/* Signup Form */}
@@ -581,7 +581,7 @@ export default function SignupPage() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed mt-3 sm:mt-4"
+                    className="w-full py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg bg-linear-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed mt-3 sm:mt-4"
                   >
                     {isLoading ? (
                       <span className="flex items-center justify-center gap-1.5 sm:gap-2">
@@ -679,7 +679,7 @@ export default function SignupPage() {
                 </button>
 
                 <div className="mb-4 sm:mb-6">
-                  <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-0.5 sm:mb-1">
+                  <h2 className="text-xl sm:text-2xl font-bold bg-linear-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-0.5 sm:mb-1">
                     Verify Your Email
                   </h2>
                   <p className="text-gray-600 text-xs sm:text-sm">
@@ -765,7 +765,7 @@ export default function SignupPage() {
                   <button
                     type="submit"
                     disabled={isLoading || otp.join("").length !== 6}
-                    className="w-full py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg bg-linear-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading ? (
                       <span className="flex items-center justify-center gap-1.5 sm:gap-2">

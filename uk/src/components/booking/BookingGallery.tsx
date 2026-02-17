@@ -209,8 +209,8 @@ export function BookingGallery({
 
           {/* Loading skeleton - only show when actually loading */}
           {isLoading && !isFullscreen && !imageError && (
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-wave" />
+            <div className="absolute inset-0 bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer">
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent animate-wave" />
             </div>
           )}
 
@@ -239,7 +239,7 @@ export function BookingGallery({
           {/* Activity Type Badge */}
           {type === "activity" && activityType && (
             <div className="absolute top-4 left-4 z-20">
-              <span className="bg-gradient-to-r from-[#FF5F15] to-[#ea580c] text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-sm">
+              <span className="bg-linear-to-r from-[#FF5F15] to-[#ea580c] text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-sm">
                 {activityType.charAt(0).toUpperCase() + activityType.slice(1)}
               </span>
             </div>
@@ -397,7 +397,7 @@ export function BookingGallery({
 
             {/* Loading skeleton for fullscreen */}
             {isLoading && isFullscreen && (
-              <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-shimmer" />
+              <div className="absolute inset-0 bg-linear-to-r from-gray-800 via-gray-700 to-gray-800 animate-shimmer" />
             )}
 
             {/* Navigation arrows */}

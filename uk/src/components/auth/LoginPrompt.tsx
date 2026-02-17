@@ -90,7 +90,7 @@ export default function LoginPrompt({
           {/* Primary Action - Login */}
           <button
             onClick={handleLogin}
-            className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white rounded-xl py-3.5 px-6 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 group"
+            className="w-full bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white rounded-xl py-3.5 px-6 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 group"
           >
             <span>Continue with Login</span>
             <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />

@@ -184,7 +184,7 @@ export default function Navbar({
                   >
                     {l.label}
 
-                    <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-orange-400 to-red-500 scale-x-0 group-hover:scale-x-100 transition-transform" />
+                    <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-linear-to-r from-orange-400 to-red-500 scale-x-0 group-hover:scale-x-100 transition-transform" />
                   </Link>
                 ))}
               </div>
@@ -200,7 +200,7 @@ export default function Navbar({
               {/* AUTH - DESKTOP ONLY */}
               {!currentUser ? (
                 <Link href="/login">
-                  <button className="hidden sm:flex gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white text-sm font-semibold">
+                  <button className="hidden sm:flex gap-2 px-5 py-2.5 rounded-full bg-linear-to-r from-orange-500 to-red-600 text-white text-sm font-semibold">
                     <LogIn size={18} />
                     Login
                   </button>
@@ -381,7 +381,7 @@ export default function Navbar({
 
             {!currentUser ? (
               <Link href="/login" onClick={() => setIsOpen(false)}>
-                <button className="mt-4 px-4 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold flex items-center justify-center gap-2">
+                <button className="mt-4 px-4 py-3 rounded-lg bg-linear-to-r from-orange-500 to-red-600 text-white font-semibold flex items-center justify-center gap-2">
                   <LogIn size={18} />
                   Login
                 </button>

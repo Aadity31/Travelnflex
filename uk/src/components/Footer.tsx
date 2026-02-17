@@ -37,9 +37,9 @@ export default function FooterWithCredits() {
   ];
 
   return (
-    <footer className="bg-[var(--color-neutral-darker)] text-[var(--text-on-dark)]">
+    <footer className="bg-neutral-darker text-(--text-on-dark)">
       {/* Decorative gradient top border */}
-      <div className="h-1 w-full bg-gradient-to-r from-[var(--color-primary-dark)] via-[var(--color-primary)] to-[var(--color-primary-dark)]" />
+      <div className="h-1 w-full bg-linear-to-r from-primary-dark via-primary to-primary-dark" />
 
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-10 lg:py-14">
@@ -60,18 +60,18 @@ export default function FooterWithCredits() {
               </div>
             </div>
 
-            <p className="text-[var(--text-muted-on-dark)] text-sm leading-relaxed mb-5 max-w-sm">
+            <p className="text-(--text-muted-on-dark) text-sm leading-relaxed mb-5 max-w-sm">
               Your trusted guide to spiritual destinations across India. Explore
               sacred places with ease and create unforgettable journeys.
             </p>
 
             {/* Email Section - Company Contact */}
             <div className="mb-5">
-              <span className="text-[var(--text-muted-on-dark)] text-xs">
-                <span className="font-medium text-[var(--text-on-dark)]">Need Help? </span>
+              <span className="text-(--text-muted-on-dark) text-xs">
+                <span className="font-medium text-(--text-on-dark)">Need Help? </span>
                 <a
                   href="mailto:info@travelnflex.com"
-                  className="text-[var(--color-primary)] hover:text-[var(--color-primary-light)] transition-colors duration-300"
+                  className="text-primary hover:text-primary-light transition-colors duration-300"
                 >
                   info@travelnflex.com
                 </a>
@@ -86,16 +86,16 @@ export default function FooterWithCredits() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 bg-[var(--color-neutral-dark)] rounded-lg flex items-center justify-center 
-                           hover:bg-gradient-to-r hover:from-[var(--color-primary-dark)] hover:to-[var(--color-primary)] 
+                  className="w-9 h-9 bg-neutral-dark rounded-lg flex items-center justify-center 
+                           hover:bg-linear-to-r hover:from-primary-dark hover:to-primary 
                            transition-all duration-300 ease-out
-                           hover:shadow-lg hover:shadow-[var(--color-primary)]/25 hover:-translate-y-0.5
-                           group border border-[var(--color-neutral)] hover:border-[var(--color-primary)]"
+                           hover:shadow-lg hover:shadow-(--color-primary)/25 hover:-translate-y-0.5
+                           group border border-neutral hover:border-primary"
                   aria-label={social.name}
                 >
                   {social.type === "stroke" ? (
                     <svg
-                      className="w-4 h-4 text-[var(--text-muted-on-dark)] group-hover:text-[var(--text-on-dark)] transition-colors duration-300"
+                      className="w-4 h-4 text-(--text-muted-on-dark) group-hover:text-(--text-on-dark) transition-colors duration-300"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -109,7 +109,7 @@ export default function FooterWithCredits() {
                     </svg>
                   ) : (
                     <svg
-                      className="w-4 h-4 text-[var(--text-muted-on-dark)] group-hover:text-[var(--text-on-dark)] transition-colors duration-300"
+                      className="w-4 h-4 text-(--text-muted-on-dark) group-hover:text-(--text-on-dark) transition-colors duration-300"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -126,8 +126,8 @@ export default function FooterWithCredits() {
             <div className="grid grid-cols-2 gap-6 md:gap-8">
               {/* Quick Links */}
               <div>
-                <h3 className="text-[var(--text-on-dark)] font-semibold text-base mb-4 flex items-center gap-2">
-                  <span className="w-1 h-4 bg-gradient-to-b from-[var(--color-primary-dark)] to-[var(--color-primary)] rounded-full" />
+                <h3 className="text-(--text-on-dark) font-semibold text-base mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-linear-to-b from-primary-dark to-primary rounded-full" />
                   Quick Links
                 </h3>
                 <ul className="space-y-2.5">
@@ -135,10 +135,10 @@ export default function FooterWithCredits() {
                     <li key={link.name}>
                       <Link
                         href={link.href}
-                        className="text-[var(--text-muted-on-dark)] hover:text-[var(--color-primary)] transition-all duration-300 
+                        className="text-(--text-muted-on-dark) hover:text-primary transition-all duration-300 
                                  inline-flex items-center gap-2 group text-sm"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-neutral)] group-hover:bg-[var(--color-primary)] 
+                        <span className="w-1.5 h-1.5 rounded-full bg-neutral group-hover:bg-primary 
                                          transition-all duration-300 group-hover:scale-150" />
                         <span className="group-hover:translate-x-1 transition-transform duration-300">
                           {link.name}
@@ -152,8 +152,8 @@ export default function FooterWithCredits() {
 
               {/* Legal */}
               <div>
-                <h3 className="text-[var(--text-on-dark)] font-semibold text-base mb-4 flex items-center gap-2">
-                  <span className="w-1 h-4 bg-gradient-to-b from-[var(--color-primary-dark)] to-[var(--color-primary)] rounded-full" />
+                <h3 className="text-(--text-on-dark) font-semibold text-base mb-4 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-linear-to-b from-primary-dark to-primary rounded-full" />
                   Legal
                 </h3>
                 <ul className="space-y-2.5">
@@ -161,10 +161,10 @@ export default function FooterWithCredits() {
                     <li key={link.name}>
                       <Link
                         href={link.href}
-                        className="text-[var(--text-muted-on-dark)] hover:text-[var(--color-primary)] transition-all duration-300 
+                        className="text-(--text-muted-on-dark) hover:text-primary transition-all duration-300 
                                  inline-flex items-center gap-2 group text-sm"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-neutral)] group-hover:bg-[var(--color-primary)] 
+                        <span className="w-1.5 h-1.5 rounded-full bg-neutral group-hover:bg-primary 
                                          transition-all duration-300 group-hover:scale-150" />
                         <span className="group-hover:translate-x-1 transition-transform duration-300">
                           {link.name}

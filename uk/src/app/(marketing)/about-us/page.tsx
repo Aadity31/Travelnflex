@@ -144,11 +144,11 @@ const CTAButton: React.FC<CTAButtonProps> = ({
 
   const variantStyles = {
     primary:
-      'bg-[var(--color-primary-dark)] hover:bg-[var(--color-primary)] text-white',
+      'bg-primary hover:bg-primary text-white',
     secondary:
-      'bg-white text-[var(--color-primary-dark)] hover:bg-[var(--color-background-secondary)] transform hover:-translate-y-1 shadow-[var(--shadow-xl)]',
+      'bg-white text-primary-dark hover:bg-(--color-background-secondary)] transform hover:-translate-y-1 shadow-(--shadow-xl)]',
     outline:
-      'bg-[var(--color-primary-dark)]/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/10',
+      'bg-(--color-primary-dark)]/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/10',
   };
 
   const combinedClassName = `${baseStyles} ${variantStyles[variant]} ${className}`;
@@ -200,11 +200,11 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
   centered = false,
 }) => (
   <div className={`space-y-4 ${centered ? 'text-center max-w-2xl mx-auto mb-16' : ''}`}>
-    <h2 className="text-3xl lg:text-4xl font-extrabold text-[var(--foreground)]">{title}</h2>
+    <h2 className="text-3xl lg:text-4xl font-extrabold text-(--foreground)]">{title}</h2>
     {showDecorator && (
-      <div className="h-1.5 w-20 bg-[var(--color-primary)] mx-auto rounded-full" />
+      <div className="h-1.5 w-20 bg-primary mx-auto rounded-full" />
     )}
-    {subtitle && <p className="text-[var(--foreground-secondary)]">{subtitle}</p>}
+    {subtitle && <p className="text-(--foreground-secondary)]">{subtitle}</p>}
   </div>
 );
 
@@ -219,7 +219,7 @@ const HeroSection: React.FC = () => (
   <section className="relative w-full" aria-labelledby="hero-heading">
     <div className="max-w-7xl mx-auto px-6 lg:px-10 py-12">
       <div
-        className="relative overflow-hidden rounded-[var(--radius-xl)] h-[520px] lg:h-[600px] flex items-center justify-center text-center px-4 bg-cover bg-center"
+        className="relative overflow-hidden rounded-(--radius-xl)] h-130 lg:h-150 flex items-center justify-center text-center px-4 bg-cover bg-center"
         style={{
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6)), url("${HERO_IMAGE_URL}")`,
         }}
@@ -257,29 +257,29 @@ const StorySection: React.FC = () => (
     <div className="grid lg:grid-cols-2 gap-16 items-center">
       <div className="space-y-8">
         <div className="space-y-4">
-          <h3 className="text-[var(--color-primary)] font-bold tracking-widest uppercase text-sm">
+          <h3 className="text-primary font-bold tracking-widest uppercase text-sm">
             Where it began
           </h3>
-          <h2 className="text-4xl lg:text-5xl font-extrabold text-[var(--foreground)] leading-tight">
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-(--foreground)] leading-tight">
             Crafting meaningful <br /> paths since 2012.
           </h2>
-          <p className="text-[var(--foreground-secondary)] text-lg leading-relaxed">
+          <p className="text-(--foreground-secondary)] text-lg leading-relaxed">
             Our journey started with a simple observation: travel had become a commodity, focused on
             checkboxes rather than connections. We wanted to build a bridge back to authenticity.
           </p>
-          <p className="text-[var(--foreground-secondary)] text-lg leading-relaxed">
+          <p className="text-(--foreground-secondary)] text-lg leading-relaxed">
             From a small team of two backpackers in Nepal to a global network, our mission remains
             the same: to make travel transformative, accessible, and deeply respectful of local
             cultures.
           </p>
         </div>
-        <div className="flex items-center gap-6 p-6 bg-[var(--background)] rounded-[var(--radius-xl)] border border-[var(--border-light)] shadow-[var(--shadow-sm)]">
-          <div className="h-14 w-14 rounded-full bg-gradient-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-[var(--color-primary)]/20">
+        <div className="flex items-center gap-6 p-6 bg-(--background)] rounded-(--radius-xl)] border border-(--border-light)] shadow-(--shadow-sm)]">
+          <div className="h-14 w-14 rounded-full bg-gradient-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-(--color-primary)]/20">
             <GlobeAltIcon className="w-6 h-6" aria-hidden="true" />
           </div>
           <div>
-            <h4 className="font-bold text-[var(--foreground)]">Global Reach, Local Depth</h4>
-            <p className="text-sm text-[var(--foreground-muted)]">
+            <h4 className="font-bold text-(--foreground)]">Global Reach, Local Depth</h4>
+            <p className="text-sm text-(--foreground-muted)]">
               Partnering with over 200 local agencies worldwide.
             </p>
           </div>
@@ -287,10 +287,10 @@ const StorySection: React.FC = () => (
       </div>
       <div className="relative group">
         <div
-          className="absolute -inset-4 bg-[var(--color-primary)]/10 rounded-[var(--radius-xl)] transform rotate-3 transition-transform group-hover:rotate-1"
+          className="absolute -inset-4 bg-primary/10 rounded-(--radius-xl)] transform rotate-3 transition-transform group-hover:rotate-1"
           aria-hidden="true"
         />
-        <div className="relative rounded-[var(--radius-xl)] overflow-hidden aspect-[4/5] shadow-[var(--shadow-xl)]">
+        <div className="relative rounded-(--radius-xl)] overflow-hidden aspect-4/5 shadow-(--shadow-xl)]">
           <Image
             alt="Travelers connecting with local artisans in a traditional marketplace"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -318,28 +318,28 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ feature }) => {
 
   const colorClasses = {
     primary: {
-      bg: 'bg-[var(--color-primary)]/10',
-      text: 'text-[var(--color-primary)]',
-      hoverBg: 'group-hover:bg-[var(--color-primary)]',
+      bg: 'bg-primary/10',
+      text: 'text-primary',
+      hoverBg: 'group-hover:bg-primary',
     },
     success: {
-      bg: 'bg-[var(--color-success)]/10',
-      text: 'text-[var(--color-success)]',
-      hoverBg: 'group-hover:bg-[var(--color-success)]',
+      bg: 'bg-(--color-success)]/10',
+      text: 'text-(--color-success)]',
+      hoverBg: 'group-hover:bg-(--color-success)]',
     },
   };
 
   const colors = colorClasses[colorClass];
 
   return (
-    <article className="bg-[var(--background)] p-8 rounded-[var(--radius-xl)] border border-[var(--border-light)] hover:shadow-[var(--shadow-xl)] transition-all duration-300 group">
+    <article className="bg-(--background)] p-8 rounded-(--radius-xl)] border border-(--border-light)] hover:shadow-(--shadow-xl)] transition-all duration-300 group">
       <div
-        className={`w-16 h-16 rounded-[var(--radius-xl)] ${colors.bg} flex items-center justify-center ${colors.text} mb-6 transition-colors ${colors.hoverBg} group-hover:text-white`}
+        className={`w-16 h-16 rounded-(--radius-xl)] ${colors.bg} flex items-center justify-center ${colors.text} mb-6 transition-colors ${colors.hoverBg} group-hover:text-white`}
       >
         <Icon className="w-8 h-8" aria-hidden="true" />
       </div>
-      <h3 className="text-xl font-bold mb-3 text-[var(--foreground)]">{title}</h3>
-      <p className="text-[var(--foreground-secondary)] leading-relaxed">{description}</p>
+      <h3 className="text-xl font-bold mb-3 text-(--foreground)]">{title}</h3>
+      <p className="text-(--foreground-secondary)] leading-relaxed">{description}</p>
     </article>
   );
 };
@@ -349,7 +349,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ feature }) => {
  */
 const FeaturesSection: React.FC = () => (
   <SectionWrapper
-    className="py-24 bg-[var(--background-secondary)]"
+    className="py-24 bg-(--background-secondary)]"
     id="why-choose-us"
   >
     <SectionHeading
@@ -377,10 +377,10 @@ const ValueCard: React.FC<ValueCardProps> = ({ value }) => {
   const { Icon, title, description } = value;
 
   return (
-    <article className="space-y-4 p-8 rounded-[var(--radius-xl)] bg-[var(--background)] border border-[var(--border-light)]">
-      <Icon className="w-10 h-10 text-[var(--color-primary)]" aria-hidden="true" />
-      <h4 className="text-xl font-bold text-[var(--foreground)]">{title}</h4>
-      <p className="text-[var(--foreground-secondary)]">{description}</p>
+    <article className="space-y-4 p-8 rounded-(--radius-xl)] bg-(--background)] border border-(--border-light)]">
+      <Icon className="w-10 h-10 text-primary" aria-hidden="true" />
+      <h4 className="text-xl font-bold text-(--foreground)]">{title}</h4>
+      <p className="text-(--foreground-secondary)]">{description}</p>
     </article>
   );
 };
@@ -392,8 +392,8 @@ const ValuesSection: React.FC = () => (
   <SectionWrapper className="py-24" id="our-values">
     <div className="flex flex-col lg:flex-row gap-16 items-start">
       <aside className="lg:w-1/3 lg:sticky lg:top-32">
-        <h2 className="text-4xl font-extrabold mb-6 text-[var(--foreground)]">Our Values</h2>
-        <p className="text-[var(--foreground-secondary)] mb-8">
+        <h2 className="text-4xl font-extrabold mb-6 text-(--foreground)]">Our Values</h2>
+        <p className="text-(--foreground-secondary)] mb-8">
           These principles guide every decision we make, from the destinations we choose to the
           partners we collaborate with.
         </p>
@@ -401,7 +401,7 @@ const ValuesSection: React.FC = () => (
           {CORE_PRINCIPLES.map((principle) => (
             <li
               key={principle}
-              className="flex items-center gap-4 text-[var(--color-primary)] font-bold"
+              className="flex items-center gap-4 text-primary font-bold"
             >
               <CheckCircleIcon className="w-6 h-6" aria-hidden="true" />
               <span>{principle}</span>
@@ -423,7 +423,7 @@ const ValuesSection: React.FC = () => (
  */
 const CTASection: React.FC = () => (
   <SectionWrapper id="get-started">
-    <div className="bg-gradient-primary rounded-[var(--radius-2xl)] p-12 lg:p-20 text-center relative overflow-hidden shadow-[var(--shadow-xl)]">
+    <div className="bg-gradient-primary rounded-(--radius-2xl)] p-12 lg:p-20 text-center relative overflow-hidden shadow-(--shadow-xl)]">
       {/* Abstract Background Pattern */}
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
@@ -460,7 +460,7 @@ const CTASection: React.FC = () => (
 
 const AboutPage: React.FC = () => {
   return (
-    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+    <div className="bg-(--background)] text-(--foreground)] min-h-screen">
       <main>
         <HeroSection />
         <StorySection />

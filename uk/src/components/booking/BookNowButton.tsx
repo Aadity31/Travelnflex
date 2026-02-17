@@ -308,7 +308,7 @@ export default function BookNowButton({
           ${
             loading
               ? "bg-gray-400 text-white cursor-wait"
-              : "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40"
+              : "bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40"
           }
           ${!loading ? "hover:scale-[1.02] active:scale-[0.98]" : ""}
         `}

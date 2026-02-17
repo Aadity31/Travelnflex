@@ -95,7 +95,7 @@ export default function LoginForm({ redirectUrl, action }: LoginFormProps) {
                 <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z" />
               </svg>
             </div>
-            <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+            <span className="text-lg sm:text-xl font-bold bg-linear-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
               Sacred Journey
             </span>
           </div>
@@ -136,11 +136,11 @@ export default function LoginForm({ redirectUrl, action }: LoginFormProps) {
 
           {/* Divider */}
           <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-5">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <div className="flex-1 h-px bg-linear-to-r from-transparent via-gray-300 to-transparent"></div>
             <span className="text-gray-500 text-[10px] sm:text-xs font-medium">
               OR
             </span>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <div className="flex-1 h-px bg-linear-to-r from-transparent via-gray-300 to-transparent"></div>
           </div>
 
           {/* Email Input */}
@@ -223,7 +223,7 @@ export default function LoginForm({ redirectUrl, action }: LoginFormProps) {
           <button
             onClick={handleLogin}
             disabled={isLoading}
-            className="w-full py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-2 sm:py-2.5 text-xs sm:text-sm rounded-lg bg-linear-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">

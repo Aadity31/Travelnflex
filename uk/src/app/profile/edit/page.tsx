@@ -513,7 +513,7 @@ export default function EditProfilePage() {
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 sm:flex-[2] px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
+                      className="flex-1 sm:flex-[2] px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg sm:rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 transition-all flex items-center justify-center gap-1.5 sm:gap-2"
                     >
                       <Save size={16} className="sm:w-4.5 sm:h-4.5" />
                       <span>Save Changes</span>

@@ -873,8 +873,8 @@ export function BookingCard({
               }}
               className={`py-3 px-6 rounded-xl font-bold text-sm flex items-center gap-2 transition-all ${
                 !booking.selectedDate
-                  ? "bg-gradient-to-r from-gray-400 to-gray-500 text-white"
-                  : "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg"
+                  ? "bg-linear-to-r from-gray-400 to-gray-500 text-white"
+                  : "bg-linear-to-r from-orange-500 to-red-500 text-white shadow-lg"
               }`}
             >
               {!booking.selectedDate ? "Select Date" : "Book Now"}

@@ -38,7 +38,7 @@ export default function PaymentSummary({
   return (
     <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden top-6">
       {/* Header with gradient */}
-      <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-5">
+      <div className="bg-linear-to-r from-green-500 to-emerald-600 p-5">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
             <svg
@@ -70,7 +70,7 @@ export default function PaymentSummary({
       <div className="p-5">
         {/* Booking Details */}
         <div className="mb-5 space-y-3">
-          <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-3">
+          <div className="bg-linear-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-3">
             <div className="text-xs font-bold text-orange-700 uppercase tracking-wide mb-1">
               Package Selected
             </div>
@@ -206,7 +206,7 @@ export default function PaymentSummary({
         </div>
 
         {/* Payment Button */}
-        <button className="w-full h-12 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-base font-bold shadow-lg hover:shadow-xl transition-all flex items-center justify-center mb-4 gap-2 group">
+        <button className="w-full h-12 rounded-xl bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-base font-bold shadow-lg hover:shadow-xl transition-all flex items-center justify-center mb-4 gap-2 group">
           <LockClosedIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
           <span>Proceed to Payment</span>
         </button>
@@ -219,13 +219,13 @@ export default function PaymentSummary({
           </p>
           <div className="flex justify-center gap-3 items-center">
             <div className="flex items-center gap-1">
-              <div className="w-8 h-5 bg-gradient-to-r from-blue-600 to-blue-400 rounded flex items-center justify-center">
+              <div className="w-8 h-5 bg-linear-to-r from-blue-600 to-blue-400 rounded flex items-center justify-center">
                 <span className="text-white text-[8px] font-bold">VISA</span>
               </div>
-              <div className="w-8 h-5 bg-gradient-to-r from-red-600 to-orange-500 rounded flex items-center justify-center">
+              <div className="w-8 h-5 bg-linear-to-r from-red-600 to-orange-500 rounded flex items-center justify-center">
                 <span className="text-white text-[8px] font-bold">MC</span>
               </div>
-              <div className="w-8 h-5 bg-gradient-to-r from-indigo-600 to-blue-500 rounded flex items-center justify-center">
+              <div className="w-8 h-5 bg-linear-to-r from-indigo-600 to-blue-500 rounded flex items-center justify-center">
                 <span className="text-white text-[8px] font-bold">UPI</span>
               </div>
               <div className="w-8 h-5 bg-gray-700 rounded flex items-center justify-center">
@@ -237,7 +237,7 @@ export default function PaymentSummary({
 
         {/* Support Section */}
         <div className="pt-5 border-t-2 border-dashed border-gray-200">
-          <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
+          <div className="bg-linear-to-r from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
             <h4 className="text-xs font-bold text-orange-900 mb-3 uppercase tracking-wide flex items-center gap-2">
               <PhoneIcon className="w-4 h-4" />
               Need Assistance?

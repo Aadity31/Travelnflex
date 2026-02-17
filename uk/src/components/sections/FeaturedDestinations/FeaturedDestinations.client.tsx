@@ -48,13 +48,13 @@ const Badge: React.FC<BadgeProps> = ({ text, type }) => {
   const getBadgeStyles = () => {
     switch (type) {
       case "popular":
-        return "bg-[var(--color-primary)] text-white";
+        return "bg-primary text-white";
       case "trending":
         return "bg-purple-500 text-white";
       case "new":
-        return "bg-[var(--color-success)] text-white";
+        return "bg-(--color-success)] text-white";
       default:
-        return "bg-[var(--color-neutral)] text-white";
+        return "bg-(--color-neutral)] text-white";
     }
   };
 
@@ -122,7 +122,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
           )}
 
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
 
           {/* Top badges and wishlist - Fixed positioning */}
           <div className="absolute top-3 sm:top-4 left-3 sm:left-4 right-3 sm:right-4 flex justify-between items-start">
@@ -133,7 +133,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
             </div>
 
             {/* Wishlist button - Top Right Corner */}
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <WishlistButton
                 liked={wishlist.get(destination.id)}
                 onToggle={() => wishlist.toggle(destination.id)}
@@ -155,27 +155,27 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
         </div>
 
         {/* Content - Balanced padding */}
-        <div className="p-5 sm:p-6 flex flex-col flex-grow">
+        <div className="p-5 sm:p-6 flex flex-col grow">
           {/* Location */}
           <div className="flex items-center gap-2 text-gray-600 mb-3">
-            <MapPinIcon className="w-4 h-4 flex-shrink-0" />
+            <MapPinIcon className="w-4 h-4 shrink-0" />
             <span className="text-sm font-medium truncate">
               {destination.location}
             </span>
           </div>
 
           {/* Title - Readable sizes */}
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 group-hover:text-[var(--color-primary)] transition-colors duration-300 leading-tight">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors duration-300 leading-tight">
             {destination.name}
           </h3>
 
           {/* Description */}
-          <p className="text-sm sm:text-base text-gray-700 mb-4 line-clamp-3 leading-relaxed min-h-[4.5rem]">
+          <p className="text-sm sm:text-base text-gray-700 mb-4 line-clamp-3 leading-relaxed min-h-18">
             {destination.shortDescription}
           </p>
 
           {/* Activities */}
-          <div className="mb-4 flex-grow">
+          <div className="mb-4 grow">
             <h4 className="text-sm font-semibold text-gray-900 mb-2">
               Popular Activities:
             </h4>
@@ -183,7 +183,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
               {destination.popularActivities.slice(0, 3).map((activity, index) => (
                 <span
                   key={index}
-                  className="bg-[var(--color-primary-lightest)] text-[var(--color-primary-dark)] px-2.5 py-1 rounded-full text-xs font-medium border border-[var(--color-primary-light)]"
+                  className="bg-(--color-primary-lightest)] text-primary-dark)] px-2.5 py-1 rounded-full text-xs font-medium border border-primary-light"
                 >
                   {activity}
                 </span>
@@ -199,7 +199,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
           {/* Best time and price */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
             <div className="flex items-center gap-2 text-sm text-gray-600">
-              <ClockIcon className="w-4 h-4 flex-shrink-0" />
+              <ClockIcon className="w-4 h-4 shrink-0" />
               <span>Best time: {destination.bestTimeToVisit}</span>
             </div>
             <div className="text-left sm:text-right">
@@ -211,7 +211,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({
           </div>
 
           {/* CTA Button */}
-          <div className="w-full bg-[var(--color-primary-dark)] hover:bg-[var(--color-primary)] text-white py-3 px-5 rounded-lg font-semibold text-center transition-all duration-300 hover:shadow-lg group-hover:bg-[var(--color-primary)] flex items-center justify-center gap-2 text-base">
+          <div className="w-full bg-primary hover:bg-primary text-white py-3 px-5 rounded-lg font-semibold text-center transition-all duration-300 hover:shadow-lg group-hover:bg-primary flex items-center justify-center gap-2 text-base">
             Explore Destination
             <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </div>
@@ -243,12 +243,12 @@ const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header - Readable sizes */}
         <div className="text-center mb-12">
-          <div className="inline-block bg-[var(--color-primary-lightest)] text-[var(--color-primary)] px-4 py-2 rounded-full text-sm font-semibold mb-4">
+          <div className="inline-block bg-(--color-primary-lightest)] text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
             Sacred Destinations
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 px-4">
             Discover Your Perfect
-            <span className="text-[var(--color-primary-dark)] block mt-2">
+            <span className="text-primary-dark)] block mt-2">
               Spiritual Journey
             </span>
           </h2>
@@ -277,7 +277,7 @@ const FeaturedDestinations: React.FC<FeaturedDestinationsClientProps> = ({
         <div className="text-center px-4">
           <Link
             href="/destinations"
-            className="inline-flex items-center gap-3 bg-white text-[var(--color-primary-dark)] px-8 py-4 rounded-xl font-semibold border-2 border-[var(--color-primary-dark)] hover:bg-[var(--color-primary-dark)] hover:text-white transition-all duration-300 hover:shadow-lg text-base"
+            className="inline-flex items-center gap-3 bg-white text-primary-dark)] px-8 py-4 rounded-xl font-semibold border-2 border-primary-dark hover:bg-(--color-primary-dark)] hover:text-white transition-all duration-300 hover:shadow-lg text-base"
           >
             View All Destinations
             <ArrowRightIcon className="w-5 h-5" />

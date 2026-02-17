@@ -100,7 +100,7 @@ export default function HeroSection() {
           >
             <Link
               href="/destinations"
-              className="w-full sm:w-auto group bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-6 sm:px-7 py-3 sm:py-3.5 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-xl shadow-orange-500/30 flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="w-full sm:w-auto group bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-6 sm:px-7 py-3 sm:py-3.5 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-xl shadow-orange-500/30 flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               {currentHero.cta}
               <ChevronRightIcon className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />

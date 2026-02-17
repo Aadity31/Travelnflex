@@ -176,33 +176,33 @@ export default function NotificationBellClient() {
     switch (type) {
       case "booking":
         return {
-          bg: "bg-[var(--color-success-lighter)]",
-          text: "text-[var(--color-success-dark)]",
-          icon: "text-[var(--color-success)]",
+          bg: "bg-(--color-success-lighter)]",
+          text: "text-(--color-success-dark)]",
+          icon: "text-(--color-success)]",
         };
       case "reminder":
         return {
-          bg: "bg-[var(--color-secondary-lighter)]",
-          text: "text-[var(--color-secondary-dark)]",
-          icon: "text-[var(--color-secondary)]",
+          bg: "bg-(--color-secondary-lighter)]",
+          text: "text-(--color-secondary-dark)]",
+          icon: "text-(--color-secondary)]",
         };
       case "update":
         return {
-          bg: "bg-[var(--color-primary-lighter)]",
-          text: "text-[var(--color-primary-dark)]",
-          icon: "text-[var(--color-primary)]",
+          bg: "bg-(--color-primary-lighter)]",
+          text: "text-(--color-primary-dark)]",
+          icon: "text-primary",
         };
       case "promo":
         return {
-          bg: "bg-[var(--color-accent-lighter)]",
-          text: "text-[var(--color-accent-dark)]",
-          icon: "text-[var(--color-accent)]",
+          bg: "bg-(--color-accent-lighter)]",
+          text: "text-(--color-accent-dark)]",
+          icon: "text-(--color-accent)]",
         };
       default:
         return {
-          bg: "bg-[var(--background-tertiary)]",
-          text: "text-[var(--color-neutral-dark)]",
-          icon: "text-[var(--color-neutral)]",
+          bg: "bg-(--background-tertiary)",
+          text: "text-(--color-neutral-dark)",
+          icon: "text-(--color-neutral)",
         };
     }
   };
@@ -212,13 +212,13 @@ export default function NotificationBellClient() {
       {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-1.5 sm:p-2 text-white hover:text-[var(--color-primary)] rounded-[var(--radius-lg)] transition-[var(--transition-fast)] "
+        className="relative p-1.5 sm:p-2 text-white hover:text-primary rounded-(--radius-lg)] transition-(--transition-fast)] "
         aria-label="Notifications"
       >
-        <Bell size={20} className="sm:w-[20px] sm:h-[20px]" />
+        <Bell size={20} className="sm:w-5 sm:h-5" />
 
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-[var(--color-error)] text-white text-[8px] sm:text-[10px] font-bold rounded-[var(--radius-full)] flex items-center justify-center shadow-[var(--shadow-md)]">
+          <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-(--color-error)] text-white text-[8px] sm:text-[10px] font-bold rounded-(--radius-full)] flex items-center justify-center shadow-(--shadow-md)]">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -228,32 +228,32 @@ export default function NotificationBellClient() {
       {isOpen && (
         <div 
           className="fixed top-16 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-md max-h-[60vh]
-  sm:absolute sm:top-full sm:right-0 sm:left-auto sm:translate-x-0 sm:w-[380px] sm:max-h-[450px]
+  sm:absolute sm:top-full sm:right-0 sm:left-auto sm:translate-x-0 sm:w-95 sm:max-h-112.5
   mt-0 sm:mt-3 pb-2 sm:pb-3 
-  rounded-[var(--radius-2xl)] 
-  bg-[var(--background)]/95 backdrop-blur-lg
-  shadow-[var(--shadow-xl)] 
-  border border-[var(--border-light)]/50
+  rounded-(--radius-2xl)] 
+  bg-(--background)/95 backdrop-blur-lg
+  shadow-(--shadow-xl)] 
+  border border-(--border-light)]/50
   z-50 flex flex-col overflow-hidden
   [-webkit-backdrop-filter:blur(16px)]"
 
         >
           {/* Header */}
-          <div className="px-4 py-3 sm:px-5 sm:py-4 bg-gradient-to-r from-[var(--color-primary)]/5 to-[var(--color-primary-light)]/30 border-b border-[var(--border-light)]">
+          <div className="px-4 py-3 sm:px-5 sm:py-4 bg-linear-to-r from-primary/5 to-primary-light/30 border-b border-(--border-light)]">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm sm:text-base font-bold text-[var(--foreground)]">
+              <h3 className="text-sm sm:text-base font-bold text-(--foreground)]">
                 Notifications
               </h3>
 
               {unreadCount > 0 ? (
                 <button
                   onClick={markAllAsRead}
-                  className="text-[10px] sm:text-xs text-[var(--color-primary-dark)] font-semibold px-2.5 py-1.5 hover:bg-[var(--color-primary-light)]/50 rounded-[var(--radius-md)] transition-[var(--transition-fast)]"
+                  className="text-[10px] sm:text-xs text-primary-dark font-semibold px-2.5 py-1.5 hover:bg-primary-light/50 rounded-md transition-(--transition-fast)"
                 >
                   Mark all read
                 </button>
               ) : (
-                <span className="text-[10px] sm:text-xs text-[var(--foreground-secondary)] font-medium">
+                <span className="text-[10px] sm:text-xs text-(--foreground-secondary)] font-medium">
                   All caught up! ✨
                 </span>
               )}
@@ -264,16 +264,16 @@ export default function NotificationBellClient() {
           <div className="flex-1 overflow-y-auto custom-scrollbar">
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-8 text-center">
-                <Bell size={40} className="text-[var(--foreground-muted)] mb-3 opacity-80" />
-                <p className="text-sm text-[var(--foreground-secondary)] font-medium">
+                <Bell size={40} className="text-(--foreground-muted)] mb-3 opacity-80" />
+                <p className="text-sm text-(--foreground-secondary)] font-medium">
                   No notifications yet
                 </p>
-                <p className="text-xs text-[var(--foreground-muted)] mt-1">
+                <p className="text-xs text-(--foreground-muted)] mt-1">
                   {`We'll notify you when something arrives`}
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-[var(--border-light)]">
+              <div className="divide-y divide-(--border-light)">
                 {notifications.map((n) => {
                   const colors = getTypeColors(n.type);
                   
@@ -281,14 +281,14 @@ export default function NotificationBellClient() {
                     <div
                       key={n.id}
                       onClick={() => handleNotificationClick(n)}
-                      className={`p-3 sm:p-4 cursor-pointer transition-[var(--transition-fast)] hover:bg-[var(--background-hover)] ${
-                        !n.read ? "bg-[var(--color-primary-lightest)]" : "bg-[var(--background)]"
+                      className={`p-3 sm:p-4 cursor-pointer transition-(--transition-fast) hover:bg-(--background-hover) ${
+                        !n.read ? "bg-(--color-primary-lightest)" : "bg-(--background)"
                       }`}
                     >
                       <div className="flex items-start gap-3">
                         {/* Badge Icon */}
                         <div
-                          className={`w-8 h-8 sm:w-9 sm:h-9 rounded-[var(--radius-lg)] flex items-center justify-center flex-shrink-0 ${colors.bg}`}
+                          className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center shrink-0 ${colors.bg}`}
                         >
                           <Bell size={14} className={colors.icon} />
                         </div>
@@ -301,15 +301,15 @@ export default function NotificationBellClient() {
                             </h4>
 
                             {!n.read && (
-                              <span className="w-2 h-2 bg-[var(--color-primary)] rounded-[var(--radius-full)] flex-shrink-0 mt-1 animate-pulse" />
+                              <span className="w-2 h-2 bg-primary rounded-(--radius-full)] shrink-0 mt-1 animate-pulse" />
                             )}
                           </div>
 
-                          <p className="text-[11px] sm:text-xs text-[var(--foreground-secondary)] line-clamp-2 leading-relaxed mb-1.5">
+                          <p className="text-[11px] sm:text-xs text-(--foreground-secondary)] line-clamp-2 leading-relaxed mb-1.5">
                             {n.message}
                           </p>
 
-                          <p className="text-[10px] text-[var(--foreground-muted)] font-medium">
+                          <p className="text-[10px] text-(--foreground-muted)] font-medium">
                             {n.timestamp}
                           </p>
                         </div>
@@ -320,7 +320,7 @@ export default function NotificationBellClient() {
                             e.stopPropagation();
                             deleteNotification(n.id);
                           }}
-                          className="p-1.5 text-[var(--foreground-muted)] hover:text-[var(--color-error)] hover:bg-[var(--color-error-lighter)] rounded-[var(--radius-md)] transition-[var(--transition-fast)] flex-shrink-0"
+                          className="p-1.5 text-(--foreground-muted)] hover:text-error hover:bg-(--color-error-lighter) rounded-md transition-(--transition-fast) shrink-0"
                           aria-label="Delete notification"
                         >
                           <Trash2 size={14} />
