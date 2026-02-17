@@ -18,7 +18,7 @@ export default function Credits({
 
   return (
     <footer
-      className={`bg-(--color-neutral-darker)] border-t border-primary ${className}`}
+      className={`bg-neutral-darker border-t border-primary ${className}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Credits Section */}
@@ -26,19 +26,19 @@ export default function Credits({
           {/* Mobile: Single row */}
           <div className="flex flex-row items-center justify-between gap-2 sm:hidden">
             {/* Left - Site Name */}
-            <div className="text-(--text-muted-on-dark)] text-sm">
+            <div className="text-(--text-muted-on-dark) text-sm">
               <p className="text-primary hover:text-primary-light transition-colors duration-300">
                 travelnflex.com
               </p>
             </div>
 
             {/* Center - Copyright */}
-            <div className="text-(--text-muted-on-dark)] text-xs">
+            <div className="text-(--text-muted-on-dark) text-xs">
               <span>© {currentYear} <span className="font-medium text-primary">{websiteName}</span></span>
             </div>
 
             {/* Right - Designer Credit */}
-            <div className="text-(--text-muted-on-dark)] text-xs">
+            <div className="text-(--text-muted-on-dark) text-xs">
               <Link
                 href={designerUrl}
                 target="_blank"
@@ -67,19 +67,19 @@ export default function Credits({
           {/* Desktop: 3-column layout */}
           <div className="hidden sm:flex flex-row items-center justify-between gap-4">
             {/* Left - Site Name */}
-            <div className="text-(--text-muted-on-dark)] text-sm">
+            <div className="text-(--text-muted-on-dark) text-sm">
               <p className="text-primary hover:text-primary-light transition-colors duration-300">
                 travelnflex.com
               </p>
             </div>
 
             {/* Center - Copyright */}
-            <div className="text-(--text-muted-on-dark)] text-sm">
-              <span>© {currentYear} All rights reserved by<span className="font-medium text-primary">{websiteName}</span></span>
+            <div className="text-(--text-muted-on-dark) text-sm">
+              <span>© {currentYear} All rights reserved by <span className="font-medium text-primary">{websiteName}</span></span>
             </div>
 
             {/* Right - Designer Credit */}
-            <div className="text-(--text-muted-on-dark)] text-sm">
+            <div className="text-(--text-muted-on-dark) text-sm">
               <Link
                 href={designerUrl}
                 target="_blank"

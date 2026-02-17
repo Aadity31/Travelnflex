@@ -46,3 +46,53 @@
 .animate-toast-out {
   animation: toast-out 0.3s ease forwards;
 }
+
+
+/* Global animations for About page */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Tailwind v4 compatible utilities */
+@layer utilities {
+  .animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out both;
+  }
+
+  .animate-fadeInLeft {
+    animation: fadeInLeft 0.6s ease-out both;
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 1s ease-out;
+  }
+}
+

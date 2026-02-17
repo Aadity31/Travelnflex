@@ -37,7 +37,7 @@ export default function FooterWithCredits() {
   ];
 
   return (
-    <footer className="bg-neutral-darker text-(--text-on-dark)">
+    <footer className="bg-neutral-darker text-on-dark">
       {/* Decorative gradient top border */}
       <div className="h-1 w-full bg-linear-to-r from-primary-dark via-primary to-primary-dark" />
 
@@ -135,12 +135,12 @@ export default function FooterWithCredits() {
                     <li key={link.name}>
                       <Link
                         href={link.href}
-                        className="text-(--text-muted-on-dark) hover:text-primary transition-all duration-300 
+                        className="text-(--text-muted-on-dark) hover:text-primary transition-all duration-100 
                                  inline-flex items-center gap-2 group text-sm"
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-neutral group-hover:bg-primary 
-                                         transition-all duration-300 group-hover:scale-150" />
-                        <span className="group-hover:translate-x-1 transition-transform duration-300">
+                                         transition-all duration-100 group-hover:scale-150" />
+                        <span className="group-hover:translate-x-1 transition-transform duration-100">
                           {link.name}
                         </span>
                       </Link>
@@ -161,12 +161,12 @@ export default function FooterWithCredits() {
                     <li key={link.name}>
                       <Link
                         href={link.href}
-                        className="text-(--text-muted-on-dark) hover:text-primary transition-all duration-300 
+                        className="text-(--text-muted-on-dark) hover:text-primary transition-all duration-100 
                                  inline-flex items-center gap-2 group text-sm"
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-neutral group-hover:bg-primary 
-                                         transition-all duration-300 group-hover:scale-150" />
-                        <span className="group-hover:translate-x-1 transition-transform duration-300">
+                                         transition-all duration-100 group-hover:scale-150" />
+                        <span className="group-hover:translate-x-1 transition-transform duration-100">
                           {link.name}
                         </span>
                       </Link>
